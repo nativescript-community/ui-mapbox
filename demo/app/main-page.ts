@@ -2,7 +2,7 @@ import * as observable from '@nativescript/core/data/observable';
 import * as pages from '@nativescript/core/ui/page';
 import { Color } from '@nativescript/core';
 import { HelloWorldModel } from './main-view-model';
-import { LatLng, MapboxViewApi } from '@nativescrit-community/ui-mapbox';
+import { LatLng, MapboxViewApi } from '@nativescript-community/ui-mapbox';
 
 import { SETTINGS } from '../../mapbox_config';
 

@@ -21,7 +21,7 @@
     "@nativescript/theme": "^2.3.3",
     "@nativescript/webpack": "^3.0.4",
     "@nativescript-community/perms": "^2.1.1",
-    "@nativescrit-community/ui-mapbox": "file:../plugin",
+    "@nativescript-community/ui-mapbox": "file:../plugin",
     "nativescript-ui-sidedrawer": "~9.0.0",
     "reflect-metadata": "~0.1.12",
     "rxjs": "^6.4.0",

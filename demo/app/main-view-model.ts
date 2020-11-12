@@ -2,7 +2,7 @@ import { Button, Color, Observable, Page } from '@nativescript/core';
 import * as platform from '@nativescript/core/platform';
 import { ContentView } from '@nativescript/core/ui/content-view';
 import { AlertOptions, alert } from '@nativescript/core/ui/dialogs';
-import { DownloadProgress, LatLng, MapStyle, Mapbox, MapboxMarker, MapboxView, OfflineRegion, Viewport } from '@nativescrit-community/ui-mapbox';
+import { DownloadProgress, LatLng, MapStyle, Mapbox, MapboxMarker, MapboxView, OfflineRegion, Viewport } from '@nativescript-community/ui-mapbox';
 import { SETTINGS } from '../../mapbox_config';
 
 const isIOS = platform.Device.os === platform.platformNames.ios;
