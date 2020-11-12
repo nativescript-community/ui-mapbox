@@ -1,35 +1,30 @@
-
 export class GeoUtils {
+    /**
+     * Is the current location within the given circle?
+     *
+     * @param {number} longitude to check
+     * @param {number} latitude to check
+     * @param {number} longitude center of circle
+     * @param {number} latitude center of circle
+     * @param {number} radius of circle in meters
+     *
+     * @return {boolean} true if the point is within the given geofence.
+     *
+     * @link https://stackoverflow.com/questions/24680247/check-if-a-latitude-and-longitude-is-within-a-circle-google-maps
+     */
 
-  /**
-  * Is the current location within the given circle?
-  *
-  * @param {number} longitude to check
-  * @param {number} latitude to check
-  * @param {number} longitude center of circle
-  * @param {number} latitude center of circle
-  * @param {number} radius of circle in meters
-  *
-  * @return {boolean} true if the point is within the given geofence.
-  *
-  * @link https://stackoverflow.com/questions/24680247/check-if-a-latitude-and-longitude-is-within-a-circle-google-maps
-  */
+    static isLocationInCircle(lng, lat, circleLng, circleLat, circleRadius) {
+        const ky = 40000 / 360;
+        const kx = Math.cos((Math.PI * circleLat) / 180.0) * ky;
+        const dx = Math.abs(circleLng - lng) * kx;
+        const dy = Math.abs(circleLat - lat) * ky;
 
-  static isLocationInCircle( lng, lat, circleLng, circleLat, circleRadius ) {
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
-    let ky = 40000 / 360;
-    let kx = Math.cos( Math.PI * circleLat / 180.0 ) * ky;
-    let dx = Math.abs( circleLng - lng ) * kx;
-    let dy = Math.abs( circleLat - lat ) * ky;
+        if (distance < circleRadius / 1000) {
+            return true;
+        }
 
-    let distance = Math.sqrt(dx * dx + dy * dy);
-
-    if ( distance < circleRadius / 1000 ) {
-      return true;
+        return false;
     }
-
-    return false;
-
-  }
-
 } // END

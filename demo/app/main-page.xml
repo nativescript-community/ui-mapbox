@@ -1,4 +1,4 @@
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:map="nativescript-mapbox" actionBarHidden="true" loaded="pageLoaded">
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:map="@nativescrit-community/ui-mapbox" actionBarHidden="true" loaded="pageLoaded">
   <TabView>
     <TabView.items>
 

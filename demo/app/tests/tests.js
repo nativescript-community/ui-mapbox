@@ -1,4 +1,4 @@
-var MapboxPlugin = require("nativescript-mapbox").Mapbox;
+var MapboxPlugin = require("@nativescrit-community/ui-mapbox").Mapbox;
 var mapbox = new MapboxPlugin();
 
 describe("show", function () {

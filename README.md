@@ -8,8 +8,8 @@
 [![Downloads][downloads-image]][npm-url]
 [![Twitter Follow][twitter-image]][twitter-url]
 
-[build-status]:https://travis-ci.org/EddyVerbruggen/nativescript-mapbox.svg?branch=master
-[build-url]:https://travis-ci.org/EddyVerbruggen/nativescript-mapbox
+[build-status]:https://travis-ci.org/@nativescript-community/ui-mapbox.svg?branch=master
+[build-url]:https://travis-ci.org/@nativescript-community/ui-mapbox
 [npm-image]:http://img.shields.io/npm/v/nativescript-mapbox.svg
 [npm-url]:https://npmjs.org/package/nativescript-mapbox
 [downloads-image]:http://img.shields.io/npm/dm/nativescript-mapbox.svg
@@ -18,7 +18,7 @@
 
 Awesome native OpenGL-powered maps - by Mapbox
 
-<img src="https://raw.githubusercontent.com/EddyVerbruggen/nativescript-mapbox/master/screenshots/ios-demoapp-slice.png" width="375px" height="196px" />
+<img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/ios-demoapp-slice.png" width="375px" height="196px" />
 
 > There is a NativeScript Core Modules bug under Android that causes random crashes on navigation. See ./demo-angular/README.md for a workaround.
 > https://github.com/NativeScript/NativeScript/issues/7954
@@ -107,7 +107,7 @@ You can instantiate a map from JS or TS. As the map is yet another view componen
 
 A simple layout could look like this:
 
-<img src="https://raw.githubusercontent.com/EddyVerbruggen/nativescript-mapbox/master/screenshots/ios-xml-declared.png" width="373px" height="361px" />
+<img src="https://raw.githubusercontent.com/@nativescript-community/ui-mapbox/master/screenshots/ios-xml-declared.png" width="373px" height="361px" />
 
 Could be rendered by a definition like this:
 

@@ -1,25 +1,81 @@
-.idea
-.history
-.vscode
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# =========================
+# Operating System Files
+# =========================
+
+# OSX
+# =========================
+
 .DS_Store
-*.js
-*.log
+.AppleDouble
+.LSOverride
+.idea
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+bin
+obj
+build/
+.vs
+.tscache
+*.user
+!demo-vue/app/app.js
 *.map
-*.tgz
-*.aar
-!src/angular/*.js
-!demo/karma.conf.js
-!demo/app/tests/*.js
-demo/*.d.ts
-src/*.d.ts
-!src/index.d.ts
-!src/references.d.ts
-demo/lib
-demo/platforms
+!gruntfile.js
 node_modules
-demo/hooks/
-publish/package/
-ngdemo/lib
-ngdemo/platoforms
-ngdemo/node_modules
-ngdemo/hooks
+*.tmp.*
+demo*/platforms
+lib
+!webpack.*.js
+!build.esm.js
+report
+*.log
+
+*.framework
+*.aar
+
+Pods
+*.lock
+*.xcworkspace
+plugin/**/*.d.ts
+/plugin/README.md
+package-lock.json
+/.vscode
+/pnpm-lock.yaml
+
+.update_backup
+.migration_backup
+plugin/**/*js.map
+plugin/**/*js
+pnpm-lock.yaml
+hooks
