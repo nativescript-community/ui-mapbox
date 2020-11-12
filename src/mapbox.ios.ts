@@ -2874,8 +2874,81 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // ---------------------------------------------------------------------
 
-    addGeoJsonClustered(options: AddGeoJsonClusteredOptions, nativeMap?): Promise<void> {
+    addGeoJsonClustered(options: AddGeoJsonClusteredOptions, nativeMapViewInstance?): Promise<void> {
         throw new Error('Method not implemented.');
+        // return new Promise((resolve, reject) => {
+        //     const theMap: MGLMapView = nativeMapViewInstance || this._mapboxViewInstance;
+        //     try {
+        //         const source = MGLShapeSource.alloc().initWithIdentifierURLOptions(options.name, NSURL.URLWithString(options.data), null);
+        //         theMap.style.addSource(source);
+
+        //         const layers = [];
+        //         if (options.clusters) {
+        //             for (let i = 0; i < options.clusters.length; i++) {
+        //                 // TODO also allow Color object
+        //                 layers.push([options.clusters[i].points, new Color(options.clusters[i].color).ios]);
+        //             }
+        //         } else {
+        //             layers.push([150, new Color('red').ios]);
+        //             layers.push([20, new Color('green').ios]);
+        //             layers.push([0, new Color('blue').ios]);
+        //         }
+
+        //         const unclustered = MGLCircleStyleLayer.alloc().initWithIdentifierSource(options.name, source);
+        //         unclustered.circleColor = NSExpression.expressionWithFormatArgumentArray('%@', new Color('red').ios);
+        //         unclustered.circleRadius = NSExpression.expressionWithFormatArgumentArray('16', null);
+        //         unclustered.circleBlur = NSExpression.expressionWithFormatArgumentArray('0.2', null);
+        //         // unclustered.setFilter(com.mapbox.mapboxsdk.style.expressions.Expression.neq(com.mapbox.mapboxsdk.style.expressions.Expression.get('cluster'), true));
+        //         // theMap.style.addLayer(unclustered); // , "building");
+
+        //         for (let i = 0; i < layers.length; i++) {
+        //             // Add some nice circles
+        //             const circles = MGLCircleStyleLayer.alloc().initWithIdentifierSource(options.name, source);
+        //             const circles = new com.mapbox.mapboxsdk.style.layers.CircleLayer('cluster-' + i, options.name);
+        //         //     circles.setProperties([
+        //         //         // com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage("icon")
+        //         //         com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor(layers[i][1]),
+        //         //         com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius(new java.lang.Float(22.0)),
+        //         //         com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleBlur(new java.lang.Float(0.2)),
+        //         //     ]);
+
+        //         //     const pointCount = com.mapbox.mapboxsdk.style.expressions.Expression.toNumber(com.mapbox.mapboxsdk.style.expressions.Expression.get('point_count'));
+        //         //     if (i === 0) {
+        //         //         circles.setFilter(
+        //         //             com.mapbox.mapboxsdk.style.expressions.Expression.gte(pointCount, com.mapbox.mapboxsdk.style.expressions.Expression.literal(java.lang.Integer.valueOf(layers[i][0])))
+        //         //         );
+        //         //     } else {
+        //         //         circles.setFilter(
+        //         //             com.mapbox.mapboxsdk.style.expressions.Expression.all([
+        //         //                 com.mapbox.mapboxsdk.style.expressions.Expression.gte(pointCount, com.mapbox.mapboxsdk.style.expressions.Expression.literal(java.lang.Integer.valueOf(layers[i][0]))),
+        //         //                 com.mapbox.mapboxsdk.style.expressions.Expression.lt(
+        //         //                     pointCount,
+        //         //                     com.mapbox.mapboxsdk.style.expressions.Expression.literal(java.lang.Integer.valueOf(layers[i - 1][0]))
+        //         //                 ),
+        //         //             ])
+        //         //         );
+        //         //     }
+
+        //         //     this._mapboxMapInstance.getStyle().addLayer(circles); // , "building");
+        //         }
+
+        //         // // Add the count labels (note that this doesn't show.. #sad)
+        //         // const count = new com.mapbox.mapboxsdk.style.layers.SymbolLayer('count', options.name);
+        //         // count.setProperties([
+        //         //     com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField(com.mapbox.mapboxsdk.style.expressions.Expression.get('point_count')),
+        //         //     com.mapbox.mapboxsdk.style.layers.PropertyFactory.textSize(new java.lang.Float(12.0)),
+        //         //     com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor(new Color('white').android),
+        //         // ]);
+        //         // this._mapboxMapInstance.getStyle().addLayer(count);
+
+        //         resolve();
+        //     } catch (ex) {
+        //         if (Trace.isEnabled()) {
+        //             CLog(CLogTypes.info, 'Error in mapbox.addGeoJsonClustered: ' + ex);
+        //         }
+        //         reject(ex);
+        //     }
+        // });
     }
 
     /**
