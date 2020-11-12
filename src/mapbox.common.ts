@@ -583,9 +583,9 @@ export interface MapboxApi {
 
     animateCamera(options: AnimateCameraOptions, nativeMap?: any): Promise<any>;
 
-    setOnMapClickListener(listener: (data: LatLng) => void, nativeMap?): Promise<any>;
+    setOnMapClickListener(listener: (data: LatLng) => boolean, nativeMap?): Promise<any>;
 
-    setOnMapLongClickListener(listener: (data: LatLng) => void, nativeMap?): Promise<any>;
+    setOnMapLongClickListener(listener: (data: LatLng) => boolean, nativeMap?): Promise<any>;
 
     setOnScrollListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void>;
 
@@ -692,9 +692,9 @@ export interface MapboxViewApi {
 
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<Feature[]>;
 
-    setOnMapClickListener(listener: (data: LatLng) => void): Promise<any>;
+    setOnMapClickListener(listener: (data: LatLng) => boolean): Promise<any>;
 
-    setOnMapLongClickListener(listener: (data: LatLng) => void): Promise<any>;
+    setOnMapLongClickListener(listener: (data: LatLng) => boolean): Promise<any>;
 
     setOnScrollListener(listener: (data?: LatLng) => void): Promise<void>;
 
@@ -829,13 +829,13 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
 
     // -----------------------------------------------------------------
 
-    setOnMapClickListener(listener: (data: LatLng) => void): Promise<any> {
+    setOnMapClickListener(listener: (data: LatLng) => boolean): Promise<any> {
         return this.mapbox.setOnMapClickListener(listener, this.getNativeMapView());
     }
 
     // -----------------------------------------------------------------
 
-    setOnMapLongClickListener(listener: (data: LatLng) => void): Promise<any> {
+    setOnMapLongClickListener(listener: (data: LatLng) => boolean): Promise<any> {
         return this.mapbox.setOnMapLongClickListener(listener, this.getNativeMapView());
     }
 

@@ -46,7 +46,7 @@ import {
 
 export { MapboxTraceCategory, MapStyle };
 
-declare const android, com, java, org: any;
+// declare const android, com, java, org: any;
 
 export namespace BundleKludge {
     export const bundle = { test: 'test' };
@@ -218,7 +218,7 @@ export class MapboxView extends MapboxViewBase {
      */
     telemetry = false;
     public createNativeView(): Object {
-        // const telemetry = com.mapbox.mapboxsdk.maps.Mapbox.getTelemetry();
+        // const telemetry = com.mapbox.android.telemetry.TelemetryEnabler.updateTelemetryState;
         // if (telemetry != null) {
         //     telemetry.setUserTelemetryRequestState(telemetry);
         // }
@@ -873,13 +873,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                     // this.gcFix('com.mapbox.mapboxsdk.maps.MapView.OnDidFailLoadingMapListener', this.onDidFailLoadingMapListener);
 
-                    this.onDidFinishLoadingMapListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFinishLoadingMapListener({
-                        onDidFinishLoadingMap: (map) => {
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, 'show(): finished loading map:');
-                            }
-                        },
-                    });
+                    if (Trace.isEnabled()) {
+                        this.onDidFinishLoadingMapListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFinishLoadingMapListener({
+                            onDidFinishLoadingMap: () => CLog(CLogTypes.info, 'show(): finished loading map'),
+                        });
+                    }
 
                     this._mapboxViewInstance.addOnDidFinishLoadingMapListener(this.onDidFinishLoadingMapListener);
 
@@ -1588,7 +1586,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 // the create() method of the line manager requires a feature collection.
 
-                const featureCollection = new com.mapbox.geojson.FeatureCollection.fromFeature(feature);
+                const featureCollection = com.mapbox.geojson.FeatureCollection.fromFeature(feature);
 
                 // this.gcFix('com.mapbox.geojson.FeatureCollection', featureCollection);
 
@@ -1713,7 +1711,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 // callback for when the style is successfully loaded.
 
                 this.onDidFinishLoadingStyleListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFinishLoadingStyleListener({
-                    onDidFinishLoadingStyle: (style) => {
+                    onDidFinishLoadingStyle: () => {
                         if (Trace.isEnabled()) {
                             CLog(CLogTypes.info, 'Mapbox:setMapStyle(): style loaded');
                         }
@@ -1744,7 +1742,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                         // this.gcFix('com.mapbox.mapboxsdk.plugins.annotation.OnAnnotationClickListener', this.onAnnotationClickListener);
 
-                        resolve(style);
+                        resolve();
                     },
                 });
 
@@ -2384,7 +2382,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * Not returning a boolean from the listener function will cause a crash.
      */
 
-    setOnMapClickListener(listener: (data: LatLng) => void, nativeMap?: MapboxView): Promise<void> {
+    setOnMapClickListener(listener: (data: LatLng) => boolean, nativeMap?: MapboxView): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
                 if (!this._mapboxMapInstance) {
@@ -2421,7 +2419,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // ----------------------------------------------------------------------------------
 
-    setOnMapLongClickListener(listener: (data: LatLng) => void, nativeMap?): Promise<void> {
+    setOnMapLongClickListener(listener: (data: LatLng) => boolean, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
                 if (!this._mapboxMapInstance) {
@@ -2931,18 +2929,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 fillExtrusionLayer.setSourceLayer('building');
                 fillExtrusionLayer.setFilter(com.mapbox.mapboxsdk.style.expressions.Expression.eq(com.mapbox.mapboxsdk.style.expressions.Expression.get('extrude'), 'true'));
                 fillExtrusionLayer.setMinZoom(15);
-
+                const props = [];
+                props[0] = com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillExtrusionColor(android.graphics.Color.LTGRAY);
+                props[1] = com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillExtrusionHeight(com.mapbox.mapboxsdk.style.expressions.Expression.get('height'));
+                props[2] = com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillExtrusionBase(com.mapbox.mapboxsdk.style.expressions.Expression.get('min_height'));
+                props[3] = com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillExtrusionOpacity(com.mapbox.mapboxsdk.style.expressions.Expression.literal(0.6));
                 // Set data-driven styling properties
-                fillExtrusionLayer.setProperties(
-                    com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillExtrusionColor(android.graphics.Color.LTGRAY),
-                    com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillExtrusionHeight(
-                        com.mapbox.mapboxsdk.style.functions.Function.property('height', new com.mapbox.mapboxsdk.style.functions.stops.IdentityStops())
-                    ),
-                    com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillExtrusionBase(
-                        com.mapbox.mapboxsdk.style.functions.Function.property('min_height', new com.mapbox.mapboxsdk.style.functions.stops.IdentityStops())
-                    ),
-                    com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillExtrusionOpacity(new java.lang.Float(0.6))
-                );
+                fillExtrusionLayer.setProperties(props);
 
                 this._mapboxMapInstance.addLayer(fillExtrusionLayer);
                 resolve();
@@ -2993,7 +2986,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                         const geojsonString = JSON.stringify(options.data);
 
-                        const feature: Feature = com.mapbox.geojson.Feature.fromJson(geojsonString);
+                        const feature = com.mapbox.geojson.Feature.fromJson(geojsonString);
 
                         if (Trace.isEnabled()) {
                             CLog(CLogTypes.info, 'Mapbox:addSource(): adding feature');
@@ -3314,11 +3307,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 } // end of paint section.
 
                 // now the layout section
-
+                const Property = com.mapbox.mapboxsdk.style.layers.Property;
                 if (typeof style.layout == 'undefined') {
                     lineProperties = [
-                        com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap(com.mapbox.mapboxsdk.style.layers.PropertyFactory.LINE_CAP_ROUND),
-                        com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin(com.mapbox.mapboxsdk.style.layers.PropertyFactory.LINE_JOIN_ROUND),
+                        com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
+                        com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
                     ];
                 } else {
                     // line cap
@@ -3330,12 +3323,16 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                         switch (style.layout['line-cap']) {
                             case 'round':
-                                property = com.mapbox.mapboxsdk.style.layers.PropertyFactory.LINE_CAP_ROUND;
+                                property = Property.LINE_CAP_ROUND;
 
                                 break;
 
                             case 'square':
-                                property = com.mapbox.mapboxsdk.style.layers.PropertyFactory.LINE_CAP_SQUARE;
+                                property = Property.LINE_CAP_SQUARE;
+
+                                break;
+                            case 'butt':
+                                property = Property.LINE_CAP_BUTT;
 
                                 break;
                         }
@@ -3350,13 +3347,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                         switch (style.layout['line-join']) {
                             case 'round':
-                                property = com.mapbox.mapboxsdk.style.layers.PropertyFactory.LINE_JOIN_ROUND;
-
+                                property = Property.LINE_JOIN_ROUND;
                                 break;
-
-                            case 'square':
-                                property = com.mapbox.mapboxsdk.style.layers.PropertyFactory.LINE_JOIN_SQUARE;
-
+                            case 'miter':
+                                property = Property.LINE_JOIN_MITER;
+                                break;
+                            case 'bevel':
+                                property = Property.LINE_JOIN_BEVEL;
                                 break;
                         }
 
@@ -3957,13 +3954,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 return modeRef.TRACKING;
 
             case 'TRACK_COMPASS':
-                return modeRef.TRACK_COMPASS;
+                return modeRef.TRACKING_COMPASS;
 
             case 'TRACKING_GPS':
                 return modeRef.TRACKING_GPS;
 
             case 'TRACK_GPS_NORTH':
-                return modeRef.TRACK_GPS_NORTH;
+                return modeRef.TRACKING_GPS_NORTH;
         }
     }
 
@@ -4007,10 +4004,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // -------------------------------------------------------------
 
-    _getRegionName(offlineRegion) {
+    _getRegionName(offlineRegion: com.mapbox.mapboxsdk.offline.OfflineRegion) {
         const metadata = offlineRegion.getMetadata();
         const jsonStr = new java.lang.String(metadata, 'UTF-8');
-        const jsonObj = new org.json.JSONObject(jsonStr);
+        const jsonObj = new org.json.JSONObject((jsonStr as any) as string);
         return jsonObj.getString('name');
     }
 
@@ -4064,7 +4061,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const componentOptionsBuilder = com.mapbox.mapboxsdk.location.LocationComponentOptions.builder(Application.android.context);
 
                 if (typeof options.elevation != 'undefined') {
-                    componentOptionsBuilder.elevation(new java.lang.Float(options.elevation));
+                    componentOptionsBuilder.elevation(options.elevation);
                 }
 
                 if (typeof options.accuracyColor != 'undefined') {
@@ -4072,7 +4069,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 if (typeof options.accuracyAlpha != 'undefined') {
-                    componentOptionsBuilder.accuracyAlpha(new java.lang.Float(options.accuracyAlpha));
+                    componentOptionsBuilder.accuracyAlpha(options.accuracyAlpha);
                 }
 
                 const componentOptions = componentOptionsBuilder.build();
@@ -4142,8 +4139,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 if (typeof options.clickListener != 'undefined') {
                     this.onLocationClickListener = new com.mapbox.mapboxsdk.location.OnLocationClickListener({
-                        onLocationComponentClick: (component) => {
-                            options.clickListener(component);
+                        onLocationComponentClick: () => {
+                            options.clickListener();
                         },
                     });
 
