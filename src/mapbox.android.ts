@@ -400,9 +400,7 @@ export class MapboxView extends MapboxViewBase {
         
         if (!this.nativeMapView && ((this.config && this.config.accessToken) || (this.settings && this.settings.accessToken))) {
             this.mapbox = new Mapbox();
-            if (this.telemetry === false) {
-                com.mapbox.mapboxsdk.Mapbox.getTelemetry().setUserTelemetryRequestState(false);
-            }
+            
         
 
             // the NativeScript contentview class extends from Observable to provide the notify method
@@ -429,7 +427,14 @@ export class MapboxView extends MapboxViewBase {
                     });
                 },
                 onMapReady: (map) => {
-                    
+                    if (this.telemetry === false) {
+                        try{
+                            com.mapbox.mapboxsdk.Mapbox.getTelemetry().setUserTelemetryRequestState(false);
+                            console.error('telemtry disabled!')
+                        } catch(err) {
+                            console.error('telemtry', err)
+                        }
+                    }
                     if (Trace.isEnabled()) {
                         CLog(CLogTypes.info, 'initMap(): onMapReady event - calling notify with the MapboxViewBase.mapReadyEvent');
                     }
