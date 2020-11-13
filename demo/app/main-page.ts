@@ -84,7 +84,7 @@ export function onMapReady(args) {
     // map.setOnScrollListener((point?: LatLng) => console.log(`Map scrolled: ${JSON.stringify(point)}`));
 
     // this allows json style loading for XYZ or TMS tiles source
-    map.setMapStyle("~/assets/OSM-map-style.json");
+    // map.setMapStyle("~/assets/OSM-map-style.json");
 
     // .. or use the convenience methods exposed on args.map, for instance:
 
