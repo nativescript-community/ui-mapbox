@@ -5,7 +5,7 @@
  */
 
 export const SETTINGS: any = {
-    mapbox_access_token: 'pk.eyJ1IjoiYWt5bGFzIiwiYSI6IkVJVFl2OXMifQ.TGtrEmByO3-99hA0EI44Ew',
+    mapbox_access_token: 'YOUR_ACCESS_TOKEN',
 
     // The style here can either be one of the standard mapbox styles or it can be a URL pointing to self hosted tile server.
 
