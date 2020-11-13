@@ -380,7 +380,7 @@ You can update the map style after you've loaded it.
     subtitle: 'Infamous subtitle!',
     // icon: 'res://cool_marker', // preferred way, otherwise use:
     icon: 'http(s)://website/coolimage.png', // from the internet (see the note at the bottom of this readme), or:
-    iconPath: 'res/markers/home_marker.png',
+    iconPath: '~/assets/markers/home_marker.png',
     selected: true, // makes the callout show immediately when the marker is added (note: only 1 marker can be selected at a time)
     onTap: marker => console.log("Marker tapped with title: '" + marker.title + "'"),
     onCalloutTap: marker => alert("Marker callout tapped with title: '" + marker.title + "'")
