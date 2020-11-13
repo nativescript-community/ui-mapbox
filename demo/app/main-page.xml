@@ -162,7 +162,7 @@
         <TabViewItem.view>
           <ScrollView>
             <StackLayout class="tab-content">
-              <Image margin="10" src="~/res/telerik-logo.png" />
+              <Image margin="10" src="~/assets/telerik-logo.png" />
               <Label text="Mapbox plugin demo" class="title"/>
               <Label text="Awesome platform independent OpenGL powered maps by Mapbox. Make sure you provide your own (free) ACCESS_TOKEN in main-view-model.ts or unexpected things will happen." textWrap="true"/>
             </StackLayout>

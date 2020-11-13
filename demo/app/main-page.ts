@@ -84,7 +84,7 @@ export function onMapReady(args) {
     // map.setOnScrollListener((point?: LatLng) => console.log(`Map scrolled: ${JSON.stringify(point)}`));
 
     // this allows json style loading for XYZ or TMS tiles source
-    // map.setMapStyle("~/OSM-map-style.json");
+    map.setMapStyle("~/assets/OSM-map-style.json");
 
     // .. or use the convenience methods exposed on args.map, for instance:
 
@@ -97,7 +97,7 @@ export function onMapReady(args) {
             lng: 4.889168,
             title: 'One-line title here', // no popup unless set
             subtitle: 'Really really nice location',
-            iconPath: 'res/markers/green_pin_marker.png',
+            iconPath: '~/assets/markers/green_pin_marker.png',
             onTap: () => {
                 console.log("main-page 'Nice location' marker tapped");
             },
@@ -201,13 +201,13 @@ export function onMapReady(args) {
         map.removePolylines([10]);
     }, 24000);
 
-    // this works just fine, but it interferes with the programmatic map so not doing this in the demo
-    // setTimeout(() => {
-    //   map.trackUser({
-    //     mode: "FOLLOW_WITH_HEADING",
-    //     animated: true
-    //   });
-    // }, 25000);
+    this works just fine, but it interferes with the programmatic map so not doing this in the demo
+    setTimeout(() => {
+      map.trackUser({
+        mode: "FOLLOW_WITH_HEADING",
+        animated: true
+      });
+    }, 25000);
 }
 
 // END

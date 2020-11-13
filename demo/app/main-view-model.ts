@@ -74,7 +74,7 @@ export class HelloWorldModel extends Observable {
                     lng: 4.894168,
                     title: 'Nice location',
                     subtitle: 'Really really nice location',
-                    iconPath: 'res/markers/green_pin_marker.png',
+                    iconPath: '~/assets/markers/green_pin_marker.png',
                     onTap: () => console.log("'Nice location' marker tapped"),
                     onCalloutTap: () => console.log("'Nice location' marker callout tapped"),
                 },
@@ -242,7 +242,7 @@ export class HelloWorldModel extends Observable {
                     lng: 4.789168,
                     title: 'One-line title here 3', // no popup unless set
                     subtitle: 'And a one-liner here as well.',
-                    iconPath: 'res/markers/home_marker.png',
+                    iconPath: '~/assets/markers/home_marker.png',
                     selected: true,
                     onTap,
                     onCalloutTap,
