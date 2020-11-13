@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.3](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.2...v6.0.3) (2020-11-13)
+
+
+### Bug Fixes
+
+* android disabling telemetry too soon ([1f0c6e5](https://github.com/nativescript-community/ui-mapbox/commit/1f0c6e59cc99ec6f557eaec67c5910bff4d633da))
+
+
+
+
+
 ## [6.0.2](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.1...v6.0.2) (2020-11-13)
 
 
