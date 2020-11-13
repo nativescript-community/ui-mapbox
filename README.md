@@ -1,28 +1,43 @@
 <a href="https://www.mapbox.com">
-  <img src="/screenshots/mapbox_logo.png" width="400"/>
+  <img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/mapbox_logo.png" width="400"/>
 </a>
 
 # NativeScript Mapbox plugin
 
-[![NPM version][npm-image]][npm-url]
-[![Downloads][downloads-image]][npm-url]
-[![Twitter Follow][twitter-image]][twitter-url]
-
-[build-status]:https://travis-ci.org/@nativescript-community/ui-mapbox.svg?branch=master
-[build-url]:https://travis-ci.org/@nativescript-community/ui-mapbox
-[npm-image]:http://img.shields.io/npm/v/nativescript-mapbox.svg
-[npm-url]:https://npmjs.org/package/nativescript-mapbox
-[downloads-image]:http://img.shields.io/npm/dm/nativescript-mapbox.svg
-[twitter-image]:https://img.shields.io/twitter/follow/eddyverbruggen.svg?style=social&label=Follow%20me
-[twitter-url]:https://twitter.com/eddyverbruggen
+[npm-image]:http://img.shields.io/npm/v/@nativescript-community/ui-mapbox.svg
+[npm-url]:https://npmjs.org/package/@nativescript-community/ui-mapbox
+[downloads-image]:http://img.shields.io/npm/dm/@nativescript-community/ui-mapbox.svg
 
 Awesome native OpenGL-powered maps - by Mapbox
 
 <img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/ios-demoapp-slice.png" width="375px" height="196px" />
 
-> There is a NativeScript Core Modules bug under Android that causes random crashes on navigation. See ./demo-angular/README.md for a workaround.
-> https://github.com/NativeScript/NativeScript/issues/7954
-> https://github.com/NativeScript/NativeScript/issues/7867
+
+# WARNING
+
+As we switched to a community managed plugin we upgraded the version of the Mapbox SDKs. Though starting from iOS SDK 6.0 and android SDK 9.0 they need special handling for downloading the SDK:
+[iOS](https://docs.mapbox.com/ios/maps/overview/#configure-credentials)
+
+[Android](https://docs.mapbox.com/android/maps/overview/#configure-credentials)
+
+On android the plugin default to 8.x. You can change it by creating a `before-plugins.gradle` in `App_Resources/Android` with (showing current versions):
+```
+ext {
+    okHttpVersion = "3.12.10"
+    def mapboxVersion =  "8.6.6"
+    def mapboxTelemetryVersion =  "6.1.0"
+    def mapboxPluginsVersion =  "v9"
+    def mapboxAnnotationPluginVersion =  "0.9.0"
+    def mapboxGesturesVersion =  "0.7.0"
+}
+
+```
+
+On iOS we dont force anything so it will get the latest one. If you want to change it create a `Podfile` in `App_Resources/iOS` with (see demo app):
+```
+pod 'Mapbox-iOS-SDK', '~> 5.1.1'
+```
+
 
 ## Before you begin - Prerequisites
 You either need your own tile server such as the one provided by [openmaptiles.org](https://openmaptiles.org) or a Mapbox API access token (they have a 🆓 Starter plan!), so [sign up with Mapbox](https://www.mapbox.com/signup/).
@@ -33,7 +48,7 @@ You will also need to set up your development environment. Please refer to the [
 # Installation
 
 ```
-$ tns plugin install nativescript-mapbox
+$ tns plugin install @nativescript-community/ui-mapbox
 ```
 
 # DEMOS
@@ -112,7 +127,7 @@ A simple layout could look like this:
 Could be rendered by a definition like this:
 
 ```xml
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:map="nativescript-mapbox" navigatingTo="navigatingTo">
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:map="@nativescript-community/ui-mapbox" navigatingTo="navigatingTo">
   <StackLayout>
     <Label text="Nice map, huh!" class="title"/>
     <ContentView height="240" width="240">
@@ -135,7 +150,7 @@ Component:
 
 ```typescript
 import { registerElement } from "nativescript-angular/element-registry";
-registerElement("Mapbox", () => require("nativescript-mapbox").MapboxView);
+registerElement("Mapbox", () => require("@nativescript-community/ui-mapbox").MapboxView);
 ```
 
 View:
@@ -190,7 +205,7 @@ It allows you to interact with the map after it has been drawn to the page.
 Open `main-page.[js|ts]` and add this (see [`addMarkers`](#addmarkers) further below for the full marker API):
 
 ```js
-var mapbox = require("nativescript-mapbox");
+var mapbox = require("@nativescript-community/ui-mapbox");
 
 function onMapReady(args) {
   // you can tap into the native MapView objects (MGLMapView for iOS and com.mapbox.mapboxsdk.maps.MapView for Android)
@@ -216,7 +231,7 @@ exports.onMapReady = onMapReady;
 ### .. or want to set the viewport bounds?
 
 ```js
-var mapbox = require("nativescript-mapbox");
+var mapbox = require("@nativescript-community/ui-mapbox");
 
 function onMapReady(args) {
   args.map.setViewport(
@@ -370,7 +385,7 @@ You can update the map style after you've loaded it.
 ### addMarkers
 
 ```typescript
-  import { MapboxMarker } from "nativescript-mapbox";
+  import { MapboxMarker } from "@nativescript-community/ui-mapbox";
 
   const firstMarker = <MapboxMarker>{ //cast as a MapboxMarker to pick up helper functions such as update()
     id: 2, // can be user in 'removeMarkers()'
