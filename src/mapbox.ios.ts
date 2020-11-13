@@ -1,4 +1,4 @@
-import { Color, File, ImageSource, Trace, Utils, knownFolders } from '@nativescript/core';
+import { Color, File, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
 
 import {
     AddExtrusionOptions,
@@ -73,25 +73,23 @@ const _setMapboxMapOptions = (mapView: MGLMapView, settings) => {
 };
 
 const _getMapStyle = (input: any): NSURL => {
-    if (/^mapbox:\/\/styles/.test(input) || /^http:\/\//.test(input) || /^https:\/\//.test(input)) {
+    if (input.startsWith('mapbox://styles') || input.startsWith('http://') || input.startsWith('https://')) {
         return NSURL.URLWithString(input);
-    } else if (/^~\//.test(input)) {
-        const assetPath = 'file://' + knownFolders.currentApp().path + '/';
-        input = input.replace(/^~\//, assetPath);
-        return NSURL.URLWithString(input);
-    } else if (input === MapStyle.LIGHT || input === MapStyle.LIGHT.toString()) {
+    } else if (input.startsWith('~/')) {
+        return NSURL.URLWithString( 'file://' + path.join(knownFolders.currentApp().path, input.replace('~/', '')));
+    } else if (input === MapStyle.LIGHT) {
         return MGLStyle.lightStyleURL;
-    } else if (input === MapStyle.DARK || input === MapStyle.DARK.toString()) {
+    } else if (input === MapStyle.DARK) {
         return MGLStyle.darkStyleURL;
-    } else if (input === MapStyle.OUTDOORS || input === MapStyle.OUTDOORS.toString()) {
+    } else if (input === MapStyle.OUTDOORS) {
         return MGLStyle.outdoorsStyleURL;
-    } else if (input === MapStyle.SATELLITE || input === MapStyle.SATELLITE.toString()) {
+    } else if (input === MapStyle.SATELLITE) {
         return MGLStyle.satelliteStyleURL;
-    } else if (input === MapStyle.SATELLITE_STREETS || input === MapStyle.SATELLITE_STREETS.toString()) {
+    } else if (input === MapStyle.SATELLITE_STREETS) {
         return MGLStyle.satelliteStreetsStyleURL;
-    } else if (input === MapStyle.TRAFFIC_DAY || input === MapStyle.TRAFFIC_DAY.toString()) {
+    } else if (input === MapStyle.TRAFFIC_DAY) {
         return NSURL.URLWithString('mapbox://styles/mapbox/traffic-day-v2');
-    } else if (input === MapStyle.TRAFFIC_NIGHT || input === MapStyle.TRAFFIC_NIGHT.toString()) {
+    } else if (input === MapStyle.TRAFFIC_NIGHT) {
         return NSURL.URLWithString('mapbox://styles/mapbox/traffic-night-v2');
     } else {
         return MGLStyle.streetsStyleURL;

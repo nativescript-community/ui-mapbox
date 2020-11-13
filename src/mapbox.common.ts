@@ -129,7 +129,7 @@ export interface MapboxMarker extends LatLng {
     icon?: string;
     /**
      * The preferred way is using the 'icon' property, but you can still reference a local file directly.
-     * Example: "res/markers/green_pin_marker.png"
+     * Example: "~/assets/markers/green_pin_marker.png"
      */
     iconPath?: string;
     /**

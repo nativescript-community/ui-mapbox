@@ -5,7 +5,7 @@
  */
 
 import { request } from '@nativescript-community/perms';
-import { AndroidApplication, Application, Color, File, Trace, Utils, knownFolders } from '@nativescript/core';
+import { AndroidApplication, Application, Color, File, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import { AndroidActivityBundleEventData, AndroidActivityEventData } from '@nativescript/core/application/application-interfaces';
 import { getImage } from '@nativescript/core/http';
 import { GeoUtils } from './geo.utils';
@@ -796,7 +796,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const showIt = () => {
                     if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'show(): showit() top');
+                        CLog(CLogTypes.info, 'show()');
                     }
 
                     // if no accessToken was set the app may crash.
@@ -804,7 +804,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     // FIXME: Even if using a local server add some string.
 
                     if (settings.accessToken === undefined) {
-                        reject("Please set the 'accessToken' parameter");
+                        reject('mapbox_accesstoken_missing');
                         return;
                     }
 
@@ -833,10 +833,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         context = settings.context;
                     }
 
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'show(): before getInstance()');
-                    }
-
                     // Per the Mapbox Android Native samples:
                     //
                     // "Mapbox access token is configured here. This needs to be called either in your application
@@ -859,17 +855,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     // define some listeners to inform in case the map does not
                     // load.
 
-                    this.onDidFailLoadingMapListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFailLoadingMapListener({
-                        onDidFailLoadingMap: (error) => {
-                            console.error('Mapbox::show(): failed to load map:', error);
-                        },
-                    });
-
                     if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'show(): about on add onDidFailLoadingMapListener:', this.onDidFailLoadingMapListener);
+                        this.onDidFailLoadingMapListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFailLoadingMapListener({
+                            onDidFailLoadingMap: (error) => CLog(CLogTypes.error, 'Mapbox::show(): failed to load map:', error),
+                        });
+                        this._mapboxViewInstance.addOnDidFailLoadingMapListener(this.onDidFailLoadingMapListener);
                     }
-
-                    this._mapboxViewInstance.addOnDidFailLoadingMapListener(this.onDidFailLoadingMapListener);
 
                     // this.gcFix('com.mapbox.mapboxsdk.maps.MapView.OnDidFailLoadingMapListener', this.onDidFailLoadingMapListener);
 
@@ -877,15 +868,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         this.onDidFinishLoadingMapListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFinishLoadingMapListener({
                             onDidFinishLoadingMap: () => CLog(CLogTypes.info, 'show(): finished loading map'),
                         });
+                        this._mapboxViewInstance.addOnDidFinishLoadingMapListener(this.onDidFinishLoadingMapListener);
                     }
-
-                    this._mapboxViewInstance.addOnDidFinishLoadingMapListener(this.onDidFinishLoadingMapListener);
 
                     // this.gcFix('com.mapbox.mapboxsdk.maps.MapView.OnDidFinishLoadingMapListener', this.onDidFinishLoadingMapListener);
-
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'show(): after adding fail listener()');
-                    }
 
                     this.onMapReadyCallback = new com.mapbox.mapboxsdk.maps.OnMapReadyCallback({
                         onMapReady: (mbMap) => {
@@ -898,10 +884,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             // Android SDK 7.0.0 and on requires that the style be set separately after the map
                             // is initialized. We do not consider the map ready until the style has successfully
                             // loaded.
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, "Mapbox::show(): attempting to set style '" + settings.style);
-                            }
 
                             this.setMapStyle(settings.style).then((style) => {
                                 if (Trace.isEnabled()) {
@@ -1709,7 +1691,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 // callback for when the style is successfully loaded.
-
                 this.onDidFinishLoadingStyleListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFinishLoadingStyleListener({
                     onDidFinishLoadingStyle: () => {
                         if (Trace.isEnabled()) {
@@ -1743,7 +1724,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         // this.gcFix('com.mapbox.mapboxsdk.plugins.annotation.OnAnnotationClickListener', this.onAnnotationClickListener);
 
                         resolve();
-                    },
+                    }
                 });
 
                 this._mapboxViewInstance.addOnDidFinishLoadingStyleListener(this.onDidFinishLoadingStyleListener);
@@ -1755,15 +1736,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 this.onDidFailLoadingMapListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFailLoadingMapListener({
                     onDidFailLoadingMap: (error) => {
                         if (Trace.isEnabled()) {
-                            CLog(CLogTypes.info, 'Mapbox:setMapStyle(): style failed');
+                            CLog(CLogTypes.error, 'Mapbox:setMapStyle(): style failed', mapStyle, error);
                         }
                         reject(error);
                     },
                 });
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'setMapStyle(): before onDidFailLoadingMapListener');
-                }
 
                 this._mapboxViewInstance.addOnDidFailLoadingMapListener(this.onDidFailLoadingMapListener);
 
@@ -1771,14 +1748,14 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const builder = new com.mapbox.mapboxsdk.maps.Style.Builder();
 
-                this._mapboxMapInstance.setStyle(builder.fromUrl(mapStyle));
+                this._mapboxMapInstance.setStyle(builder.fromUri(mapStyle));
 
                 // FIXME: probably not necessary.
 
                 // this.gcFix('com.mapbox.mapboxsdk.maps.Style.Builder', builder);
             } catch (ex) {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.setMapStyle: ' + ex);
+                    CLog(CLogTypes.error, 'Error in mapbox.setMapStyle', style, ex);
                 }
                 reject(ex);
             }
@@ -1787,34 +1764,28 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // ------------------------------------------------------------------------------
 
-    addMarkers(markers: MapboxMarker[], nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
-            try {
-                this._addMarkers(markers, this._mapboxViewInstance);
-                resolve();
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.addMarkers: ' + ex);
-                }
-                reject(ex);
+    async addMarkers(markers: MapboxMarker[], nativeMap?: any) {
+        try {
+            this._addMarkers(markers, this._mapboxViewInstance);
+        } catch (ex) {
+            if (Trace.isEnabled()) {
+                CLog(CLogTypes.info, 'Error in mapbox.addMarkers: ' + ex);
             }
-        });
+            throw (ex);
+        }
     }
 
     // ----------------------------------------------------------------------------------
 
-    removeMarkers(ids?: any, nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
-            try {
-                this._removeMarkers(ids, this._mapboxViewInstance);
-                resolve();
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.removeMarkers: ' + ex);
-                }
-                reject(ex);
+    async removeMarkers(ids?: any, nativeMap?: any) {
+        try {
+            this._removeMarkers(ids, this._mapboxViewInstance);
+        } catch (ex) {
+            if (Trace.isEnabled()) {
+                CLog(CLogTypes.info, 'Error in mapbox.removeMarkers: ' + ex);
             }
-        });
+            throw (ex);
+        }
     }
 
     // --------------------------------------------------------------------------------------------
@@ -3858,31 +3829,25 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
         const Style = com.mapbox.mapboxsdk.maps.Style;
 
-        if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, '_getMapStyle(): Style object is:', Style);
-        }
-
         // allow for a style URL to be passed
 
-        if (/^mapbox:\/\/styles/.test(input) || /^http:\/\//.test(input) || /^https:\/\//.test(input)) {
+        if (input.startsWith('mapbox://styles') || input.startsWith('http://') || input.startsWith('https://')) {
             return input;
-        } else if (/^~\//.test(input)) {
-            const assetsPath = 'asset://app/';
-            input = input.replace(/^~\//, assetsPath);
-            return input;
-        } else if (input === MapStyle.LIGHT || input === MapStyle.LIGHT.toString()) {
+        } else if (input.startsWith('~/')) {
+            return 'file://' + path.join(knownFolders.currentApp().path, input.replace('~/', ''));
+        } else if (input === MapStyle.LIGHT) {
             return Style.LIGHT;
-        } else if (input === MapStyle.DARK || input === MapStyle.DARK.toString()) {
+        } else if (input === MapStyle.DARK) {
             return Style.DARK;
-        } else if (input === MapStyle.OUTDOORS || input === MapStyle.OUTDOORS.toString()) {
+        } else if (input === MapStyle.OUTDOORS) {
             return Style.OUTDOORS;
-        } else if (input === MapStyle.SATELLITE || input === MapStyle.SATELLITE.toString()) {
+        } else if (input === MapStyle.SATELLITE) {
             return Style.SATELLITE;
-        } else if (input === MapStyle.SATELLITE_STREETS || input === MapStyle.SATELLITE_STREETS.toString()) {
+        } else if (input === MapStyle.SATELLITE_STREETS) {
             return Style.SATELLITE_STREETS;
-        } else if (input === MapStyle.TRAFFIC_DAY || input === MapStyle.TRAFFIC_DAY.toString()) {
+        } else if (input === MapStyle.TRAFFIC_DAY) {
             return Style.TRAFFIC_DAY;
-        } else if (input === MapStyle.TRAFFIC_NIGHT || input === MapStyle.TRAFFIC_NIGHT.toString()) {
+        } else if (input === MapStyle.TRAFFIC_NIGHT) {
             return Style.TRAFFIC_NIGHT;
         } else {
             // default
@@ -4041,7 +4006,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return new Promise((resolve, reject) => {
             try {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'showUserLocationMarker(): top');
+                    CLog(CLogTypes.info, 'showUserLocationMarker()');
                 }
 
                 if (!this._mapboxMapInstance) {
@@ -4074,21 +4039,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const componentOptions = componentOptionsBuilder.build();
 
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'showUserLocationMarker(): after componentOptions.build()');
-                }
 
                 this._locationComponent = this._mapboxMapInstance.getLocationComponent();
 
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'showUserLocationMarker(): after getLocationComponent');
-                }
 
                 const activationOptionsBuilder = com.mapbox.mapboxsdk.location.LocationComponentActivationOptions.builder(Application.android.context, this._mapboxMapInstance.getStyle());
 
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'showUserLocationMarker(): after activationOptionsBuilder');
-                }
 
                 activationOptionsBuilder.locationComponentOptions(componentOptions);
 
@@ -4097,22 +4053,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (typeof options.useDefaultLocationEngine != 'undefined') {
                     useDefaultEngine = options.useDefaultLocationEngine;
                 }
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'showUserLocationMarker(): before useDefaultEngine');
-                }
-
                 activationOptionsBuilder.useDefaultLocationEngine(useDefaultEngine);
 
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'showUserLocationMarker(): after useDefaultEngine');
-                }
 
                 const locationComponentActivationOptions = activationOptionsBuilder.build();
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'showUserLocationMarker(): after ActivationOptions');
-                }
 
                 this._locationComponent.activateLocationComponent(locationComponentActivationOptions);
                 this._locationComponent.setLocationComponentEnabled(true);
