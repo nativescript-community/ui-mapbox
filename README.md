@@ -122,7 +122,7 @@ You can instantiate a map from JS or TS. As the map is yet another view componen
 
 A simple layout could look like this:
 
-<img src="https://raw.githubusercontent.com/@nativescript-community/ui-mapbox/master/screenshots/ios-xml-declared.png" width="373px" height="361px" />
+<img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/ios-xml-declared.png" width="373px" height="361px" />
 
 Could be rendered by a definition like this:
 
