@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.2](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.1...v6.0.2) (2020-11-13)
+
+
+### Bug Fixes
+
+* force pod version in demo ([88ad6a8](https://github.com/nativescript-community/ui-mapbox/commit/88ad6a8842be1310dc2b4f6d536cd28d0b7ee889))
+* some fixes ([b452da4](https://github.com/nativescript-community/ui-mapbox/commit/b452da426815e02eeb7d4be1dc13f8765eba97cf))
+* telemetry false by default. GDRP compliant ([a4a5f2d](https://github.com/nativescript-community/ui-mapbox/commit/a4a5f2d10ef8f4ec41aa17fa09a0267725383921))
+
+
+
+
+
 ## [6.0.1](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.0...v6.0.1) (2020-11-12)
 
 
