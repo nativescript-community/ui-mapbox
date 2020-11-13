@@ -793,10 +793,9 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
 
     protected mapbox: MapboxApi;
 
+    telemetry:boolean
+
     abstract getNativeMapView(): any;
-
-    // -----------------------------------------------------------------
-
     /**
      * map event
      *
@@ -804,278 +803,141 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
      */
 
     public onMapEvent(eventName, id, callback): void {
-        console.log('MapboxViewCommonBase:on(): top');
 
         return this.mapbox.onMapEvent(eventName, id, callback, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     public offMapEvent(eventName, id): void {
         return this.mapbox.offMapEvent(eventName, id, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     addMarkers(markers: MapboxMarker[]): Promise<any> {
         return this.mapbox.addMarkers(markers, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     removeMarkers(options?: any): Promise<any> {
         return this.mapbox.removeMarkers(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setOnMapClickListener(listener: (data: LatLng) => boolean): Promise<any> {
         return this.mapbox.setOnMapClickListener(listener, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setOnMapLongClickListener(listener: (data: LatLng) => boolean): Promise<any> {
         return this.mapbox.setOnMapLongClickListener(listener, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setOnScrollListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void> {
         return this.mapbox.setOnScrollListener(listener, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setOnMoveBeginListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void> {
         return this.mapbox.setOnMoveBeginListener(listener, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setOnFlingListener(listener: () => void, nativeMap?: any): Promise<any> {
         return this.mapbox.setOnFlingListener(listener, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setOnCameraMoveListener(listener: () => void, nativeMap?: any): Promise<any> {
         return this.mapbox.setOnCameraMoveListener(listener, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setOnCameraMoveCancelListener(listener: () => void, nativeMap?: any): Promise<any> {
         return this.mapbox.setOnCameraMoveCancelListener(listener, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setOnCameraIdleListener(listener: () => void, nativeMap?: any): Promise<any> {
         return this.mapbox.setOnCameraIdleListener(listener, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     getViewport(): Promise<Viewport> {
         return this.mapbox.getViewport(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setViewport(options: SetViewportOptions): Promise<any> {
         return this.mapbox.setViewport(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setMapStyle(style: string | MapStyle): Promise<any> {
         return this.mapbox.setMapStyle(style, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     getCenter(): Promise<LatLng> {
         return this.mapbox.getCenter(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setCenter(options: SetCenterOptions): Promise<any> {
         return this.mapbox.setCenter(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     getZoomLevel(): Promise<number> {
         return this.mapbox.getZoomLevel(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setZoomLevel(options: SetZoomLevelOptions): Promise<any> {
         return this.mapbox.setZoomLevel(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     getTilt(): Promise<number> {
         return this.mapbox.getTilt(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     setTilt(options: SetTiltOptions): Promise<any> {
         return this.mapbox.setTilt(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     getUserLocation(): Promise<UserLocation> {
         return this.mapbox.getUserLocation(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     showUserLocationMarker(options): void {
         this.mapbox.showUserLocationMarker(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     hideUserLocationMarker(): void {
         this.mapbox.hideUserLocationMarker(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     changeUserLocationMarkerMode(renderModeString, cameraModeString: UserLocationCameraMode): void {
         this.mapbox.changeUserLocationMarkerMode(renderModeString, cameraModeString, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     forceUserLocationUpdate(location): void {
         this.mapbox.forceUserLocationUpdate(location, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     trackUser(options: TrackUserOptions): Promise<any> {
         return this.mapbox.trackUser(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     addSource(id: string, options: AddSourceOptions): Promise<any> {
         return this.mapbox.addSource(id, options, this.getNativeMapView());
     }
-
     removeSource(id: string): Promise<any> {
         return this.mapbox.removeSource(id, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     addLayer(style): Promise<any> {
         return this.mapbox.addLayer(style, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     removeLayer(id: string): Promise<any> {
         return this.mapbox.removeLayer(id, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     addLinePoint(id: string, point): Promise<any> {
         return this.mapbox.addLinePoint(id, point, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<Feature[]> {
         return this.mapbox.queryRenderedFeatures(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     addPolygon(options: AddPolygonOptions): Promise<any> {
         return this.mapbox.addPolygon(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     removePolygons(ids?: any[]): Promise<any> {
         return this.mapbox.removePolygons(ids, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     addPolyline(options: AddPolylineOptions): Promise<any> {
         return this.mapbox.addPolyline(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     removePolylines(ids?: any[]): Promise<any> {
         return this.mapbox.removePolylines(ids, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     animateCamera(options: AnimateCameraOptions): Promise<any> {
         return this.mapbox.animateCamera(options, this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     destroy(): Promise<any> {
         return this.mapbox.destroy(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     onStart(): Promise<any> {
         return this.mapbox.onStart(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     onResume(nativeMap?: any): Promise<any> {
-        console.log('MapboxViewCommonBase:onResume(): with nativeView:', this.getNativeMapView());
-
         return this.mapbox.onResume(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     onPause(nativeMap?: any): Promise<any> {
-        console.log('MapboxViewCommonBase:onPause(): with nativeView:', this.getNativeMapView());
-
         return this.mapbox.onPause(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     onStop(nativeMap?: any): Promise<any> {
         return this.mapbox.onStop(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     onLowMemory(nativeMap?: any): Promise<any> {
         return this.mapbox.onLowMemory(this.getNativeMapView());
     }
-
-    // -----------------------------------------------------------------
-
     onDestroy(nativeMap?: any): Promise<any> {
         return this.mapbox.onDestroy(this.getNativeMapView());
     }
-
-    // onSaveInstanceState( Bundle outState)
 }
 
 // -----------------------------------------------------------------
@@ -1124,6 +986,13 @@ export const hideAttributionProperty = new Property<MapboxViewCommonBase, boolea
     valueConverter: booleanConverter,
 });
 hideAttributionProperty.register(MapboxViewCommonBase);
+
+export const telemetryProperty = new Property<MapboxViewCommonBase, boolean>({
+    name: 'telemetry',
+    defaultValue: false,
+    valueConverter: booleanConverter,
+});
+telemetryProperty.register(MapboxViewCommonBase);
 
 export const hideCompassProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'hideCompass',
@@ -1194,13 +1063,11 @@ export abstract class MapboxViewBase extends MapboxViewCommonBase {
     }
 
     [mapStyleProperty.setNative](value: string) {
-        console.log("MapboxViewBase::mapStyle.setNative(): setting value '" + value + "'");
         this.config.style = value;
         this.config.mapStyle = value;
     }
 
     [accessTokenProperty.setNative](value: string) {
-        console.log("MapboxViewBase::accessTokenProperty.setNative(): setting value '" + value + "'");
         this.config.accessToken = value;
     }
 

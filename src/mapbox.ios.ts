@@ -32,6 +32,7 @@ import {
     UserLocation,
     UserLocationCameraMode,
     Viewport,
+    telemetryProperty,
 } from './mapbox.common';
 
 import { GeoUtils } from './geo.utils';
@@ -180,44 +181,22 @@ export class MapboxView extends MapboxViewBase {
      * and that the handstands below are not necessary.
      */
 
+    public onLoaded() {
+        super.onLoaded();
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'initNativeView(): on - loaded');
+        }
+        if (this.telemetry === false) {
+            NSUserDefaults.standardUserDefaults.setBoolForKey(false, "MGLMapboxMetricsEnabled");
+        }
+        if (!this.initialized) {
+            this.initMap();
+            this.initialized = true;
+        }
+    }
     public initNativeView(): void {
-        if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'initNativeView(): top');
-        }
-
-        this.nativeView.owner = this;
         super.initNativeView();
-
-        if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'initNativeView(): after super.initNativeView()');
-        }
-
-        // wait for the view to be fully loaded before initializing the map
-
-        this.on('loaded', () => {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'initNativeView(): on - loaded');
-            }
-
-            if (!this.initialized) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'initNativeView(): initializing map');
-                }
-
-                this.initMap();
-                this.initialized = true;
-            } else {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'initNativeView(): map already initialized.');
-                }
-            }
-        });
-
-        if (Trace.isEnabled()) {
-            this.on('unloaded', () => {
-                CLog(CLogTypes.info, 'initNativeView(): on - unloaded');
-            });
-        }
+        this.nativeView.owner = this;
     }
 
     // -------------------------------------------------------
@@ -392,6 +371,10 @@ export class MapboxView extends MapboxViewBase {
         if (this.nativeMapView) {
             this.nativeMapView.layer.frame = this.ios.layer.bounds;
         }
+    }
+
+    [telemetryProperty.setNative](value:boolean) {
+        NSUserDefaults.standardUserDefaults.setBoolForKey(false, "MGLMapboxMetricsEnabled");
     }
 }
 
@@ -3126,6 +3109,7 @@ function _downloadImage(marker) {
             }
         );
     });
+
 }
 
 const _downloadMarkerImages = (markers: MapboxMarker[]) => {

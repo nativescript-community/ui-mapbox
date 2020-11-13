@@ -40,6 +40,7 @@ import {
     UserLocation,
     UserLocationCameraMode,
     Viewport,
+    telemetryProperty,
 } from './mapbox.common';
 
 // Export the enums for devs not using TS
@@ -216,12 +217,8 @@ export class MapboxView extends MapboxViewBase {
      *
      * @todo check this.
      */
-    telemetry = false;
     public createNativeView(): Object {
-        // const telemetry = com.mapbox.android.telemetry.TelemetryEnabler.updateTelemetryState;
-        // if (telemetry != null) {
-        //     telemetry.setUserTelemetryRequestState(telemetry);
-        // }
+   
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'createNativeView(): top');
         }
@@ -400,9 +397,13 @@ export class MapboxView extends MapboxViewBase {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, "MapboxView:initMap(): top - accessToken is '" + this.config.accessToken + "'", this.config);
         }
-
+        
         if (!this.nativeMapView && ((this.config && this.config.accessToken) || (this.settings && this.settings.accessToken))) {
             this.mapbox = new Mapbox();
+            if (this.telemetry === false) {
+                com.mapbox.mapboxsdk.Mapbox.getTelemetry().setUserTelemetryRequestState(false);
+            }
+        
 
             // the NativeScript contentview class extends from Observable to provide the notify method
             // which is the glue that joins this code with whatever callbacks are set in the Mapbox XML
@@ -428,6 +429,7 @@ export class MapboxView extends MapboxViewBase {
                     });
                 },
                 onMapReady: (map) => {
+                    
                     if (Trace.isEnabled()) {
                         CLog(CLogTypes.info, 'initMap(): onMapReady event - calling notify with the MapboxViewBase.mapReadyEvent');
                     }
@@ -499,6 +501,10 @@ export class MapboxView extends MapboxViewBase {
                 CLog(CLogTypes.info, 'initMap(): bottom.');
             }
         }
+    }
+
+    [telemetryProperty.setNative](value:boolean) {
+        com.mapbox.mapboxsdk.Mapbox.getTelemetry().setUserTelemetryRequestState(value);
     }
 } // end of class MapboxView
 
@@ -1873,7 +1879,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
                     }
                 } else if (marker.iconPath) {
-                    const iconFullPath = knownFolders.currentApp().path + '/' + marker.iconPath;
+                    const iconFullPath =path.join(knownFolders.currentApp().path , marker.iconPath.replace('~/', ''));
                     // if the file doesn't exist the app will crash, so checking it
                     if (File.exists(iconFullPath)) {
                         // could set width, height, retina, see https://github.com/Telerik-Verified-Plugins/Mapbox/pull/42/files?diff=unified&short_path=1c65267, but that's what the marker.icon param is for..
