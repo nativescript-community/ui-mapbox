@@ -48,7 +48,7 @@ You will also need to set up your development environment. Please refer to the [
 # Installation
 
 ```
-$ tns plugin install @nativescript-community/ui-mapbox
+$ ns plugin install @nativescript-community/ui-mapbox
 ```
 
 # DEMOS
@@ -63,22 +63,25 @@ The style can be set to one of the Mapbox style names or it can be the URL of yo
 
 > NOTE: As of this writing, the NativeScript demo only works with a mapbox token. The demo-angular will work with either a self hosted tile server or a mapbox token.
 
+## Demo prerequisites
+```
+npm run setup
+```
+
+
 ## To run the Angular demo
 
 ```
-cd src
-npm run build.release
-cd ../demo-angular
-tns run <platform>
+npm run build
+cd ./demo-angular
+ns run <platform>
 ```
 
 ## To run the plain Nativescript demo
-
 ```
-cd src
-npm run build.release
-cd ../demo
-tns run <platform>
+npm run build
+cd ./demo
+ns run <platform>
 ```
 
 ## Debug Build
@@ -96,7 +99,7 @@ sharing of mapping code between browser based and native applications.
 ## Issues
 
 If you get an error during iOS build related to Podspec versions, probably the easiest fix is:
-`tns platform remove ios` and `tns platform add ios`.
+`ns platform remove ios` and `ns platform add ios`.
 
 On Android the plugin adds this to the `<application>` node of `app/App_Resources/Android/AndroidManifest.xml` (the plugin already attempts to do so):
 
