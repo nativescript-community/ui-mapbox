@@ -626,7 +626,7 @@ export interface MapboxApi {
 
     getLayer(name: string, nativeMap?: any): Promise<LayerCommon>;
 
-    getLayers(nativeMap?: any): Promise<Array<LayerCommon>>;
+    getLayers(nativeMap?: any): Promise<LayerCommon[]>;
 
     // addSource(options: AddSourceOptions): Promise<any>;
 
@@ -773,7 +773,7 @@ export interface MapboxViewApi {
 
     getLayer(name: string, nativeMap?: any): Promise<LayerCommon>;
 
-    getLayers(nativeMap?: any): Promise<Array<LayerCommon>>;
+    getLayers(nativeMap?: any): Promise<LayerCommon[]>;
 
     destroy(): Promise<any>;
 
@@ -936,7 +936,7 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     getLayer(name: string, nativeMap?: any): Promise<LayerCommon> {
         return this.mapbox.getLayer(name, nativeMap);
     }
-    getLayers(nativeMap?: any): Promise<Array<LayerCommon>> {
+    getLayers(nativeMap?: any): Promise<LayerCommon[]> {
         return this.mapbox.getLayers(nativeMap);
     }
     destroy(): Promise<any> {

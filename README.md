@@ -65,6 +65,7 @@ The style can be set to one of the Mapbox style names or it can be the URL of yo
 
 ## Demo prerequisites
 ```
+npm i
 npm run setup
 ```
 

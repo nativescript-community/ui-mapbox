@@ -4088,7 +4088,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // ----------------------------------------------------------------------------------
 
-    getLayers(nativeMap?: any): Promise<Array<LayerCommon>> {
+    getLayers(nativeMap?: any): Promise<LayerCommon[]> {
         return new Promise((resolve, reject) => {
             try {
                 const theMap = nativeMap || this._mapboxMapInstance;
