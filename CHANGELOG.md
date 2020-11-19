@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.4](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.3...v6.0.4) (2020-11-19)
+
+
+### Bug Fixes
+
+* android bug where map would remain black ([19a0b67](https://github.com/nativescript-community/ui-mapbox/commit/19a0b6788c6574a4376e2a74c7e6b2e610606cd6))
+* npm script paths corrected, removed obsolete test scripts. reset scripts use ns clean. fixed readme ([94ebe11](https://github.com/nativescript-community/ui-mapbox/commit/94ebe11f781adf3dd9a9b6f4e6ef7c16cada91ac))
+
+
+### Features
+
+* getLayer + getLayers ([0b3f882](https://github.com/nativescript-community/ui-mapbox/commit/0b3f8826308b4e8a5bf5665fccd481cdf0900ac0))
+
+
+
+
+
 ## [6.0.3](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.2...v6.0.3) (2020-11-13)
 
 

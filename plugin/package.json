@@ -1,6 +1,6 @@
 {
   "name": "@nativescript-community/ui-mapbox",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "description": "A Nativescript plugin for Mapbox Native Maps.",
   "main": "mapbox",
   "typings": "index.d.ts",
