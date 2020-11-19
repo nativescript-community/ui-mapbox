@@ -112,6 +112,20 @@ function _getTrackingMode(input: UserLocationCameraMode): MGLUserTrackingMode {
     return MGLUserTrackingMode.None;
 }
 
+function _getLocation (loc: MGLUserLocation) {
+    if (loc === null) {
+        return null;
+    } else {
+        return {
+            location: {
+                lat: loc.coordinate.latitude,
+                lng: loc.coordinate.longitude,
+            },
+            speed: loc.location ? loc.location.speed : 0,
+        } as UserLocation;
+    }
+}
+
 // ------------------------------------------------------------------------
 
 /**
@@ -1249,13 +1263,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (loc === null) {
                     reject('Location not available');
                 } else {
-                    resolve({
-                        location: {
-                            lat: loc.coordinate.latitude,
-                            lng: loc.coordinate.longitude,
-                        },
-                        speed: loc.location ? loc.location.speed : 0,
-                    });
+                    resolve(_getLocation(loc));
                 }
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -3148,7 +3156,8 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
 
     private mapboxApi: any;
 
-    private userLocationClickListener: any;
+    private userLocationClickListener: (annotation: MGLAnnotation)=>void;
+    private userLocationChangedListener: (location: UserLocation)=>void;
     private userLocationRenderMode: any;
     private userLocationAnnotationView: CustomUserLocationAnnotationView;
 
@@ -3185,6 +3194,13 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
 
     setUserLocationClickListener(callback) {
         this.userLocationClickListener = callback;
+    }
+    /**
+     * set the user location click listener callback
+     */
+
+    setUserLocationChangedistener(callback) {
+        this.userLocationChangedListener = callback;
     }
 
     // -----------------------
@@ -3445,6 +3461,16 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         }
 
         return null;
+    }
+
+    mapViewDidUpdateUserLocation(mapView: MGLMapView, userLocation: MGLUserLocation) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::mapViewDidUpdateUserLocation() top');
+        }
+        if (this.userLocationChangedListener) {
+            this.userLocationChangedListener(_getLocation(userLocation));
+        }
+
     }
 } // end of MGLMapViewDelegateImpl
 
