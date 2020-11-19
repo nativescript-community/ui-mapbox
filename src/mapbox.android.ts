@@ -22,6 +22,7 @@ import {
     DownloadOfflineRegionOptions,
     Feature,
     LatLng,
+    LayerCommon,
     ListOfflineRegionsOptions,
     MapStyle,
     MapboxApi,
@@ -4057,6 +4058,71 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // ---------------------------------------------------------------
 
+    getLayer(name: string, nativeMap?: any): Promise<LayerCommon> {
+        return new Promise((resolve, reject) => {
+            try {
+                const theMap = nativeMap || this._mapboxMapInstance;
+
+                if (!theMap) {
+                    reject('No map has been loaded');
+                    return;
+                }
+
+                const styleLoadedCallback = new com.mapbox.mapboxsdk.maps.Style.OnStyleLoaded({
+                    onStyleLoaded: (style) => {
+                        const layer = style.getLayer(name);
+                        console.log('layer :', layer);
+                        resolve(layer ? new Layer(layer) : null);
+                    },
+                });
+
+                theMap.getStyle(styleLoadedCallback);
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.getLayer: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
+
+    // ----------------------------------------------------------------------------------
+
+    getLayers(nativeMap?: any): Promise<Array<LayerCommon>> {
+        return new Promise((resolve, reject) => {
+            try {
+                const theMap = nativeMap || this._mapboxMapInstance;
+
+                if (!theMap) {
+                    reject('No map has been loaded');
+                    return;
+                }
+
+                const styleLoadedCallback = new com.mapbox.mapboxsdk.maps.Style.OnStyleLoaded({
+                    onStyleLoaded: (style) => {
+                        const layers = style.getLayers();
+                        const result: Layer[] = [];
+
+                        for (let i = 0; i < layers.size(); i++) {
+                            result.push(new Layer(layers.get(i)));
+                        }
+
+                        resolve(result);
+                    },
+                });
+
+                theMap.getStyle(styleLoadedCallback);
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.getLayers: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
+
+    // ---------------------------------------------------------------
+
     _getClickedMarkerDetails(clicked) {
         for (const m in this._markers) {
             const cached = this._markers[m];
@@ -4473,5 +4539,27 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         ];
     }
 } // end of class Mapbox
+
+export class Layer implements LayerCommon {
+    public id: string;
+    private instance: any;
+
+    constructor(instance: any) {
+        this.instance = instance;
+        this.id = instance.getId();
+    }
+
+    public visibility(): boolean {
+        return this.instance.getVisibility().getValue() === 'visible' ? true : false;
+    }
+
+    public show(): void {
+        this.instance.setProperties([new com.mapbox.mapboxsdk.style.layers.PropertyValue('visibility', 'visible')]);
+    }
+
+    public hide(): void {
+        this.instance.setProperties([new com.mapbox.mapboxsdk.style.layers.PropertyValue('visibility', 'none')]);
+    }
+}
 
 // END

@@ -824,4 +824,32 @@ export class HelloWorldModel extends Observable {
             console.log('Fine Location permission requested');
         });
     }
+
+    public doGetLayers(): void {
+        this.mapbox.getLayers().then((layers) => {
+            layers.map(l => console.log(l.id));
+
+            const alertOptions: AlertOptions = {
+                title: 'All map style layers',
+                message: JSON.stringify(layers.map(l => l.id)),
+                okButtonText: 'OK',
+            };
+            alert(alertOptions);
+        });
+
+        this.mapbox.getLayer('waterway').then((waterwayLayer) => {
+            if (!!waterwayLayer) {
+                console.log(`getLayer("${waterwayLayer.id}") visible?: ${waterwayLayer.visibility()}`);
+            }
+        })
+    }
+
+    public doToggleLayers(): void {
+        this.mapbox.getLayers().then((layers) => {
+            const everySecondElement = layers.filter((e, i) => i % 2 === 2 - 1);
+            everySecondElement.map((layer) => {
+                layer.visibility() ? layer.hide() : layer.show();
+            });
+        });
+    }
 }

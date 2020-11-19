@@ -482,6 +482,15 @@ export interface AnimateCameraOptions {
 
 // ------------------------------------------------------------
 
+export interface LayerCommon {
+    id: string;
+    visibility(): boolean;
+    show(): void;
+    hide(): void;
+}
+
+// ------------------------------------------------------------
+
 export interface MapboxCommonApi {
     requestFineLocationPermission(): Promise<any>;
 
@@ -614,6 +623,10 @@ export interface MapboxApi {
     deleteOfflineRegion(options: DeleteOfflineRegionOptions): Promise<any>;
 
     addGeoJsonClustered(options: AddGeoJsonClusteredOptions): Promise<any>;
+
+    getLayer(name: string, nativeMap?: any): Promise<LayerCommon>;
+
+    getLayers(nativeMap?: any): Promise<Array<LayerCommon>>;
 
     // addSource(options: AddSourceOptions): Promise<any>;
 
@@ -758,6 +771,10 @@ export interface MapboxViewApi {
 
     animateCamera(options: AnimateCameraOptions): Promise<any>;
 
+    getLayer(name: string, nativeMap?: any): Promise<LayerCommon>;
+
+    getLayers(nativeMap?: any): Promise<Array<LayerCommon>>;
+
     destroy(): Promise<any>;
 
     onStart(): Promise<any>;
@@ -793,7 +810,7 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
 
     protected mapbox: MapboxApi;
 
-    telemetry:boolean
+    telemetry: boolean;
 
     abstract getNativeMapView(): any;
     /**
@@ -803,7 +820,6 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
      */
 
     public onMapEvent(eventName, id, callback): void {
-
         return this.mapbox.onMapEvent(eventName, id, callback, this.getNativeMapView());
     }
     public offMapEvent(eventName, id): void {
@@ -916,6 +932,12 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     }
     animateCamera(options: AnimateCameraOptions): Promise<any> {
         return this.mapbox.animateCamera(options, this.getNativeMapView());
+    }
+    getLayer(name: string, nativeMap?: any): Promise<LayerCommon> {
+        return this.mapbox.getLayer(name, nativeMap);
+    }
+    getLayers(nativeMap?: any): Promise<Array<LayerCommon>> {
+        return this.mapbox.getLayers(nativeMap);
     }
     destroy(): Promise<any> {
         return this.mapbox.destroy(this.getNativeMapView());

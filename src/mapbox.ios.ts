@@ -33,6 +33,7 @@ import {
     UserLocationCameraMode,
     Viewport,
     telemetryProperty,
+    LayerCommon,
 } from './mapbox.common';
 
 import { GeoUtils } from './geo.utils';
@@ -3086,6 +3087,55 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
         });
     }
+
+    getLayer(name: string, nativeMap?: any): Promise<LayerCommon> {
+        return new Promise((resolve, reject) => {
+            try {
+                const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+
+                if (!theMap) {
+                    reject('No map has been loaded');
+                    return;
+                }
+
+                const layer = theMap.style.layerWithIdentifier(name);
+
+                resolve(new Layer(layer));
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.getLayer: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
+
+    getLayers(nativeMap?: any): Promise<Array<LayerCommon>> {
+        return new Promise((resolve, reject) => {
+            try {
+                const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+
+                if (!theMap) {
+                    reject('No map has been loaded');
+                    return;
+                }
+
+                const layers = theMap.style.layers;
+                const result: Layer[] = [];
+
+                for (let i = 0; i < layers.count; i++) {
+                    result.push(new Layer(layers[i]));
+                }
+
+                resolve(result);
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.getLayers: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
 }
 
 const _addObserver = (eventName, callback) => NSNotificationCenter.defaultCenter.addObserverForNameObjectQueueUsingBlock(eventName, null, NSOperationQueue.mainQueue, callback);
@@ -3632,3 +3682,26 @@ class MapSwipeHandlerImpl extends NSObject {
         swipe: { returns: interop.types.void, params: [interop.types.id] },
     };
 }
+
+export class Layer implements LayerCommon {
+    public id: string;
+    private instance;
+
+    constructor(instance) {
+        this.instance = instance;
+        this.id = instance.identifier;
+    }
+
+    visibility(): boolean {
+        return this.instance.visible;
+    }
+
+    show(): void {
+        this.instance.visible = true;
+    }
+
+    hide(): void {
+        this.instance.visible = false;
+    }
+}
+  
