@@ -49,10 +49,23 @@ export { MapboxTraceCategory, MapStyle };
 
 // declare const android, com, java, org: any;
 
-export namespace BundleKludge {
-    export const bundle = { test: 'test' };
-}
+// export namespace BundleKludge {
+//     export const bundle = { test: 'test' };
+// }
 
+function _getLocation(loc: globalAndroid.location.Location) {
+    if (loc === null) {
+        return null;
+    } else {
+        return {
+            location: {
+                lat: loc.getLatitude(),
+                lng: loc.getLongitude(),
+            },
+            speed: loc.getSpeed(),
+        } as UserLocation;
+    }
+}
 // ------------------------------------------------------------
 
 /**
@@ -218,7 +231,6 @@ export class MapboxView extends MapboxViewBase {
      * @todo check this.
      */
     public createNativeView(): Object {
-   
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'createNativeView(): top');
         }
@@ -336,11 +348,17 @@ export class MapboxView extends MapboxViewBase {
             this.initialized = true;
         }
     }
+
     public initNativeView(): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'initNativeView(): top');
         }
         this.nativeView.owner = this;
+        // Application.android.on(AndroidApplication.activityStartedEvent, this.onStart, this);
+        Application.android.on(AndroidApplication.activityStartedEvent, this.onPause, this);
+        Application.android.on(AndroidApplication.activityStartedEvent, this.onResume, this);
+        // Application.android.on(AndroidApplication.activityStartedEvent, this.onStop, this);
+
         super.initNativeView();
     }
 
@@ -356,26 +374,20 @@ export class MapboxView extends MapboxViewBase {
      * @link https://docs.nativescript.org/plugins/ui-plugin-custom
      */
 
-    async disposeNativeView(): Promise<void> {
+    disposeNativeView() {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'disposeNativeView(): top');
         }
 
         this.nativeView.owner = null;
 
-        await this.mapbox.destroy();
+        // Application.android.off(AndroidApplication.activityStartedEvent, this.onStart, this);
+        Application.android.off(AndroidApplication.activityStartedEvent, this.onPause, this);
+        Application.android.off(AndroidApplication.activityStartedEvent, this.onResume, this);
+        // Application.android.off(AndroidApplication.activityStartedEvent, this.onStop, this);
 
-        if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'disposeNativeView(): after mapbox.destroy()');
-        }
-
-        // this.gcClear();
-
+        this.mapbox.destroy();
         super.disposeNativeView();
-
-        if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'disposeNativeView(): bottom');
-        }
     }
 
     // -------------------------------------------------------------------------------------------
@@ -397,11 +409,9 @@ export class MapboxView extends MapboxViewBase {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, "MapboxView:initMap(): top - accessToken is '" + this.config.accessToken + "'", this.config);
         }
-        
+
         if (!this.nativeMapView && ((this.config && this.config.accessToken) || (this.settings && this.settings.accessToken))) {
             this.mapbox = new Mapbox();
-            
-        
 
             // the NativeScript contentview class extends from Observable to provide the notify method
             // which is the glue that joins this code with whatever callbacks are set in the Mapbox XML
@@ -428,11 +438,11 @@ export class MapboxView extends MapboxViewBase {
                 },
                 onMapReady: (map) => {
                     if (this.telemetry === false) {
-                        try{
+                        try {
                             com.mapbox.mapboxsdk.Mapbox.getTelemetry().setUserTelemetryRequestState(false);
-                            console.error('telemtry disabled!')
-                        } catch(err) {
-                            console.error('telemtry', err)
+                            console.error('telemtry disabled!');
+                        } catch (err) {
+                            console.error('telemtry', err);
                         }
                     }
                     if (Trace.isEnabled()) {
@@ -508,7 +518,7 @@ export class MapboxView extends MapboxViewBase {
         }
     }
 
-    [telemetryProperty.setNative](value:boolean) {
+    [telemetryProperty.setNative](value: boolean) {
         com.mapbox.mapboxsdk.Mapbox.getTelemetry().setUserTelemetryRequestState(value);
     }
 } // end of class MapboxView
@@ -530,8 +540,8 @@ export class MapboxView extends MapboxViewBase {
 export class Mapbox extends MapboxCommon implements MapboxApi {
     // reference to the native mapbox API
 
-    private _mapboxMapInstance: any;
-    private _mapboxViewInstance: any;
+    private _mapboxMapInstance: com.mapbox.mapboxsdk.maps.MapboxMap;
+    private _mapboxViewInstance: com.mapbox.mapboxsdk.maps.MapView;
 
     // keep track of the activity the map was created in so other spawned
     // activities don't cause unwanted side effects. See Android Activity Events below.
@@ -540,7 +550,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // the user location component
 
-    private _locationComponent: any = false;
+    private _locationComponent: com.mapbox.mapboxsdk.location.LocationComponent;
 
     /**
      * the permissionsManager
@@ -605,130 +615,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         this.eventCallbacks['click'] = [];
-
-        this._activity = Application.android.foregroundActivity;
-
-        // When we receive events from Android we need to inform the API.
-        //
-        // start
-
-        Application.android.on(AndroidApplication.activityStartedEvent, (args: AndroidActivityEventData) => {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'constructor: activityStartedEvent Event: ' + args.eventName + ', Activity: ' + args.activity);
-            }
-
-            if (this._mapboxViewInstance && this._activity === args.activity) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'constructor(): calling onStart()');
-                }
-
-                this._mapboxViewInstance.onStart();
-            }
-        });
-
-        // pause
-
-        Application.android.on(AndroidApplication.activityPausedEvent, (args: AndroidActivityEventData) => {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'constructor:: activityPausedEvent Event: ' + args.eventName + ', Activity: ' + args.activity);
-            }
-
-            if (this._mapboxViewInstance && this._activity === args.activity) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'constructor(): calling onPause()');
-                }
-
-                this._mapboxViewInstance.onPause();
-            }
-        });
-
-        // resume
-
-        Application.android.on(AndroidApplication.activityResumedEvent, (args: AndroidActivityEventData) => {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'constructor: activityResumedEvent Event: ' + args.eventName + ', Activity: ' + args.activity);
-            }
-
-            if (this._mapboxViewInstance && this._activity === args.activity) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'constructor(): calling onResume() - destroyed flag is:', this._mapboxViewInstance.isDestroyed());
-                }
-
-                this._mapboxViewInstance.onResume();
-            }
-        });
-
-        // stop
-
-        Application.android.on(AndroidApplication.activityStoppedEvent, (args: AndroidActivityEventData) => {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'constructor: activityStoppedEvent Event: ' + args.eventName + ', Activity: ' + args.activity);
-            }
-
-            if (this._mapboxViewInstance && this._activity === args.activity) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'constructor(): calling onStop()');
-                }
-
-                this._mapboxViewInstance.onStop();
-            }
-        });
-
-        // destroy
-
-        Application.android.on(AndroidApplication.activityDestroyedEvent, (args: AndroidActivityEventData) => {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'constructor: activityDestroyedEvent Event: ' + args.eventName + ', Activity: ' + args.activity);
-            }
-
-            if (this._activity === args.activity) {
-                if (this.lineManager) {
-                    this.lineManager.onDestroy();
-                }
-
-                if (this.circleManager) {
-                    this.circleManager.onDestroy();
-                }
-
-                if (this.symbolManager) {
-                    this.symbolManager.onDestroy();
-                }
-
-                if (this._mapboxViewInstance) {
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'constructor(): calling onDestroy()');
-                    }
-
-                    this._mapboxViewInstance.onDestroy();
-                }
-            }
-        });
-
-        // savestate
-
-        Application.android.on(AndroidApplication.saveActivityStateEvent, (args: AndroidActivityBundleEventData) => {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'constructor: saveActivityStateEvent Event: ' + args.eventName + ', Activity: ' + args.activity + ', Bundle: ' + args.bundle);
-            }
-
-            if (this._mapboxViewInstance && this._activity === args.activity) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'constructor(): saving instance state');
-                }
-
-                this._mapboxViewInstance.onSaveInstanceState(args.bundle);
-            }
-        });
-
-        // Application.android.on( AndroidApplication.activityResultEvent, ( args: AndroidActivityResultEventData ) => {
-        //   console.log( "Mapbox::constructor: activityResultEvent Event: " + args.eventName + ", Activity: " + args.activity +
-        //     ", requestCode: " + args.requestCode + ", resultCode: " + args.resultCode + ", Intent: " + args.intent);
-        // });
-
-        // Application.android.on( AndroidApplication.activityBackPressedEvent, ( args: AndroidActivityBackPressedEventData ) => {
-        //   console.log( "Mapbox::constructor: activityBackPressedEvent Event: " + args.eventName + ", Activity: " + args.activity);
-        //   // Set args.cancel = true to cancel back navigation and do something custom.
-        // });
 
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'constructor(): end of Mapbox constructor.');
@@ -826,7 +712,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             CLog(CLogTypes.info, 'show(): view already created. Removing it.');
                         }
 
-                        const viewGroup = this._mapboxViewInstance.getParent();
+                        const viewGroup = this._mapboxViewInstance.getParent() as android.view.ViewGroup;
                         if (viewGroup !== null) {
                             if (Trace.isEnabled()) {
                                 CLog(CLogTypes.info, 'show(): view already created. Removing _mapboxViewInstance child of view parent.');
@@ -1012,7 +898,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return new Promise((resolve, reject) => {
             try {
                 if (this._mapboxViewInstance) {
-                    const viewGroup = this._mapboxViewInstance.getParent();
+                    const viewGroup = this._mapboxViewInstance.getParent() as android.view.ViewGroup;
                     if (viewGroup !== null) {
                         viewGroup.setVisibility(android.view.View.INVISIBLE);
                     }
@@ -1033,7 +919,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return new Promise((resolve, reject) => {
             try {
                 if (this._mapboxViewInstance) {
-                    this._mapboxViewInstance.getParent().setVisibility(android.view.View.VISIBLE);
+                    (this._mapboxViewInstance.getParent() as android.view.ViewGroup).setVisibility(android.view.View.VISIBLE);
                     resolve();
                 } else {
                     reject('No map found');
@@ -1093,7 +979,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
 
             if (this._mapboxViewInstance) {
-                const viewGroup = this._mapboxViewInstance.getParent();
+                const viewGroup = this._mapboxViewInstance.getParent() as android.view.ViewGroup;
                 if (viewGroup !== null) {
                     if (Trace.isEnabled()) {
                         CLog(CLogTypes.info, 'destroy(): removing _mapboxViewInstance view.');
@@ -1204,116 +1090,48 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     // Life Cycle Hooks
     // ------------------------------------------------
 
-    /**
-     * on Start
-     */
-
-    onStart(nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
-            // super.onStart();
-
-            this._mapboxViewInstance.onStart();
-
-            resolve();
-        });
+    async onStart(nativeMap?: any) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'onStart()');
+        }
+        this._mapboxViewInstance.onStart();
     }
 
-    // ----------------------------------------------
-
-    /**
-     * on Resume
-     */
-
-    onResume(nativeMapViewInstance?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'onResume(): calling resume');
-            }
-
-            // super.onResume();
-
-            this._mapboxViewInstance.onResume();
-
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'onResume(): after calling resume on nativeMap:', this._mapboxViewInstance);
-            }
-
-            resolve();
-        });
+    async onResume(nativeMapViewInstance?: any) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'onResume()');
+        }
+        this._mapboxViewInstance.onResume();
     }
 
-    // ----------------------------------------------
+    async onPause(nativeMapViewInstance?: any) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'onPause()');
+        }
 
-    /**
-     * on Pause
-     */
-
-    onPause(nativeMapViewInstance?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'onPause(): calling pause');
-            }
-
-            // super.onPause();
-
-            this._mapboxViewInstance.onPause();
-
-            resolve();
-        });
+        this._mapboxViewInstance.onPause();
     }
 
-    // ----------------------------------------------
-
-    /**
-     * on Stop
-     */
-
-    onStop(nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
-            // super.onStop();
-
-            this._mapboxViewInstance.onStop();
-
-            resolve();
-        });
+    async onStop(nativeMap?: any) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'onStop()');
+        }
+        this._mapboxViewInstance.onStop();
     }
 
-    // ----------------------------------------------
-
-    /**
-     * on Low Memory
-     */
-
-    onLowMemory(nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
-            // super.onLowMemory();
-
-            this._mapboxViewInstance.onLowMemory();
-
-            resolve();
-        });
+    async onLowMemory(nativeMap?: any) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'onLowMemory()');
+        }
+        this._mapboxViewInstance.onLowMemory();
     }
 
-    // ----------------------------------------------
-
-    /**
-     * on Destroy
-     */
-
-    onDestroy(nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
-            // super.onStart();
-
-            this._mapboxViewInstance.onDestroy();
-
-            resolve();
-        });
+    async onDestroy(nativeMap?: any) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'onDestroy()');
+        }
+        this._mapboxViewInstance.onDestroy();
     }
-
-    // ---------------------------------------------
-
-    // onSaveInstanceState( Bundle outState)
-
     // --------------------------------------------------------------------
 
     /**
@@ -1735,7 +1553,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         // this.gcFix('com.mapbox.mapboxsdk.plugins.annotation.OnAnnotationClickListener', this.onAnnotationClickListener);
 
                         resolve();
-                    }
+                    },
                 });
 
                 this._mapboxViewInstance.addOnDidFinishLoadingStyleListener(this.onDidFinishLoadingStyleListener);
@@ -1782,7 +1600,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'Error in mapbox.addMarkers: ' + ex);
             }
-            throw (ex);
+            throw ex;
         }
     }
 
@@ -1795,7 +1613,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'Error in mapbox.removeMarkers: ' + ex);
             }
-            throw (ex);
+            throw ex;
         }
     }
 
@@ -1884,7 +1702,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
                     }
                 } else if (marker.iconPath) {
-                    const iconFullPath =path.join(knownFolders.currentApp().path , marker.iconPath.replace('~/', ''));
+                    const iconFullPath = path.join(knownFolders.currentApp().path, marker.iconPath.replace('~/', ''));
                     // if the file doesn't exist the app will crash, so checking it
                     if (File.exists(iconFullPath)) {
                         // could set width, height, retina, see https://github.com/Telerik-Verified-Plugins/Mapbox/pull/42/files?diff=unified&short_path=1c65267, but that's what the marker.icon param is for..
@@ -2127,13 +1945,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (loc === null) {
                     reject('Location not available');
                 } else {
-                    resolve({
-                        location: {
-                            lat: loc.getLatitude(),
-                            lng: loc.getLongitude(),
-                        },
-                        speed: loc.getSpeed(),
-                    });
+                    resolve(_getLocation(loc));
                 }
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -2919,7 +2731,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 // Set data-driven styling properties
                 fillExtrusionLayer.setProperties(props);
 
-                this._mapboxMapInstance.addLayer(fillExtrusionLayer);
+                this._mapboxMapInstance.getStyle().addLayer(fillExtrusionLayer);
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -3416,7 +3228,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const geometry = lineEntry.feature.geometry();
 
-                const coordinates = geometry.coordinates();
+                // const coordinates = geometry.coordinates();
 
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Mapbox:addLinePoint(): adding point:', lnglat);
@@ -3439,7 +3251,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 // now reset the source
 
-                const lineSource = this._mapboxMapInstance.getStyle().getSource(id + '_source');
+                const lineSource = this._mapboxMapInstance.getStyle().getSource(id + '_source') as com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
                 lineSource.setGeoJson(lineEntry.feature);
 
@@ -4050,12 +3862,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const componentOptions = componentOptionsBuilder.build();
 
-
                 this._locationComponent = this._mapboxMapInstance.getLocationComponent();
 
-
                 const activationOptionsBuilder = com.mapbox.mapboxsdk.location.LocationComponentActivationOptions.builder(Application.android.context, this._mapboxMapInstance.getStyle());
-
 
                 activationOptionsBuilder.locationComponentOptions(componentOptions);
 
@@ -4065,7 +3874,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     useDefaultEngine = options.useDefaultLocationEngine;
                 }
                 activationOptionsBuilder.useDefaultLocationEngine(useDefaultEngine);
-
 
                 const locationComponentActivationOptions = activationOptionsBuilder.build();
 
