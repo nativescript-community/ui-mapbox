@@ -7677,7 +7677,7 @@ declare module com {
 					public activateLocationComponent(param0: globalAndroid.content.Context, param1: com.mapbox.mapboxsdk.maps.Style): void;
 					public removeRenderModeChangedListener(param0: com.mapbox.mapboxsdk.location.OnRenderModeChangedListener): void;
 					public removeOnCameraTrackingChangedListener(param0: com.mapbox.mapboxsdk.location.OnCameraTrackingChangedListener): void;
-					public getLocationEngine(): LocationEngine;
+					public getLocationEngine(): com.mapbox.android.core.location.LocationEngine;
 					public removeOnLocationStaleListener(param0: com.mapbox.mapboxsdk.location.OnLocationStaleListener): void;
 					/** @deprecated */
 					public activateLocationComponent(param0: globalAndroid.content.Context, param1: com.mapbox.mapboxsdk.maps.Style, param2: boolean, param3: com.mapbox.android.core.location.LocationEngineRequest): void;
