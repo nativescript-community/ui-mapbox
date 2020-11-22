@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.5](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.4...v6.0.5) (2020-11-22)
+
+
+### Bug Fixes
+
+* typo ([e841223](https://github.com/nativescript-community/ui-mapbox/commit/e841223b6b89a579ece1886ad250f787dd7395d0))
+
+
+
+
+
 ## [6.0.4](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.3...v6.0.4) (2020-11-19)
 
 
