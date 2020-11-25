@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.7](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.6...v6.0.7) (2020-11-25)
+
+
+### Bug Fixes
+
+* android lifecycle fix ([2c3731a](https://github.com/nativescript-community/ui-mapbox/commit/2c3731a9f454b3d861fd8b4ea7a58f11fef4037a))
+* correctly handle lifecycle ([e4e3fd9](https://github.com/nativescript-community/ui-mapbox/commit/e4e3fd9fa9c45c6c0c6174d305443b09078c7d19))
+
+
+
+
+
 ## [6.0.6](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.5...v6.0.6) (2020-11-23)
 
 **Note:** Version bump only for package @nativescript-community/ui-mapbox
