@@ -356,8 +356,8 @@ export class MapboxView extends MapboxViewBase {
         }
         this.nativeView.owner = this;
         // Application.android.on(AndroidApplication.activityStartedEvent, this.onStart, this);
-        Application.android.on(AndroidApplication.activityStartedEvent, this.onPause, this);
-        Application.android.on(AndroidApplication.activityStartedEvent, this.onResume, this);
+        Application.android.on(AndroidApplication.activityPausedEvent, this.onPause, this);
+        Application.android.on(AndroidApplication.activityResumedEvent, this.onResume, this);
         // Application.android.on(AndroidApplication.activityStartedEvent, this.onStop, this);
 
         super.initNativeView();
@@ -383,8 +383,8 @@ export class MapboxView extends MapboxViewBase {
         this.nativeView.owner = null;
 
         // Application.android.off(AndroidApplication.activityStartedEvent, this.onStart, this);
-        Application.android.off(AndroidApplication.activityStartedEvent, this.onPause, this);
-        Application.android.off(AndroidApplication.activityStartedEvent, this.onResume, this);
+        Application.android.off(AndroidApplication.activityPausedEvent, this.onPause, this);
+        Application.android.off(AndroidApplication.activityResumedEvent, this.onResume, this);
         // Application.android.off(AndroidApplication.activityStartedEvent, this.onStop, this);
 
         this.mapbox.destroy();
