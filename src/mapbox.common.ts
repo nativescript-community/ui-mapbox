@@ -940,25 +940,25 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
         return this.mapbox.getLayers(nativeMap);
     }
     destroy(): Promise<any> {
-        return this.mapbox.destroy(this.getNativeMapView());
+        return this.mapbox && this.mapbox.destroy(this.getNativeMapView());
     }
     onStart(): Promise<any> {
-        return this.mapbox.onStart(this.getNativeMapView());
+        return this.mapbox && this.mapbox.onStart(this.getNativeMapView());
     }
     onResume(nativeMap?: any): Promise<any> {
-        return this.mapbox.onResume(this.getNativeMapView());
+        return this.mapbox && this.mapbox.onResume(this.getNativeMapView());
     }
     onPause(nativeMap?: any): Promise<any> {
-        return this.mapbox.onPause(this.getNativeMapView());
+        return this.mapbox && this.mapbox.onPause(this.getNativeMapView());
     }
     onStop(nativeMap?: any): Promise<any> {
-        return this.mapbox.onStop(this.getNativeMapView());
+        return this.mapbox && this.mapbox.onStop(this.getNativeMapView());
     }
     onLowMemory(nativeMap?: any): Promise<any> {
         return this.mapbox.onLowMemory(this.getNativeMapView());
     }
     onDestroy(nativeMap?: any): Promise<any> {
-        return this.mapbox.onDestroy(this.getNativeMapView());
+        return this.mapbox && this.mapbox.onDestroy(this.getNativeMapView());
     }
 }
 
