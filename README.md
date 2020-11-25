@@ -85,11 +85,6 @@ cd ./demo
 ns run <platform>
 ```
 
-## Debug Build
-
-To come up to speed on the plugin, I added extensive trace messages.
-These can be turned on by replacing 'npm run build.release' with 'npm run build.debug' in the commands above.
-
 ## Breaking Changes
 
 This version includes breaking API changes. 
