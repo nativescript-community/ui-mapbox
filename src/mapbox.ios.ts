@@ -3409,7 +3409,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
                 }
             } else if (cachedMarker.iconPath) {
                 const appPath = knownFolders.currentApp().path;
-                const iconFullPath = appPath + '/' + cachedMarker.iconPath;
+                const iconFullPath = appPath + '/' + cachedMarker.iconPath.replace('~/', '');
                 if (File.exists(iconFullPath)) {
                     const image = ImageSource.fromFileSync(iconFullPath).ios;
                     // perhaps add resize options for nice retina rendering (although you can now use the 'icon' param instead)
