@@ -59,7 +59,7 @@ export class HelloWorldModel extends Observable {
                 lng: 4.895168,
             },
             zoomLevel: 9, // 0 (most of the world) to 20, default 0
-            showUserLocation: true, // default false
+            showUserLocation: false, // default false
             hideAttribution: true, // default false
             hideLogo: true, // default false
             hideCompass: false, // default false
@@ -234,13 +234,13 @@ export class HelloWorldModel extends Observable {
                     lat: 52.360216,
                     lng: 5,
                     onTap: () => console.log('Titleless marker tapped!'),
-                    icon: 'http://www.bme.be/wp-content/uploads/2014/04/marker.png',
+                    icon: 'https://www.emojimeaning.com/img/img-google-64/1f35e.png',
                 },
                 {
                     id: 4,
                     lat: 52.360216,
                     lng: 4.789168,
-                    title: 'One-line title here 3', // no popup unless set
+                    title: 'Home Marker', // no popup unless set
                     subtitle: 'And a one-liner here as well.',
                     iconPath: '~/assets/markers/home_marker.png',
                     selected: true,
@@ -253,7 +253,7 @@ export class HelloWorldModel extends Observable {
                     lng: 5.1,
                     title: 'This title is cut off on iOS, but multi-line on Android', // no popup unless set
                     subtitle: 'Same for this subtitle. Same for this subtitle. Same for this subtitle. Same for this subtitle. Same for this subtitle.',
-                    icon: 'https://maryjanekirkland.com/wp-content/uploads/2016/01/map-marker.png',
+                    icon: 'https://www.emojimeaning.com/img/img-google-64/1f420.png',
                     onTap: () => console.log('Marker tapped'),
                     onCalloutTap: () => console.log('Marker callout tapped'),
                 },
