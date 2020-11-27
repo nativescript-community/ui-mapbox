@@ -2756,7 +2756,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return new Promise((resolve, reject) => {
             try {
                 const { url, type } = options;
-                const theMap = nativeMap;
+                const theMap = nativeMap || this._mapboxMapInstance;
                 let source;
 
                 if (!theMap) {
@@ -2764,7 +2764,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                if (theMap.mapboxMap.getSource(id)) {
+                if (theMap.getStyle().getSource(id)) {
                     reject('Source exists: ' + id);
                     return;
                 }
@@ -2787,13 +2787,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             CLog(CLogTypes.info, 'Mapbox:addSource(): adding feature');
                         }
 
-                        // com.mapbox.mapboxsdk.maps.Style
-
-                        const geoJsonSource = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id, feature);
-
-                        this._mapboxMapInstance.getStyle().addSource(geoJsonSource);
-
-                        // this.gcFix('com.mapbox.mapboxsdk.style.sources.GeoJsonSource', geoJsonSource);
+                        source = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id, feature);
 
                         // To support handling click events on lines and circles, we keep the underlying
                         // feature.
@@ -2833,7 +2827,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                theMap.mapboxMap.addSource(source);
+                theMap.getStyle().addSource(source);
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -2853,14 +2847,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     removeSource(id: string, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                const theMap = nativeMap;
+                const theMap = nativeMap || this._mapboxMapInstance;
 
                 if (!theMap) {
                     reject('No map has been loaded');
                     return;
                 }
-
-                theMap.mapboxMap.removeSource(id);
 
                 // if we've cached the underlying feature, remove it.
                 //
@@ -2909,16 +2901,20 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @link https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers
      */
 
-    public addLayer(style, nativeMapView?): Promise<void> {
+    public addLayer(style, nativeMap?): Promise<void> {
         let retval;
+        const theMap = nativeMap || this._mapboxMapInstance;
+        if (!theMap) {
+            return Promise.reject('No map has been loaded');
+        }
 
         switch (style.type) {
             case 'line':
-                retval = this.addLineLayer(style, nativeMapView);
+                retval = this.addLineLayer(style, theMap);
                 break;
 
             case 'circle':
-                retval = this.addCircleLayer(style, nativeMapView);
+                retval = this.addCircleLayer(style, theMap);
                 break;
 
             default:
@@ -2930,8 +2926,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return retval;
     }
 
-    // -----------------------------------------------------------------------
-
     /**
      * remove layer by ID
      *
@@ -2940,12 +2934,15 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @param {string} id
      */
 
-    public async removeLayer(id: string, nativeMapViewInstance) {
-        this._mapboxMapInstance.getStyle().removeLayer(id);
+    public async removeLayer(id: string, nativeMap?) {
+        const theMap = nativeMap || this._mapboxMapInstance;
+
+        theMap.getStyle().removeLayer(id);
+
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'Mapbox:removeLayer(): after removing layer');
         }
-    } // end of removeLayer()
+    }
 
     // -------------------------------------------------------------------------------------
 

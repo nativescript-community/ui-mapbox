@@ -2382,7 +2382,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @param {string} id
      */
 
-    public async removeLayer(id: string, nativeMapViewInstance) {
+    public async removeLayer(id: string, nativeMapViewInstance?) {
         const theMap: MGLMapView = nativeMapViewInstance || this._mapboxViewInstance;
 
         if (Trace.isEnabled()) {
