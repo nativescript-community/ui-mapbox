@@ -3427,7 +3427,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         // we have two options for a radius. We might have a fixed float or an expression
 
                         if (typeof style.paint['circle-radius'] == 'number') {
-                            circleProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius(new java.lang.Float(style.paint.radius)));
+                            circleProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius(new java.lang.Float(style.paint['circle-radius'])));
                         } else {
                             if (!style.paint['circle-radius'].stops) {
                                 reject('No radius or stops provided to addCircleLayer.');
