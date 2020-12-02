@@ -2854,6 +2854,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
+                const isRemoved = theMap.getStyle().removeSource(id);
+                if (!isRemoved) {
+                    reject(`Could not remove source with id: ${id}`)
+                }
+
                 // if we've cached the underlying feature, remove it.
                 //
                 // since we don't know if it's a line or a circle we have to check both lists.

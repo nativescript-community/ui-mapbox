@@ -419,6 +419,8 @@ export class HelloWorldModel extends Observable {
     }
 
     public doAddLayerAndSource(): void {
+        try {
+            
         this.mapbox
             .addSource('custom-collection-1', {
                 type: 'geojson',
@@ -506,34 +508,41 @@ export class HelloWorldModel extends Observable {
                     .then(() => console.log('circle-layer-1 added to source custom-collection-1'));
             });
 
-            this.mapbox.addLayer({
-                id: 'layer-with-source-object',
-                type: 'line',
-                source: {
-                    type: 'geojson',
-                    data: {
-                        type: 'Feature',
-                        properties: {},
-                        geometry: {
-                            type: 'LineString',
-                            coordinates: [
-                                [4.80926513671875, 52.27403984182285],
-                                [4.9383544921875, 52.30931825948968],
-                            ],
-                        },
-                    }
-                },
-                layout: {
-                    'line-cap': 'square',
-                    'line-join': 'round',
-                    'line-blur': 15
-                },
-                paint: {
-                    'line-color': '#5dbcd2',
-                    'line-width': 8,
-                    'line-opacity': 0.5
+        this.mapbox.addLayer({
+            id: 'layer-with-source-object',
+            type: 'line',
+            source: {
+                type: 'geojson',
+                data: {
+                    type: 'Feature',
+                    properties: {},
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: [
+                            [4.80926513671875, 52.27403984182285],
+                            [4.9383544921875, 52.30931825948968],
+                        ],
+                    },
                 }
-            }).then(() => console.log('layer-with-source-object added'));
+            },
+            layout: {
+                'line-cap': 'square',
+                'line-join': 'round',
+                'line-blur': 15
+            },
+            paint: {
+                'line-color': '#5dbcd2',
+                'line-width': 8,
+                'line-opacity': 0.5
+            }
+        }).then(() => console.log('layer-with-source-object added'));
+
+        } catch (error) {
+            console.error('Mapbox doAddLayerAndSource error :', error);
+            
+        }
+
+
     }
 
     public doRemoveLayerAndSource(): void {
@@ -542,8 +551,10 @@ export class HelloWorldModel extends Observable {
             this.mapbox.removeLayer('circle-layer-1'),
             this.mapbox.removeLayer('layer-with-source-object')
         ]).then(() => {
-            this.mapbox.removeSource('custom-collection-1');
-            this.mapbox.removeSource('layer-with-source-object_source');
+            return Promise.all([
+                this.mapbox.removeSource('custom-collection-1'),
+                this.mapbox.removeSource('layer-with-source-object_source')
+            ]);
         })
     }
 
