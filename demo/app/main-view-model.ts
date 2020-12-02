@@ -420,8 +420,94 @@ export class HelloWorldModel extends Observable {
 
     public doAddLayerAndSource(): void {
         this.mapbox
-            .addLayer({
-                id: 'custom-layer-1',
+            .addSource('custom-collection-1', {
+                type: 'geojson',
+                url: null,
+                data: {
+                    type: 'FeatureCollection',
+                    features: [
+                        {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: [
+                                    [4.744720458984375, 52.47357958606801],
+                                    [5.108642578125, 52.24882376803033],
+                                ],
+                            },
+                        },
+                        {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [4.823684692382513, 52.3701494345567],
+                            },
+                        },
+                        {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [4.8703765869140625, 52.3479242945069],
+                            },
+                        },
+                        {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: [
+                                    [4.7989654541015625, 52.40577019043],
+                                    [4.7866058349609375, 52.36008660493161],
+                                    [4.854583740234375, 52.32736657808751],
+                                    [4.9376678466796875, 52.338695481504814],
+                                ],
+                            },
+                        },
+                    ],
+                },
+            })
+            .then(() => {
+                console.log('source with id custom-collection-1 successfully added');
+
+                this.mapbox
+                    .addLayer({
+                        id: 'line-layer-1',
+                        type: 'line',
+                        source: 'custom-collection-1',
+                        layout: {
+                            'line-cap': 'butt',
+                            'line-join': 'bevel',
+                        },
+                        paint: {
+                            'line-color': '#053481',
+                            'line-width': 5,
+                            'line-opacity': 0.8,
+                            'line-dash-array': [1, 1, 1, 1],
+                        },
+                    })
+                    .then(() => console.log('line-layer-1 added to source custom-collection-1'));
+
+                this.mapbox
+                    .addLayer({
+                        id: 'circle-layer-1',
+                        type: 'circle',
+                        source: 'custom-collection-1',
+                        paint: {
+                            'circle-radius': 2,
+                            'circle-opacity': 0.05,
+                            'circle-color': '#ed6498',
+                            'circle-stroke-width': 2,
+                            'circle-stroke-color': '#ed6498',
+                        },
+                    })
+                    .then(() => console.log('circle-layer-1 added to source custom-collection-1'));
+            });
+
+            this.mapbox.addLayer({
+                id: 'layer-with-source-object',
                 type: 'line',
                 source: {
                     type: 'geojson',
@@ -431,48 +517,34 @@ export class HelloWorldModel extends Observable {
                         geometry: {
                             type: 'LineString',
                             coordinates: [
-                                [4.744720458984375, 52.47357958606801],
-                                [5.108642578125, 52.24882376803033],
+                                [4.80926513671875, 52.27403984182285],
+                                [4.9383544921875, 52.30931825948968],
                             ],
                         },
-                    },
-                    url: null,
+                    }
                 },
                 layout: {
-                    'line-cap': 'round',
+                    'line-cap': 'square',
                     'line-join': 'round',
+                    'line-blur': 15
                 },
                 paint: {
-                    'line-color': '#053481',
-                    'line-width': 5,
-                    'line-opacity': 0.8,
-                    'line-dash-array': [1, 1, 1, 1],
-                },
-            })
-            .catch(console.error);
+                    'line-color': '#5dbcd2',
+                    'line-width': 8,
+                    'line-opacity': 0.5
+                }
+            }).then(() => console.log('layer-with-source-object added'));
     }
 
     public doRemoveLayerAndSource(): void {
-        this.mapbox.removeLayer('custom-layer-1').then(
-            () => {
-                /* 
-                    layer 'custom-layer-1' implicitly added a source under the hood,
-                    so the source id was generate as <layer-id>_source, i.e.: 'custom-layer-1_source'
-                */
-                const sourceId = 'custom-layer-1_source';
-                this.mapbox.removeSource(sourceId).then(
-                    () => {
-                        console.log('Mapbox doRemoveLayerAndSource done');
-                    },
-                    (error: string) => {
-                        console.log('mapbox doAddSource error: ' + error);
-                    }
-                );
-            },
-            (error: string) => {
-                console.log('mapbox doAddSource error: ' + error);
-            }
-        );
+        Promise.all([
+            this.mapbox.removeLayer('line-layer-1'),
+            this.mapbox.removeLayer('circle-layer-1'),
+            this.mapbox.removeLayer('layer-with-source-object')
+        ]).then(() => {
+            this.mapbox.removeSource('custom-collection-1');
+            this.mapbox.removeSource('layer-with-source-object_source');
+        })
     }
 
     // ===============================================================
