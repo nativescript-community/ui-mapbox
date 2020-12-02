@@ -2777,39 +2777,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     case 'geojson':
                         if (Trace.isEnabled()) {
                             CLog(CLogTypes.info, 'Mapbox:addSource(): before addSource with geojson');
+                            CLog(CLogTypes.info, 'Mapbox:addSource(): before adding geoJSON to GeoJsonSource');
                         }
 
-                        const geojsonString = JSON.stringify(options.data);
-
-                        const feature = com.mapbox.geojson.Feature.fromJson(geojsonString);
-
-                        if (Trace.isEnabled()) {
-                            CLog(CLogTypes.info, 'Mapbox:addSource(): adding feature');
-                        }
-
-                        source = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id, feature);
-
-                        // To support handling click events on lines and circles, we keep the underlying
-                        // feature.
-                        //
-                        // FIXME: There should be a way to get the original feature back out from the source
-                        // but I have not yet figured out how.
-
-                        if (options.data.geometry.type === 'LineString') {
-                            this.lines.push({
-                                type: 'line',
-                                id,
-                                feature,
-                            });
-                        } else if (options.data.geometry.type === 'Point') {
-                            // probably a circle
-
-                            this.circles.push({
-                                type: 'line',
-                                id,
-                                center: options.data.geometry.coordinates,
-                            });
-                        }
+                        const geoJsonSource = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id);
+                        const geoJsonString = JSON.stringify(options.data);
+                        geoJsonSource.setGeoJson(geoJsonString);
+                        source = geoJsonSource;
 
                         break;
 
