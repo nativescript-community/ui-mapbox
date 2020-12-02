@@ -8,6 +8,7 @@ import { request } from '@nativescript-community/perms';
 import { AndroidApplication, Application, Color, File, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import { AndroidActivityBundleEventData, AndroidActivityEventData } from '@nativescript/core/application/application-interfaces';
 import { getImage } from '@nativescript/core/http';
+import { FilterParser } from './filter/filter-parser.android';
 import { GeoUtils } from './geo.utils';
 import {
     AddExtrusionOptions,
@@ -4281,6 +4282,14 @@ export class Layer implements LayerCommon {
 
     public hide(): void {
         this.instance.setProperties([new com.mapbox.mapboxsdk.style.layers.PropertyValue('visibility', 'none')]);
+    }
+
+    public setFilter(filter: Array<any>) {
+        this.instance.setFilter(FilterParser.get().parseJson(filter));
+    }
+
+    public getFilter(): Array<any> {
+        return FilterParser.get().toJson(this.instance.getFilter());;
     }
 }
 
