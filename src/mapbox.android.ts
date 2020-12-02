@@ -2812,12 +2812,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    // -------------------------------------------------------------------------------------
-
     /**
      * remove source by id
      */
-
     removeSource(id: string, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
@@ -2833,22 +2830,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     reject(`Could not remove source with id: ${id}`)
                 }
 
-                // if we've cached the underlying feature, remove it.
-                //
-                // since we don't know if it's a line or a circle we have to check both lists.
-
-                let offset = this.lines.findIndex((entry) => entry.id === id);
-
-                if (offset !== -1) {
-                    this.lines.splice(offset, 1);
-                }
-
-                offset = this.circles.findIndex((entry) => entry.id === id);
-
-                if (offset !== -1) {
-                    this.circles.splice(offset, 1);
-                }
-
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -2858,8 +2839,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
         });
     }
-
-    // -------------------------------------------------------------------------------------
 
     /**
      * a rough analogue to the mapbox-gl-js addLayer() method
