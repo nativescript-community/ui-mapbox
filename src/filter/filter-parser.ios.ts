@@ -1,4 +1,4 @@
-import { IFilterParser } from "./filter-parser.common";
+import { IFilterParser } from './filter-parser.common';
 
 export class FilterParser implements IFilterParser {
     private static readonly parserInstance = new FilterParser();
@@ -12,13 +12,13 @@ export class FilterParser implements IFilterParser {
         return predicateFilter;
     }
 
-    toJson(filter: NSPredicate): Array<any> {
+    toJson(filter: NSPredicate): any[] {
         if (!filter) {
             return null;
         }
-        
+
         if (!(filter instanceof NSPredicate)) {
-            throw "Filter must be a NSPredicate.";
+            throw new Error('Filter must be a NSPredicate.');
         }
 
         const expressionObj = (filter as any).mgl_jsonExpressionObject;

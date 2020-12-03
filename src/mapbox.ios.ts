@@ -3563,19 +3563,18 @@ export class Layer implements LayerCommon {
         this.instance.visible = false;
     }
 
-    setFilter(filter: Array<any>) {
+    setFilter(filter: any[]) {
         if (this.instance instanceof MGLVectorStyleLayer) {
             // MGLVectorStyleLayer is the base type of many layer types. Predicates only supported on vector style layers.
             // See https://docs.mapbox.com/ios/maps/api/6.3.0/Classes/MGLVectorStyleLayer.html
 
             this.instance.predicate = FilterParser.get().parseJson(filter);
         } else {
-            throw "Set filter only support for vector layer.";
+            throw new Error('Set filter only support for vector layer.');
         }
     }
 
-    getFilter(): Array<any> {
+    getFilter(): any[] {
         return FilterParser.get().toJson(this.instance.predicate);
     }
 }
-  

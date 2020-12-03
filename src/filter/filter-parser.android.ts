@@ -1,4 +1,4 @@
-import { IFilterParser } from "./filter-parser.common";
+import { IFilterParser } from './filter-parser.common';
 
 export class FilterParser implements IFilterParser {
     private static readonly parserInstance = new FilterParser();
@@ -13,7 +13,7 @@ export class FilterParser implements IFilterParser {
         }
 
         if (!(filter instanceof com.mapbox.mapboxsdk.style.expressions.Expression)) {
-            throw "Filter must be a Expression.";
+            throw new Error('Filter must be a Expression.');
         }
 
         return JSON.parse(filter.toString());

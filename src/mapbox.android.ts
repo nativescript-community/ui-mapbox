@@ -4284,12 +4284,12 @@ export class Layer implements LayerCommon {
         this.instance.setProperties([new com.mapbox.mapboxsdk.style.layers.PropertyValue('visibility', 'none')]);
     }
 
-    public setFilter(filter: Array<any>) {
+    public setFilter(filter: any[]) {
         this.instance.setFilter(FilterParser.get().parseJson(filter));
     }
 
-    public getFilter(): Array<any> {
-        return FilterParser.get().toJson(this.instance.getFilter());;
+    public getFilter(): any[] {
+        return FilterParser.get().toJson(this.instance.getFilter());
     }
 }
 

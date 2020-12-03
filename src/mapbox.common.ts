@@ -487,8 +487,8 @@ export interface LayerCommon {
     visibility(): boolean;
     show(): void;
     hide(): void;
-    setFilter(filter: Array<any>): void;
-    getFilter(): Array<any>;
+    setFilter(filter: any[]): void;
+    getFilter(): any[];
 }
 
 // ------------------------------------------------------------

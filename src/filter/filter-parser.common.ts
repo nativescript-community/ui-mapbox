@@ -1,4 +1,4 @@
 export interface IFilterParser {
-    parseJson(json: Array<any>): any;
-    toJson(filter: any): Array<any>;
+    parseJson(json: any[]): any;
+    toJson(filter: any): any[];
 }
