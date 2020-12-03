@@ -7,6 +7,7 @@
 import { request } from '@nativescript-community/perms';
 import { AndroidApplication, Application, Color, File, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import { getImage } from '@nativescript/core/http';
+import { FilterParser } from './filter/filter-parser.android';
 import { GeoUtils } from './geo.utils';
 import { LayerFactory } from './layers/layer-factory';
 import {
@@ -3779,7 +3780,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
 export class Layer implements LayerCommon {
     public id: string;
-    private instance: com.mapbox.mapboxsdk.style.layers.Layer;
+    private instance: any;
 
     constructor(instance: any) {
         this.instance = instance;
@@ -3801,6 +3802,12 @@ export class Layer implements LayerCommon {
     public getNativeInstance() {
         return this.instance;
     }
-}
 
-// END
+    public setFilter(filter: any[]) {
+        this.instance.setFilter(FilterParser.parseJson(filter));
+    }
+
+    public getFilter(): any[] {
+        return FilterParser.toJson(this.instance.getFilter());
+    }
+}
