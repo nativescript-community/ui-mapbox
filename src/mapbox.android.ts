@@ -4285,11 +4285,11 @@ export class Layer implements LayerCommon {
     }
 
     public setFilter(filter: any[]) {
-        this.instance.setFilter(FilterParser.get().parseJson(filter));
+        this.instance.setFilter(FilterParser.parseJson(filter));
     }
 
     public getFilter(): any[] {
-        return FilterParser.get().toJson(this.instance.getFilter());
+        return FilterParser.toJson(this.instance.getFilter());
     }
 }
 

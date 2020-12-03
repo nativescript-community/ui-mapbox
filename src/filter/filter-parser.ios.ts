@@ -1,9 +1,5 @@
-import { IFilterParser } from './filter-parser.common';
-
-export class FilterParser implements IFilterParser {
-    private static readonly parserInstance = new FilterParser();
-
-    parseJson(json: any[]): NSPredicate {
+export class FilterParser {
+    static parseJson(json: any[]): NSPredicate {
         const filterStr = NSString.stringWithString(JSON.stringify(json));
         const filterData = filterStr.dataUsingEncoding(NSUTF8StringEncoding);
         const filterJson = NSJSONSerialization.JSONObjectWithDataOptionsError(filterData, NSJSONReadingOptions.MutableContainers);
@@ -12,7 +8,7 @@ export class FilterParser implements IFilterParser {
         return predicateFilter;
     }
 
-    toJson(filter: NSPredicate): any[] {
+    static toJson(filter: NSPredicate): any[] {
         if (!filter) {
             return null;
         }
@@ -26,9 +22,5 @@ export class FilterParser implements IFilterParser {
         const expression: any = NSString.alloc().initWithDataEncoding(data, NSUTF8StringEncoding);
 
         return JSON.parse(expression);
-    }
-
-    static get(): FilterParser {
-        return this.parserInstance;
     }
 }
