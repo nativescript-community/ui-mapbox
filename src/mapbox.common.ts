@@ -487,6 +487,7 @@ export interface LayerCommon {
     visibility(): boolean;
     show(): void;
     hide(): void;
+    getNativeInstance(): any;
 }
 
 // ------------------------------------------------------------
