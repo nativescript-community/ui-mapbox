@@ -52,17 +52,17 @@ export class LayerFactory  {
             line-cap ✓
             line-color ✓
             line-dasharray ✓
-            line-gap-width
+            line-gap-width ✓
             line-gradient
             line-join ✓
-            line-miter-limit
-            line-offset
+            line-miter-limit ✓
+            line-offset ✓
             line-opacity ✓
             line-pattern
-            line-round-limit
+            line-round-limit ✓
             line-sort-key
-            line-translate
-            line-translate-anchor
+            line-translate ✓
+            line-translate-anchor ✓
             line-width ✓
             visibility
         */
@@ -105,6 +105,10 @@ export class LayerFactory  {
             lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineDasharray(dashArray));
         }
 
+        if (propertiesObject['line-gap-width']) {
+            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineGapWidth(new java.lang.Float(propertiesObject['line-gap-width'])));
+        }
+
         if (propertiesObject['line-join']) {
             let property;
 
@@ -125,8 +129,34 @@ export class LayerFactory  {
             lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin(property));
         }
 
+        if (propertiesObject['line-miter-limit']) {
+            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineMiterLimit(new java.lang.Float(propertiesObject['line-miter-limit'])));
+        }
+
+        if (propertiesObject['line-offset']) {
+            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineOffset(new java.lang.Float(propertiesObject['line-offset'])));
+        }
+
         if (propertiesObject['line-opacity']) {
             lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineOpacity(new java.lang.Float(propertiesObject['line-opacity'])));
+        }
+
+        if (propertiesObject['line-round-limit']) {
+            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineRoundLimit(new java.lang.Float(propertiesObject['line-round-limit'])));
+        }
+
+        if (propertiesObject['line-translate']) {
+            const dashArray = Array.create('java.lang.Float', propertiesObject['line-translate'].length);
+
+            for (let i = 0; i < propertiesObject['line-translate'].length; i++) {
+                dashArray[i] = new java.lang.Float(propertiesObject['line-translate'][i]);
+            }
+
+            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineTranslate(dashArray));
+        }
+
+        if (propertiesObject['line-translate-anchor']) {
+            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineTranslateAnchor(propertiesObject['line-translate-anchor']));
         }
 
         if (propertiesObject['line-width']) {

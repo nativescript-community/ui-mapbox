@@ -58,17 +58,17 @@ export class LayerFactory {
             line-cap ✓
             line-color ✓
             line-dasharray ✓
-            line-gap-width
+            line-gap-width ✓
             line-gradient
             line-join ✓
-            line-miter-limit
-            line-offset
+            line-miter-limit ✓
+            line-offset ✓
             line-opacity ✓
             line-pattern
-            line-round-limit
+            line-round-limit ✓
             line-sort-key
-            line-translate
-            line-translate-anchor
+            line-translate ✓
+            line-translate-anchor ✓
             line-width ✓
             visibility
         */
@@ -89,12 +89,36 @@ export class LayerFactory {
             lineProperties['lineDashPattern'] = NSExpression.expressionForConstantValue(propertiesObject['line-dash-array']);
         }
 
+        if (propertiesObject['line-gap-width']) {
+            lineProperties['lineGapWidth'] = NSExpression.expressionForConstantValue(propertiesObject['line-gap-width']);
+        }
+
         if (propertiesObject['line-join']) {
             lineProperties['lineJoin'] = NSExpression.expressionForConstantValue(propertiesObject['line-join']);
         }
 
+        if (propertiesObject['line-miter-limit']) {
+            lineProperties['lineMiterLimit'] = NSExpression.expressionForConstantValue(propertiesObject['line-miter-limit']);
+        }
+
+        if (propertiesObject['line-offset']) {
+            lineProperties['lineOffset'] = NSExpression.expressionForConstantValue(propertiesObject['line-offset']);
+        }
+
         if (propertiesObject['line-opacity']) {
             lineProperties['lineOpacity'] = NSExpression.expressionForConstantValue(propertiesObject['line-opacity']);
+        }
+
+        if (propertiesObject['line-round-limit']) {
+            lineProperties['lineRoundLimit'] = NSExpression.expressionForConstantValue(propertiesObject['line-round-limit']);
+        }
+
+        if (propertiesObject['line-translate']) {
+            lineProperties['lineTranslation'] = NSExpression.expressionForConstantValue(propertiesObject['line-translate']);
+        }
+
+        if (propertiesObject['line-translate-anchor']) {
+            lineProperties['lineTranslationAnchor'] = NSExpression.expressionForConstantValue(propertiesObject['line-translate-anchor']);
         }
 
         if (propertiesObject['line-width']) {
