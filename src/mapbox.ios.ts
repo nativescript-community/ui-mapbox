@@ -39,6 +39,7 @@ import {
 import { GeoUtils } from './geo.utils';
 import { iOSNativeHelper } from '@nativescript/core/utils';
 import { getImage } from '@nativescript/core/http';
+import { FilterParser } from './filter/filter-parser.ios';
 
 // Export the enums for devs not using TS
 
@@ -3561,5 +3562,19 @@ export class Layer implements LayerCommon {
     hide(): void {
         this.instance.visible = false;
     }
+
+    setFilter(filter: any[]) {
+        if (this.instance instanceof MGLVectorStyleLayer) {
+            // MGLVectorStyleLayer is the base type of many layer types. Predicates only supported on vector style layers.
+            // See https://docs.mapbox.com/ios/maps/api/6.3.0/Classes/MGLVectorStyleLayer.html
+
+            this.instance.predicate = FilterParser.parseJson(filter);
+        } else {
+            throw new Error('Set filter only support for vector layer.');
+        }
+    }
+
+    getFilter(): any[] {
+        return FilterParser.toJson(this.instance.predicate);
+    }
 }
-  
