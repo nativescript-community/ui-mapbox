@@ -4,7 +4,7 @@ import { LayerCommon } from '../mapbox.common';
 import { Layer } from '../mapbox.ios';
 
 export class LayerFactory {
-    static createLayer(style, source): Promise<LayerCommon> {
+    static async createLayer(style, source): Promise<LayerCommon> {
         let nativeLayer;
         switch (style.type) {
             case 'line':
@@ -33,7 +33,7 @@ export class LayerFactory {
 
         var layer = new Layer(nativeLayer);
 
-        return Promise.resolve(layer);
+        return layer;
     }
 
     private static parseProperties(layerType, propertiesObject) {

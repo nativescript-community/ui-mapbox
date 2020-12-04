@@ -1,8 +1,8 @@
 import { Layer } from '../mapbox.android';
 import { LayerCommon } from '../mapbox.common';
 
-export class LayerFactory  {
-    static createLayer(style, source): Promise<LayerCommon> {
+export class LayerFactory {
+    static async createLayer(style, source): Promise<LayerCommon> {
         const layerProperties = this.parseProperties(style.type, Object.assign(style.paint, style.layout)); // TODO: handle defaults
 
         const sourceId = source.getId();
@@ -27,7 +27,7 @@ export class LayerFactory  {
 
         var layer = new Layer(nativeLayer);
 
-        return Promise.resolve(layer);
+        return layer;
     }
 
     private static parseProperties(layerType, propertiesObject) {
@@ -71,9 +71,11 @@ export class LayerFactory  {
             line-width ✓
             visibility
         */
+        const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+        const Property = com.mapbox.mapboxsdk.style.layers.Property;
 
         if (propertiesObject['line-blur']) {
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineBlur(new java.lang.Float(propertiesObject['line-blur'])));
+            lineProperties.push(PropertyFactory.lineBlur(new java.lang.Float(propertiesObject['line-blur'])));
         }
 
         if (propertiesObject['line-cap']) {
@@ -81,23 +83,23 @@ export class LayerFactory  {
 
             switch (propertiesObject['line-cap']) {
                 case 'round':
-                    property = com.mapbox.mapboxsdk.style.layers.Property.LINE_CAP_ROUND;
+                    property = Property.LINE_CAP_ROUND;
                     break;
                 case 'square':
-                    property = com.mapbox.mapboxsdk.style.layers.Property.LINE_CAP_SQUARE;
+                    property = Property.LINE_CAP_SQUARE;
                     break;
                 case 'butt':
-                    property = com.mapbox.mapboxsdk.style.layers.Property.LINE_CAP_BUTT;
+                    property = Property.LINE_CAP_BUTT;
                     break;
                 default:
                     throw new Error('Unknown line-cap value');
             }
 
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap(property));
+            lineProperties.push(PropertyFactory.lineCap(property));
         }
 
         if (propertiesObject['line-color']) {
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor(propertiesObject['line-color']));
+            lineProperties.push(PropertyFactory.lineColor(propertiesObject['line-color']));
         }
 
         if (propertiesObject['line-dash-array']) {
@@ -107,11 +109,11 @@ export class LayerFactory  {
                 dashArray[i] = new java.lang.Float(propertiesObject['line-dash-array'][i]);
             }
 
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineDasharray(dashArray));
+            lineProperties.push(PropertyFactory.lineDasharray(dashArray));
         }
 
         if (propertiesObject['line-gap-width']) {
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineGapWidth(new java.lang.Float(propertiesObject['line-gap-width'])));
+            lineProperties.push(PropertyFactory.lineGapWidth(new java.lang.Float(propertiesObject['line-gap-width'])));
         }
 
         if (propertiesObject['line-join']) {
@@ -119,35 +121,35 @@ export class LayerFactory  {
 
             switch (propertiesObject['line-join']) {
                 case 'bevel':
-                    property = com.mapbox.mapboxsdk.style.layers.Property.LINE_JOIN_BEVEL;
+                    property = Property.LINE_JOIN_BEVEL;
                     break;
                 case 'miter':
-                    property = com.mapbox.mapboxsdk.style.layers.Property.LINE_JOIN_MITER;
+                    property = Property.LINE_JOIN_MITER;
                     break;
                 case 'round':
-                    property = com.mapbox.mapboxsdk.style.layers.Property.LINE_JOIN_ROUND;
+                    property = Property.LINE_JOIN_ROUND;
                     break;
                 default:
                     throw new Error('Unknown line-join value');
             }
 
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin(property));
+            lineProperties.push(PropertyFactory.lineJoin(property));
         }
 
         if (propertiesObject['line-miter-limit']) {
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineMiterLimit(new java.lang.Float(propertiesObject['line-miter-limit'])));
+            lineProperties.push(PropertyFactory.lineMiterLimit(new java.lang.Float(propertiesObject['line-miter-limit'])));
         }
 
         if (propertiesObject['line-offset']) {
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineOffset(new java.lang.Float(propertiesObject['line-offset'])));
+            lineProperties.push(PropertyFactory.lineOffset(new java.lang.Float(propertiesObject['line-offset'])));
         }
 
         if (propertiesObject['line-opacity']) {
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineOpacity(new java.lang.Float(propertiesObject['line-opacity'])));
+            lineProperties.push(PropertyFactory.lineOpacity(new java.lang.Float(propertiesObject['line-opacity'])));
         }
 
         if (propertiesObject['line-round-limit']) {
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineRoundLimit(new java.lang.Float(propertiesObject['line-round-limit'])));
+            lineProperties.push(PropertyFactory.lineRoundLimit(new java.lang.Float(propertiesObject['line-round-limit'])));
         }
 
         if (propertiesObject['line-translate']) {
@@ -157,15 +159,15 @@ export class LayerFactory  {
                 dashArray[i] = new java.lang.Float(propertiesObject['line-translate'][i]);
             }
 
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineTranslate(dashArray));
+            lineProperties.push(PropertyFactory.lineTranslate(dashArray));
         }
 
         if (propertiesObject['line-translate-anchor']) {
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineTranslateAnchor(propertiesObject['line-translate-anchor']));
+            lineProperties.push(PropertyFactory.lineTranslateAnchor(propertiesObject['line-translate-anchor']));
         }
 
         if (propertiesObject['line-width']) {
-            lineProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth(new java.lang.Float(propertiesObject['line-width'])));
+            lineProperties.push(PropertyFactory.lineWidth(new java.lang.Float(propertiesObject['line-width'])));
         }
 
         return lineProperties;
@@ -194,23 +196,26 @@ export class LayerFactory  {
             visibility    
         */
 
+        const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+        const Expression = com.mapbox.mapboxsdk.style.expressions.Expression;
+
         if (propertiesObject['circle-blur']) {
-            circleProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleBlur(new java.lang.Float(propertiesObject['circle-blur'])));
+            circleProperties.push(PropertyFactory.circleBlur(new java.lang.Float(propertiesObject['circle-blur'])));
         }
 
         if (propertiesObject['circle-color']) {
-            circleProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor(propertiesObject['circle-color']));
+            circleProperties.push(PropertyFactory.circleColor(propertiesObject['circle-color']));
         }
 
         if (propertiesObject['circle-opacity']) {
-            circleProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleOpacity(new java.lang.Float(propertiesObject['circle-opacity'])));
+            circleProperties.push(PropertyFactory.circleOpacity(new java.lang.Float(propertiesObject['circle-opacity'])));
         }
 
         if (propertiesObject['circle-radius']) {
             // we have two options for a radius. We might have a fixed float or an expression
 
             if (typeof propertiesObject['circle-radius'] == 'number') {
-                circleProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius(new java.lang.Float(propertiesObject['circle-radius'])));
+                circleProperties.push(PropertyFactory.circleRadius(new java.lang.Float(propertiesObject['circle-radius'])));
             } else {
                 if (!propertiesObject['circle-radius'].stops) {
                     throw new Error('No radius or stops provided to addCircleLayer.');
@@ -220,7 +225,7 @@ export class LayerFactory  {
 
                 for (let i = 0; i < propertiesObject['circle-radius'].stops.length; i++) {
                     const stop = propertiesObject['circle-radius'].stops[i];
-                    stopArgs.push(com.mapbox.mapboxsdk.style.expressions.Expression.stop(new java.lang.Float(stop[0]), new java.lang.Float(stop[1])));
+                    stopArgs.push(Expression.stop(new java.lang.Float(stop[0]), new java.lang.Float(stop[1])));
                 }
 
                 let base = 2;
@@ -230,10 +235,10 @@ export class LayerFactory  {
                 }
 
                 circleProperties.push(
-                    com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius(
-                        com.mapbox.mapboxsdk.style.expressions.Expression.interpolate(
-                            com.mapbox.mapboxsdk.style.expressions.Expression.exponential(new java.lang.Float(base)),
-                            com.mapbox.mapboxsdk.style.expressions.Expression.zoom(),
+                    PropertyFactory.circleRadius(
+                        Expression.interpolate(
+                            Expression.exponential(new java.lang.Float(base)),
+                            Expression.zoom(),
                             stopArgs
                         )
                     )
@@ -242,15 +247,15 @@ export class LayerFactory  {
         }
 
         if (propertiesObject['circle-stroke-color']) {
-            circleProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleStrokeColor(propertiesObject['circle-stroke-color']));
+            circleProperties.push(PropertyFactory.circleStrokeColor(propertiesObject['circle-stroke-color']));
         }
 
         if (propertiesObject['circle-stroke-opacity']) {
-            circleProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleStrokeOpacity(new java.lang.Float(propertiesObject['circle-stroke-opacity'])));
+            circleProperties.push(PropertyFactory.circleStrokeOpacity(new java.lang.Float(propertiesObject['circle-stroke-opacity'])));
         }
 
         if (propertiesObject['circle-stroke-width']) {
-            circleProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleStrokeWidth(new java.lang.Float(propertiesObject['circle-stroke-width'])));
+            circleProperties.push(PropertyFactory.circleStrokeWidth(new java.lang.Float(propertiesObject['circle-stroke-width'])));
         }
 
         return circleProperties;
@@ -275,25 +280,27 @@ export class LayerFactory  {
             visibility
         */
 
+        const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+
         if (propertiesObject['fill-color']) {
-            fillProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillColor(propertiesObject['fill-color']));
+            fillProperties.push(PropertyFactory.fillColor(propertiesObject['fill-color']));
         }
 
         if (propertiesObject['fill-opacity']) {
-            fillProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillOpacity(new java.lang.Float(propertiesObject['fill-opacity'])));
+            fillProperties.push(PropertyFactory.fillOpacity(new java.lang.Float(propertiesObject['fill-opacity'])));
         }
 
         if (propertiesObject['fill-antialias']) {
-            fillProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillAntialias(new java.lang.Boolean(propertiesObject['fill-antialias'])));
+            fillProperties.push(PropertyFactory.fillAntialias(new java.lang.Boolean(propertiesObject['fill-antialias'])));
         }
 
         if (propertiesObject['fill-outline-color']) {
-            fillProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillOutlineColor(propertiesObject['fill-outline-color']));
+            fillProperties.push(PropertyFactory.fillOutlineColor(propertiesObject['fill-outline-color']));
         }
 
         if (propertiesObject['fill-pattern']) {
             // TODO: can be string or string[]
-            fillProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillPattern(propertiesObject['fill-pattern']));
+            fillProperties.push(PropertyFactory.fillPattern(propertiesObject['fill-pattern']));
         }
 
         if (propertiesObject['fill-translate']) {
@@ -302,11 +309,11 @@ export class LayerFactory  {
             for (let i = 0; i < propertiesObject['fill-translate'].length; i++) {
                 fillTranslateArray[i] = new java.lang.Float(propertiesObject['fill-translate'][i]);
             }
-            fillProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillTranslate(fillTranslateArray));
+            fillProperties.push(PropertyFactory.fillTranslate(fillTranslateArray));
         }
 
         if (propertiesObject['fill-translate-anchor']) {
-            fillProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.fillTranslateAnchor(propertiesObject['fill-translate-anchor']));
+            fillProperties.push(PropertyFactory.fillTranslateAnchor(propertiesObject['fill-translate-anchor']));
         }
 
         return fillProperties;
@@ -378,56 +385,28 @@ export class LayerFactory  {
             visibility
         */
 
+        const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+
         if (propertiesObject['icon-image']) {
-            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage(propertiesObject['icon-image']));
-        } 
+            symbolProperties.push(PropertyFactory.iconImage(propertiesObject['icon-image']));
+        }
 
         if (propertiesObject['icon-rotate']) {
-            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconRotate(new java.lang.Float(propertiesObject['icon-rotate'])));
+            symbolProperties.push(PropertyFactory.iconRotate(new java.lang.Float(propertiesObject['icon-rotate'])));
         }
 
         if (propertiesObject['icon-size']) {
-            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize(new java.lang.Float(propertiesObject['icon-size'])));
+            symbolProperties.push(PropertyFactory.iconSize(new java.lang.Float(propertiesObject['icon-size'])));
         }
 
         if (propertiesObject['text-color']) {
-            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor(propertiesObject['text-color']));
+            symbolProperties.push(PropertyFactory.textColor(propertiesObject['text-color']));
         }
 
         if (propertiesObject['text-field']) {
-            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField(propertiesObject['text-field']));
+            symbolProperties.push(PropertyFactory.textField(propertiesObject['text-field']));
         }
 
         return symbolProperties;
-    }
-
-    private static parseLayoutProperties(layoutObject) {
-        const layoutProperties = [];
-
-        if (!layoutObject) {
-            return layoutProperties;
-        }
-
-        if (layoutObject['line-cap']) {
-            let property;
-
-            switch (layoutObject['line-cap']) {
-                case 'round':
-                    property = com.mapbox.mapboxsdk.style.layers.Property.LINE_CAP_ROUND;
-                    break;
-                case 'square':
-                    property = com.mapbox.mapboxsdk.style.layers.Property.LINE_CAP_SQUARE;
-                    break;
-                case 'butt':
-                    property = com.mapbox.mapboxsdk.style.layers.Property.LINE_CAP_BUTT;
-                    break;
-                default:
-                    throw new Error('Unknown line-cap value');
-            }
-
-            layoutProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap(property));
-        }
-
-        return layoutProperties;
     }
 }
