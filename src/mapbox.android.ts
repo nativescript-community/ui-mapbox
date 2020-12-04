@@ -21,7 +21,6 @@ import {
     CLogTypes,
     DeleteOfflineRegionOptions,
     DownloadOfflineRegionOptions,
-    Feature,
     LatLng,
     LayerCommon,
     ListOfflineRegionsOptions,
@@ -603,7 +602,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // registered callbacks.
 
-    private eventCallbacks: any[] = [];
+    private eventCallbacks: { [key: string]: any[] } = {};
 
     _markerIconDownloadCache = [];
 
@@ -1150,7 +1149,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             CLog(CLogTypes.info, 'Mapbox:initEventHandlerShim(): top');
         }
 
-        this.setOnMapClickListener((point: LatLng) => this.checkForCircleClickEvent(point), mapboxNativeViewInstance);
+        this.setOnMapClickListener((point: LatLng) => this.checkForClickEvent(point), mapboxNativeViewInstance);
 
         this.setOnMoveBeginListener((point: LatLng) => {
             if (Trace.isEnabled()) {
@@ -1187,37 +1186,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             this.eventCallbacks[eventName] = [];
         }
 
-        // is this event being added to a line?
-
-        const lineEntry = this.lines.find((entry) => entry.id === id);
-
-        if (lineEntry) {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'Mapbox:on(): we have a line entry:', lineEntry);
-            }
-
-            // we have a line layer. As mentioned, Mapbox line layers do not support
-            // click handlers but Annotation plugin lines do (but they sadly do not
-            // support the nice styling that Layer lines do ... )
-
-            this.addClickableLineOverlay(lineEntry.id, nativeMapView).then((clickOverlay) => {
-                lineEntry.clickOverlay = clickOverlay;
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, "Mapbox:on(): pushing id '" + id + "' with clickOverlay:", clickOverlay);
-                }
-
-                this.eventCallbacks[eventName].push({
-                    id,
-                    callback,
-                });
-            });
-        } else {
-            this.eventCallbacks[eventName].push({
-                id,
-                callback,
-            });
-        }
+        this.eventCallbacks[eventName].push({
+            id,
+            callback,
+        });
     }
 
     // ---------------------------------------------------------------
@@ -1235,6 +1207,27 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         this.eventCallbacks[eventName] = this.eventCallbacks[eventName].filter((entry) => entry.id !== id);
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * If click events registered and a feature found for the event, then fire listener.
+     */
+    private checkForClickEvent(point: LatLng, nativeMap?) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'Mapbox:checkForClickEvent(): got click event with point:', JSON.stringify(point));
+        }
+
+        this.eventCallbacks['click'].forEach((eventListener) => {
+            this.queryRenderedFeatures({ layerIds: [eventListener.id], point }, nativeMap).then((response) => {
+                if (response.length > 0) {
+                    eventListener.callback(response);
+                }
+            });
+        });
+
+        return false;
     }
 
     // ------------------------------------------------------------------------
@@ -1278,156 +1271,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
         return false;
     }
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * checks for a click event on a circle.
-     *
-     * For the moment we have to handle map click events long hand ourselves for circles.
-     *
-     * When we catch an event we'll check the eventHandlers map to see if the
-     * given layer is listed. If it is we invoke it's callback.
-     *
-     * If there are multiple overlapping circles only the first one in the list will be called.
-     *
-     * We also check the location of the click to see if it's inside any
-     * circles and raise the event accordingly.
-     *
-     * @todo detect the top circle in the overlapping circles case.
-     */
-
-    private checkForCircleClickEvent(point: LatLng) {
-        if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'Mapbox:checkForCircleClickEvent(): got click event with point:', point);
-        }
-
-        // is this point within a circle?
-
-        for (let i = 0; i < this.circles.length; i++) {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'Mapbox:checkForCircleClickEvent(): checking circle with radius:', this.circles[i].radius);
-            }
-
-            if (GeoUtils.isLocationInCircle(point.lng, point.lat, this.circles[i].center[0], this.circles[i].center[1], this.circles[i].radius)) {
-                if (Trace.isEnabled()) {
-                    CLog(
-                        CLogTypes.info,
-                        "Mapbox:checkForCircleClickEvent() Point is in circle with id '" + this.circles[i].id + "' invoking callbacks, if any. Callback list is:",
-                        this.eventCallbacks
-                    );
-                }
-
-                for (let x = 0; x < this.eventCallbacks['click'].length; x++) {
-                    const entry = this.eventCallbacks['click'][x];
-
-                    if (entry.id === this.circles[i].id) {
-                        if (Trace.isEnabled()) {
-                            CLog(CLogTypes.info, "Mapbox:checkForCircleClickEvent(): calling callback for '" + entry.id + "'");
-                        }
-
-                        return entry.callback(point);
-                    }
-                } // end of for loop over events.
-            }
-        } // end of loop over circles.
-
-        return false;
-    } // end of checkForCircleClickEvent()
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * add Clickable Line Overlay
-     *
-     * As of this writing, Mapbox Layer lines do not support click handlers however
-     * they do offer a nice array of styling options.
-     *
-     * Annotation plugin lines do support click handlers but have limited styling
-     * options.
-     *
-     * To wedge click handler support onto Mapbox layer lines we overlay the line
-     * with an invisible Annotation line and catch click events from that.
-     *
-     * @param {string} lineId id of lineLayer we are to draw the clickable annotation over..
-     * @param {object} nativeMapView
-     *
-     * @return {Promise<void>} clickLine layer
-     *
-     * @link https://stackoverflow.com/questions/54795079/how-to-get-a-geometry-from-a-mapbox-gl-native-geojsonsource
-     *
-     * @todo we assume a geojson source for lines.
-     * @todo ideally I'd like to pull the geometry out of the line instead of keeping a separate copy of the coordinates around.
-     */
-
-    private addClickableLineOverlay(lineId, nativeMapView?) {
-        return new Promise((resolve, reject) => {
-            try {
-                // we need to get the line layer from the lines array.
-
-                const lineEntry = this.lines.find((entry) => entry.id === lineId);
-
-                if (!lineEntry) {
-                    reject("No such line with id '" + lineId + "'");
-                    return;
-                }
-
-                // we want to draw an invisible line of the same width.
-
-                const width = lineEntry.layer.getLineWidth().getValue();
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, "Mapbox:addClickableLineOverlay(): we have a source line of width '" + width + "'");
-                }
-
-                // FIXME: for the moment we are carrying around the feature used to create the original line layer.
-                //
-                // Line Layer features do not have any properties as the properties are separately set in the layer.
-
-                const feature = lineEntry.feature;
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addClickableLineOverlay(): after removing properties');
-                }
-
-                feature.addNumberProperty('line-opacity', new java.lang.Float(0));
-                feature.addNumberProperty('line-width', width);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addClickableLineOverlay(): after updating feature');
-                }
-
-                // the create() method of the line manager requires a feature collection.
-
-                const featureCollection = com.mapbox.geojson.FeatureCollection.fromFeature(feature);
-
-                // this.gcFix('com.mapbox.geojson.FeatureCollection', featureCollection);
-
-                const clickOverlay = this.lineManager.create(featureCollection).get(0);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addClickableLineOverlay(): after creating overlay:', clickOverlay);
-                }
-
-                // console.log( "Mapbox:addClickableLineOverlay(): got width '" + width + "' and sourceId '" + sourceId + "'" );
-                //
-                // let source = nativeMapView.mapboxMap.getStyle().getSource( sourceId );
-                //
-                // console.log( "Mapbox:addClickableLineOverlay(): got source:", source );
-                //
-                // let features = source.querySourceFeatures( null );
-                //
-                // console.log( "Mapbox:addClickableLineOverlay(): features are:", features.get(0).getGeometry() );
-
-                resolve(clickOverlay);
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'MapboxaddClickableLineOverlay error: ' + ex);
-                }
-                reject(ex);
-            }
-        });
-    } // end of addClickableLineOverylay()
 
     // ------------------------------------------------------------------------
 
@@ -1965,7 +1808,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @link https://www.mapbox.com/android-docs/api/mapbox-java/libjava-geojson/3.4.1/com/mapbox/geojson/Feature.html
      */
 
-    queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?): Promise<Feature[]> {
+    queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?): Promise<any[]> {
         return new Promise((resolve, reject) => {
             try {
                 const point = options.point;
@@ -1978,15 +1821,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
 
                 if (this._mapboxMapInstance.queryRenderedFeatures) {
-                    const features /* List<Feature> */ = this._mapboxMapInstance.queryRenderedFeatures(screenLocation, null, options.layerIds);
-                    const result: Feature[] = [];
+                    const features = this._mapboxMapInstance.queryRenderedFeatures(screenLocation, null, options.layerIds);                    const result = [];
                     for (let i = 0; i < features.size(); i++) {
-                        const feature = features.get(i);
-                        result.push({
-                            id: feature.id(),
-                            type: feature.type(),
-                            properties: JSON.parse(feature.properties().toString()),
-                        });
+                        const feature: com.mapbox.geojson.Feature = features.get(i);
+                        result.push(feature as any);
                     }
                     resolve(result);
                 } else {
