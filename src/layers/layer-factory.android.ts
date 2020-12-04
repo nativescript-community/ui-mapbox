@@ -18,6 +18,9 @@ export class LayerFactory  {
             case 'fill':
                 nativeLayer = new com.mapbox.mapboxsdk.style.layers.FillLayer(style.id, sourceId).withProperties(layerProperties);
                 break;
+            case 'symbol':
+                nativeLayer = new com.mapbox.mapboxsdk.style.layers.SymbolLayer(style.id, sourceId).withProperties(layerProperties);
+                break;
             default:
                 throw new Error(`Unknown layer type: ${style.type}`);
         }
@@ -35,6 +38,8 @@ export class LayerFactory  {
                 return this.parsePropertiesForCircleLayer(propertiesObject);
             case 'fill':
                 return this.parsePropertiesForFillLayer(propertiesObject);
+            case 'symbol':
+                return this.parsePropertiesForSymbolLayer(propertiesObject);
             default:
                 throw new Error(`Unknown layer type: ${layerType}`);
         }
@@ -305,6 +310,95 @@ export class LayerFactory  {
         }
 
         return fillProperties;
+    }
+
+    private static parsePropertiesForSymbolLayer(propertiesObject) {
+        const symbolProperties = [];
+
+        if (!propertiesObject) {
+            return symbolProperties;
+        }
+
+        /*
+            icon-allow-overlap
+            icon-anchor
+            icon-color
+            icon-halo-blur
+            icon-halo-color
+            icon-halo-width
+            icon-ignore-placement
+            icon-image ✓
+            icon-keep-upright
+            icon-offset
+            icon-opacity
+            icon-optional
+            icon-padding
+            icon-pitch-alignment
+            icon-rotate ✓
+            icon-rotation-alignment
+            icon-size ✓
+            icon-text-fit
+            icon-text-fit-padding
+            icon-translate
+            icon-translate-anchor
+            symbol-avoid-edges
+            symbol-placement
+            symbol-sort-key
+            symbol-spacing
+            symbol-z-order
+            text-allow-overlap
+            text-anchor
+            text-color ✓
+            text-field ✓
+            text-font
+            text-halo-blur
+            text-halo-color
+            text-halo-width
+            text-ignore-placement
+            text-justify
+            text-keep-upright
+            text-letter-spacing
+            text-line-height
+            text-max-angle
+            text-max-width
+            text-offset
+            text-opacity
+            text-optional
+            text-padding
+            text-pitch-alignment
+            text-radial-offset
+            text-rotate
+            text-rotation-alignment
+            text-size
+            text-transform
+            text-translate
+            text-translate-anchor
+            text-variable-anchor
+            text-writing-mode
+            visibility
+        */
+
+        if (propertiesObject['icon-image']) {
+            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage(propertiesObject['icon-image']));
+        } 
+
+        if (propertiesObject['icon-rotate']) {
+            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconRotate(new java.lang.Float(propertiesObject['icon-rotate'])));
+        }
+
+        if (propertiesObject['icon-size']) {
+            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconSize(new java.lang.Float(propertiesObject['icon-size'])));
+        }
+
+        if (propertiesObject['text-color']) {
+            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor(propertiesObject['text-color']));
+        }
+
+        if (propertiesObject['text-field']) {
+            symbolProperties.push(com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField(propertiesObject['text-field']));
+        }
+
+        return symbolProperties;
     }
 
     private static parseLayoutProperties(layoutObject) {

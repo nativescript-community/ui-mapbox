@@ -5,7 +5,7 @@
  */
 
 import { request } from '@nativescript-community/perms';
-import { AndroidApplication, Application, Color, File, Trace, Utils, knownFolders, path } from '@nativescript/core';
+import { AndroidApplication, Application, Color, File, Trace, Utils, knownFolders, path, ImageSource } from '@nativescript/core';
 import { getImage } from '@nativescript/core/http';
 import { FilterParser } from './filter/filter-parser.android';
 import { GeoUtils } from './geo.utils';
@@ -1594,6 +1594,36 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     }
 
     // ------------------------------------------------------------------------------
+
+    async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const theMap = nativeMap || this._mapboxMapInstance;
+            
+            if (!theMap) {
+                reject('No map has been loaded');
+                return;
+            }
+
+            if (!image.startsWith("res://")) {
+                image = path.join(knownFolders.currentApp().path, image.replace('~/', ''));
+            }
+            
+            const img = ImageSource.fromFileOrResourceSync(image);
+
+            try {
+                theMap.getStyle().addImage(imageId, img.android);
+                resolve();
+            } catch (ex) {
+                reject("Error during addImage: " + ex);
+
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.addImage: ' + ex);
+                }
+                throw ex;
+            }
+            
+        });
+    }
 
     async addMarkers(markers: MapboxMarker[], nativeMap?: any) {
         try {

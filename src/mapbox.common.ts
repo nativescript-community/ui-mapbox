@@ -1,4 +1,4 @@
-import { Color, ContentView, Property, Trace, booleanConverter } from '@nativescript/core';
+import { Color, ContentView, Property, Trace, booleanConverter, ImageSource } from '@nativescript/core';
 
 export const MapboxTraceCategory = 'NativescriptMapbox';
 export enum CLogTypes {
@@ -631,9 +631,7 @@ export interface MapboxApi {
 
     getLayers(nativeMap?: any): Promise<LayerCommon[]>;
 
-    // addSource(options: AddSourceOptions): Promise<any>;
-
-    // addExtrusion(options: AddExtrusionOptions): Promise<any>;
+    addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
 }
 
 // ------------------------------------------------------------

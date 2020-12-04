@@ -1103,6 +1103,37 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // --------------------------------------------
 
+    async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+            
+            if (!theMap) {
+                reject('No map has been loaded');
+                return;
+            }
+
+            if (!image.startsWith("res://")) {
+                const appPath = knownFolders.currentApp().path;
+                image = appPath + '/' + image.replace('~/', '');
+            }
+            
+            const img = ImageSource.fromFileOrResourceSync(image);
+
+            try {
+                theMap.style.setImageForName(img.ios, imageId);
+                resolve();
+            } catch (ex) {
+                reject("Error during addImage: " + ex);
+
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.addImage: ' + ex);
+                }
+                throw ex;
+            }
+            
+        });
+    }
+
     addMarkers(markers: MapboxMarker[], nativeMap?: any): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
