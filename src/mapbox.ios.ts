@@ -39,6 +39,7 @@ import {
 import { GeoUtils } from './geo.utils';
 import { iOSNativeHelper } from '@nativescript/core/utils';
 import { getImage } from '@nativescript/core/http';
+import { LayerFactory } from './layers/layer-factory';
 import { FilterParser } from './filter/filter-parser.ios';
 
 // Export the enums for devs not using TS
@@ -1101,6 +1102,37 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     }
 
     // --------------------------------------------
+
+    async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+            
+            if (!theMap) {
+                reject('No map has been loaded');
+                return;
+            }
+
+            if (!image.startsWith("res://")) {
+                const appPath = knownFolders.currentApp().path;
+                image = appPath + '/' + image.replace('~/', '');
+            }
+            
+            const img = ImageSource.fromFileOrResourceSync(image);
+
+            try {
+                theMap.style.setImageForName(img.ios, imageId);
+                resolve();
+            } catch (ex) {
+                reject("Error during addImage: " + ex);
+
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.addImage: ' + ex);
+                }
+                throw ex;
+            }
+            
+        });
+    }
 
     addMarkers(markers: MapboxMarker[], nativeMap?: any): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -2217,25 +2249,21 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @link https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers
      */
-    public addLayer(style, nativeMapView?): Promise<void> {
-        let retval;
+    public async addLayer(style, nativeMapView?): Promise<void> {
+        const theMap: MGLMapView = nativeMapView || this._mapboxViewInstance;
 
-        switch (style.type) {
-            case 'line':
-                retval = this.addLineLayer(style, nativeMapView);
-                break;
-
-            case 'circle':
-                retval = this.addCircleLayer(style, nativeMapView);
-                break;
-
-            default:
-                retval = Promise.reject("Mapbox:addLayer() Unsupported geometry type '" + style.type + "'");
-
-                break;
+        let source = null;
+        if (typeof style.source != 'string') {
+            this.addSource(style.id + '_source', style.source);
+            source = theMap.style.sourceWithIdentifier(style.id + '_source');
+        } else {
+            source = style.source;
         }
 
-        return retval;
+        const layer = await LayerFactory.createLayer(style, source);
+        theMap.style.addLayer(layer.getNativeInstance());
+
+        return Promise.resolve();
     }
 
     /**
@@ -2267,183 +2295,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'Mapbox:removeLayer(): after removing layer ' + id);
         }
-    } // end of removeLayer()
-
-    // -------------------------------------------------------------------------------------
-
-    /**
-     * add a line layer
-     *
-     * Draws a line layer based on a mapbox-gl-js Mapbox Style.
-     *
-     * What sucks about this is that there is apparently no facility to add an event listener to a layer.
-     *
-     * The idea for this method is to make sharing code between mapbox-gl-js Typescript web applications
-     * and {N} native applications easier.
-     *
-     * For the moment this method only supports a source type of 'geojson'.
-     *
-     * Example style for a line:
-     *
-     * {
-     * 'id': someid,
-     * 'type': 'line',
-     * 'source': {
-     *   'type': 'geojson',
-     *   'data': {
-     *     "type": "Feature",
-     *       "geometry": {
-     *       "type": "LineString",
-     *         "coordinates": [ [ lng, lat ], [ lng, lat ], ..... ]
-     *       }
-     *     }
-     *   }
-     * },
-     * 'layout': {
-     *   'line-cap': 'round',
-     *   'line-join': 'round'
-     * },
-     * 'paint': {
-     *   'line-color': '#ed6498',
-     *   'line-width': 5,
-     *   'line-opacity': .8,
-     *   'line-dash-array': [ 1, 1, 1, ..]
-     * }
-     *
-     * Do not call this method directly. Use addLayer().
-     *
-     * 'source' may also refer to a vector source
-     *
-     * 'source': {
-     *    'type': 'vector',
-     *    'url': '<url of vector source>'
-     *  }
-     *
-     * or it may be a string referring to the id of an already added source as in
-     *
-     * 'source': '<id of source>'
-     *
-     * To enable catching of click events on a line, when a click handler is added
-     * to a line (using the onMapEvent() method above), the Annotations plugin is used to
-     * draw an invisible clickable line over the line layer. Sadly, the Annotations
-     * plugin does not support all the nice styling options of the line Layer so we're
-     * pushed into this compromise of drawing two lines, one for it's styling and the
-     * other for it's click handling.
-     *
-     * @param {object} style - a style following the Mapbox style specification.
-     * @param {any} nativeMapView - native map view (com.mapbox.mapboxsdk.maps.MapView)
-     *
-     * @return {Promise<void>}
-     *
-     * @see addLineAnnotation()
-     * @see onMapEvent()
-     *
-     * @link https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers
-     * @link https://docs.mapbox.com/android/api/map-sdk/7.1.2/com/mapbox/mapboxsdk/maps/Style.html#addSource-com.mapbox.mapboxsdk.style.sources.Source-
-     * @link https://docs.nativescript.org/core-concepts/android-runtime/marshalling/java-to-js#array-of-primitive-types
-     */
-
-    private addLineLayer(style, nativeMapViewInstance?): Promise<void> {
-        return new Promise((resolve, reject) => {
-            try {
-                const theMap: MGLMapView = nativeMapViewInstance || this._mapboxViewInstance;
-
-                if (style.type !== 'line') {
-                    reject('Non line style passed to addLineLayer()');
-                }
-
-                // the source may be of type geojson or it may be the id of a source added by addSource().
-
-                let sourceId = null;
-
-                if (typeof style.source != 'string') {
-                    sourceId = style.id + '_source';
-                    this.addSource(sourceId, style.source);
-                } else {
-                    sourceId = style.source;
-                }
-
-                const layer = MGLLineStyleLayer.alloc().initWithIdentifierSource(style.id, theMap.style.sourceWithIdentifier(sourceId));
-
-                // color
-
-                let color = 'black';
-
-                if (style.paint && style.paint['line-color']) {
-                    color = style.paint['line-color'];
-                }
-
-                layer.lineColor = NSExpression.expressionForConstantValue(new Color(color).ios);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): after line color');
-                }
-
-                // line width
-
-                let width = 5;
-
-                if (style.paint && style.paint['line-width']) {
-                    width = style.paint['line-width'];
-                }
-
-                layer.lineWidth = NSExpression.expressionForConstantValue(width);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): after line width');
-                }
-
-                let opacity = 1;
-
-                if (style.paint && style.paint['line-opacity']) {
-                    opacity = style.paint['line-opacity'];
-                }
-
-                layer.lineOpacity = NSExpression.expressionForConstantValue(opacity);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): after opacity');
-                }
-
-                // line dash array
-
-                if (style.paint && style.paint['line-dash-array']) {
-                    const dashArray = [];
-
-                    for (let i = 0; i < style.paint['line-dash-array'].length; i++) {
-                        dashArray[i] = NSExpression.expressionForConstantValue(style.paint['line-dash-array'][i]);
-                    }
-
-                    layer.lineDashPattern = NSExpression.expressionForConstantValue(dashArray);
-                }
-
-                theMap.style.addLayer(layer);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): after adding layer.');
-                }
-
-                const lineEntry = this.lines.find((entry) => entry.id === sourceId);
-
-                if (lineEntry) {
-                    lineEntry.layer = layer;
-                }
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): pushed line:', this.lines[this.lines.length - 1]);
-                }
-
-                resolve();
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer() Error : ' + ex);
-                }
-                reject(ex);
-            }
-        }); // end of Promise()
-    } // end of addLineLayer
-
-    // -------------------------------------------------------------------------------------
+    } 
 
     /**
      * Add a point to a line
@@ -2520,208 +2372,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 reject(ex);
             }
         });
-    } // end of addLinePoint()
-
-    // -------------------------------------------------------------------------------------
-
-    /**
-     * add a circle Layer
-     *
-     * Draw a circle based on a Mapbox style.
-     *
-     * Mapbox Native Android layers do not support click handlers. Unfortunately, we cannot use
-     * the same Annotations approach that we do for lines to get a click handler because
-     * circles drawn by the Annotations plugin do not support stops so there's no making them
-     * smaller as we zoom out. Instead, we have our own click handler (see handleClickEvent() above)
-     * to determine when a click has occured inside a circle.
-     *
-     * In order to support the click handler an additional circle-radius property, in meters, must
-     * be included.
-     *
-     * {
-     *  "id": someid,
-     *  "type": 'circle',
-     *  "radius-meters": 500,   // FIXME: radius in meters used for in-circle click detection.
-     *  "source": {
-     *    "type": 'geojson',
-     *    "data": {
-     *      "type": "Feature",
-     *      "geometry": {
-     *        "type": "Point",
-     *        "coordinates": [ lng, lat ]
-     *      }
-     *    }
-     *  },
-     *  "paint": {
-     *    "circle-radius": {
-     *      "stops": [
-     *        [0, 0],
-     *        [20, 8000 ]
-     *      ],
-     *      "base": 2
-     *    },
-     *    'circle-opacity': 0.05,
-     *    'circle-color': '#ed6498',
-     *    'circle-stroke-width': 2,
-     *    'circle-stroke-color': '#ed6498'
-     *  }
-     *
-     * @param {object} style a Mapbox style describing the circle draw.
-     * @param {object} nativeMap view.
-     *
-     * @link https://github.com/NativeScript/NativeScript/issues/6971
-     * @link https://stackoverflow.com/questions/54890753/how-to-call-objective-c-nsexpression-format-from-nativescript/54913932#54913932
-     */
-
-    private addCircleLayer(style, nativeMapViewInstance?): Promise<void> {
-        return new Promise((resolve, reject) => {
-            try {
-                const theMap: MGLMapView = nativeMapViewInstance || this._mapboxViewInstance;
-
-                if (style.type !== 'circle') {
-                    reject('Non circle style passed to addCircleLayer()');
-                }
-
-                // the source may be of type geojson, vector,  or it may be the id of a source added by addSource().
-
-                let sourceId = null;
-
-                if (typeof style.source != 'string') {
-                    sourceId = style.id + '_source';
-
-                    this.addSource(sourceId, style.source);
-                } else {
-                    sourceId = style.source;
-                }
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after adding source');
-                }
-
-                const layer = MGLCircleStyleLayer.alloc().initWithIdentifierSource(style.id, theMap.style.sourceWithIdentifier(sourceId));
-
-                // color
-
-                let color = 'black';
-
-                if (style.paint && style.paint['circle-color']) {
-                    color = style.paint['circle-color'];
-                }
-
-                layer.circleColor = NSExpression.expressionForConstantValue(new Color(color).ios);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after circle color');
-                }
-
-                // stroke color
-
-                let strokeColor = 'black';
-
-                if (style.paint && style.paint['circle-stroke-color']) {
-                    strokeColor = style.paint['circle-stroke-color'];
-                }
-
-                layer.circleStrokeColor = NSExpression.expressionForConstantValue(new Color(strokeColor).ios);
-
-                // stroke width
-
-                let width = 5;
-
-                if (style.paint && style.paint['circle-stroke-width']) {
-                    width = style.paint['circle-stroke-width'];
-                }
-
-                layer.circleStrokeWidth = NSExpression.expressionForConstantValue(width);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after stroke width');
-                }
-
-                let opacity = 1;
-
-                if (style.paint && style.paint['circle-opacity']) {
-                    opacity = style.paint['circe-opacity'];
-                }
-
-                layer.circleOpacity = NSExpression.expressionForConstantValue(opacity);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after opacity');
-                }
-
-                // we have two options for a radius. We might have a fixed float or an expression
-
-                const radius = 15;
-
-                if (style.paint && typeof style.paint['circle-radius'] == 'number') {
-                    layer.circleRadius = NSExpression.expressionForConstantValue(style.paint['circle-radius']);
-                } else {
-                    if (!style.paint['circle-radius'].stops) {
-                        reject('No radius or stops provided to addCircleLayer.');
-                        return;
-                    }
-
-                    // for the moment we assume we have a set of stops and a base.
-
-                    const stopKeys = [];
-                    const stopValues = [];
-
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, "Mapbox:addCircleLayer(): adding '" + style.paint['circle-radius'].stops.length + "' stops");
-                    }
-
-                    // this took forever to figure out. There is some NativeScript bug and the type definition for
-                    // NSExpression is not clear. We have to create an NSDictionary with two arrays. The first array is the
-                    // values and the second one is the keys. They have to be in ascending order. Once an NSDictionary is created
-                    // we have to create an NSArray with that.
-
-                    for (let i = 0; i < style.paint['circle-radius'].stops.length; i++) {
-                        stopKeys[i] = style.paint['circle-radius'].stops[i][0];
-                        stopValues[i] = style.paint['circle-radius'].stops[i][1];
-                    }
-
-                    let base = 2;
-
-                    if (style.paint['circle-radius'].stops.base) {
-                        base = style.paint['circle-radius'].stops.base;
-                    }
-
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): pushing circleRadius with base:', base);
-                    }
-
-                    const nsDict = new (NSDictionary as any)(stopValues, stopKeys);
-
-                    const nsArray = NSArray.arrayWithArray([nsDict]);
-
-                    layer.circleRadius = NSExpression.expressionWithFormatArgumentArray("mgl_interpolate:withCurveType:parameters:stops:( $zoomLevel, 'exponential', 2, %@)", nsArray);
-
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after setting circle radius expression');
-                    }
-                }
-
-                theMap.style.addLayer(layer);
-
-                const circleEntry = this.circles.find((entry) => entry.id === sourceId);
-
-                if (circleEntry) {
-                    circleEntry.radius = style['circle-radius'];
-                    circleEntry.layer = layer;
-                }
-
-                resolve();
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer() Error : ' + ex);
-                }
-                reject(ex);
-            }
-        }); // end of Promise()
-    } // end of addCircleLayer()
-
-    // ---------------------------------------------------------------------
+    }
 
     addGeoJsonClustered(options: AddGeoJsonClusteredOptions, nativeMapViewInstance?): Promise<void> {
         throw new Error('Method not implemented.');
@@ -3563,6 +3214,10 @@ export class Layer implements LayerCommon {
         this.instance.visible = false;
     }
 
+    getNativeInstance() {
+        return this.instance;
+    }
+    
     setFilter(filter: any[]) {
         if (this.instance instanceof MGLVectorStyleLayer) {
             // MGLVectorStyleLayer is the base type of many layer types. Predicates only supported on vector style layers.
