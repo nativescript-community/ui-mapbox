@@ -4,6 +4,7 @@ import { ContentView } from '@nativescript/core/ui/content-view';
 import { AlertOptions, alert } from '@nativescript/core/ui/dialogs';
 import { DownloadProgress, LatLng, MapStyle, Mapbox, MapboxMarker, MapboxView, OfflineRegion, Viewport } from '@nativescript-community/ui-mapbox';
 import { SETTINGS } from '../../mapbox_config';
+import { AmsterdamHoneyBees } from './sample-data';
 
 const isIOS = platform.Device.os === platform.platformNames.ios;
 
@@ -380,8 +381,6 @@ export class HelloWorldModel extends Observable {
         );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doAddAndClusterGeoJSON(): void {
         this.mapbox
             .addGeoJsonClustered({
@@ -418,28 +417,15 @@ export class HelloWorldModel extends Observable {
             );
     }
 
-    public doAddLayerAndSource(): void {
+    public async doAddLayerAndSource(): Promise<void> {
         try {
-            
-        this.mapbox
-            .addSource('custom-collection-1', {
-                type: 'geojson',
-                url: null,
-                data: {
-                    type: 'FeatureCollection',
-                    features: [
-                        {
-                            type: 'Feature',
-                            properties: {},
-                            geometry: {
-                                type: 'LineString',
-                                coordinates: [
-                                    [4.744720458984375, 52.47357958606801],
-                                    [5.108642578125, 52.24882376803033],
-                                ],
-                            },
-                        },
-                        {
+            this.mapbox
+                .addLayer({
+                    id: 'circle-with-source-object',
+                    type: 'circle',
+                    source: {
+                        type: 'geojson',
+                        data: {
                             type: 'Feature',
                             properties: {},
                             geometry: {
@@ -447,120 +433,156 @@ export class HelloWorldModel extends Observable {
                                 coordinates: [4.823684692382513, 52.3701494345567],
                             },
                         },
-                        {
-                            type: 'Feature',
-                            properties: {},
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [4.8703765869140625, 52.3479242945069],
-                            },
-                        },
-                        {
+                    },
+                    paint: {
+                        'circle-blur': 0.2,
+                        'circle-radius': 10,
+                        'circle-opacity': 0.65,
+                        'circle-color': '#ed6498',
+                        'circle-stroke-width': 4,
+                        'circle-stroke-color': '#3b0619',
+                        'circle-stroke-opacity': 0.75,
+                    },
+                })
+                .then(() => console.log('circle-with-source-object added'));
+
+            this.mapbox
+                .addLayer({
+                    id: 'line-with-source-object',
+                    type: 'line',
+                    source: {
+                        type: 'geojson',
+                        data: {
                             type: 'Feature',
                             properties: {},
                             geometry: {
                                 type: 'LineString',
                                 coordinates: [
-                                    [4.7989654541015625, 52.40577019043],
-                                    [4.7866058349609375, 52.36008660493161],
-                                    [4.854583740234375, 52.32736657808751],
-                                    [4.9376678466796875, 52.338695481504814],
+                                    [4.80926513671875, 52.27403984182285],
+                                    [4.9383544921875, 52.30931825948968],
                                 ],
                             },
                         },
-                    ],
-                },
-            })
-            .then(() => {
-                console.log('source with id custom-collection-1 successfully added');
-
-                this.mapbox
-                    .addLayer({
-                        id: 'line-layer-1',
-                        type: 'line',
-                        source: 'custom-collection-1',
-                        layout: {
-                            'line-cap': 'butt',
-                            'line-join': 'bevel',
-                        },
-                        paint: {
-                            'line-color': '#053481',
-                            'line-width': 5,
-                            'line-opacity': 0.8,
-                            'line-dash-array': [1, 1, 1, 1],
-                        },
-                    })
-                    .then(() => console.log('line-layer-1 added to source custom-collection-1'));
-
-                this.mapbox
-                    .addLayer({
-                        id: 'circle-layer-1',
-                        type: 'circle',
-                        source: 'custom-collection-1',
-                        paint: {
-                            'circle-radius': 2,
-                            'circle-opacity': 0.05,
-                            'circle-color': '#ed6498',
-                            'circle-stroke-width': 2,
-                            'circle-stroke-color': '#ed6498',
-                        },
-                    })
-                    .then(() => console.log('circle-layer-1 added to source custom-collection-1'));
-            });
-
-        this.mapbox.addLayer({
-            id: 'layer-with-source-object',
-            type: 'line',
-            source: {
-                type: 'geojson',
-                data: {
-                    type: 'Feature',
-                    properties: {},
-                    geometry: {
-                        type: 'LineString',
-                        coordinates: [
-                            [4.80926513671875, 52.27403984182285],
-                            [4.9383544921875, 52.30931825948968],
-                        ],
                     },
-                }
-            },
-            layout: {
-                'line-cap': 'square',
-                'line-join': 'round',
-                'line-blur': 15
-            },
-            paint: {
-                'line-color': '#5dbcd2',
-                'line-width': 8,
-                'line-opacity': 0.5
-            }
-        }).then(() => console.log('layer-with-source-object added'));
+                    layout: {
+                        'line-cap': 'round',
+                        'line-join': 'round',
+                        'line-blur': 0.2,
+                    },
+                    paint: {
+                        'line-color': '#ab111b',
+                        'line-width': 5,
+                        'line-opacity': 0.7,
+                        'line-dash-array': [1, 1, 1, 1],
+                    },
+                })
+                .then(() => console.log('line-with-source-object added'));
 
+            this.mapbox
+                .addLayer({
+                    id: 'fill-with-source-object',
+                    type: 'fill',
+                    source: {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'Polygon',
+                                coordinates: [
+                                    [
+                                        [4.864797592163086, 52.346980527061895],
+                                        [4.923677444458008, 52.346980527061895],
+                                        [4.923677444458008, 52.36742431104005],
+                                        [4.864797592163086, 52.36742431104005],
+                                        [4.864797592163086, 52.346980527061895],
+                                    ],
+                                ],
+                            },
+                        },
+                    },
+                    paint: {
+                        'fill-antialias': 'true',
+                        'fill-color': '#5dbcd2',
+                        'fill-opacity': 0.65,
+                        'fill-outline-color': '#23474f',
+                        'fill-translate': [0, 0],
+                        'fill-translate-anchor': 'map',
+                    },
+                })
+                .then(() => console.log('fill-with-source-object added'));
+
+            await this.mapbox.addImage('bee', 'res://bee');
+            await this.mapbox.addImage('pizza', '~/assets/pizza-slice.png');
+
+            this.mapbox
+                .addLayer({
+                    id: 'symbol-with-source-object',
+                    type: 'symbol',
+                    source: {
+                        type: 'geojson',
+                        data: AmsterdamHoneyBees,
+                    },
+                    layout: {
+                        'text-field': 'Honey',
+                        'icon-size': 0.2,
+                        'icon-image': 'bee',
+                    },
+                    paint: {
+                        'text-color': '#d6c80d',
+                    },
+                })
+                .then(() => console.log('symbol-with-source-object added')); 
+
+            this.mapbox
+                .addLayer({
+                    id: 'symbol-with-source-object2',
+                    type: 'symbol',
+                    source: {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [4.8916793, 52.3690958]
+                            },
+                        },
+                    },
+                    layout: {
+                        'text-field': 'New York Pizza',
+                        'icon-size': 0.99,
+                        'icon-image': 'pizza',
+                        'icon-rotate': 180
+                    },
+                    paint: {
+                        'text-color': '#d6c80d'
+                    }
+                })
+                .then(() => console.log('symbol-with-source-object2 added'));
         } catch (error) {
             console.error('Mapbox doAddLayerAndSource error :', error);
-            
         }
-
-
     }
 
     public doRemoveLayerAndSource(): void {
         Promise.all([
-            this.mapbox.removeLayer('line-layer-1'),
-            this.mapbox.removeLayer('circle-layer-1'),
-            this.mapbox.removeLayer('layer-with-source-object')
+            this.mapbox.removeLayer('circle-with-source-object'),
+            this.mapbox.removeLayer('line-with-source-object'),
+            this.mapbox.removeLayer('fill-with-source-object'),
+            this.mapbox.removeLayer('symbol-with-source-object'),
+            this.mapbox.removeLayer('symbol-with-source-object2'),
         ]).then(() => {
             return Promise.all([
                 this.mapbox.removeSource('custom-collection-1'),
-                this.mapbox.removeSource('layer-with-source-object_source')
+                this.mapbox.removeSource('line-with-source-object_source'),
+                this.mapbox.removeSource('circle-with-source-object_source'),
+                this.mapbox.removeSource('fill-with-source-object_source'),
+                this.mapbox.removeSource('symbol-with-source-object_source'),
+                this.mapbox.removeSource('symbol-with-source-object2_source'),
             ]);
-        })
+        });
     }
-
-    // ===============================================================
-
-    // -------------------------------------------------------------------------------
 
     public doListOfflineRegions(): void {
         this.mapbox
@@ -586,8 +608,6 @@ export class HelloWorldModel extends Observable {
                 }
             );
     }
-
-    // -------------------------------------------------------------------------------
 
     public doDeleteOfflineRegion(): void {
         this.mapbox
