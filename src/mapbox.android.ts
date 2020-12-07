@@ -1220,7 +1220,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         this.eventCallbacks['click'].forEach((eventListener) => {
-            this.queryRenderedFeatures({ layerIds: [eventListener.id], point }, nativeMap).then((response) => {
+            this.queryRenderedFeatures(point, { layers: [eventListener.id] }).then((response) => {
                 if (response.length > 0) {
                     eventListener.callback(response);
                 }
@@ -1837,21 +1837,23 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @link https://www.mapbox.com/android-docs/api/mapbox-java/libjava-geojson/3.4.1/com/mapbox/geojson/Feature.html
      */
-
-    queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?): Promise<any[]> {
+    queryRenderedFeatures(point: LatLng, options?: QueryRenderedFeaturesOptions): Promise<any[]> {
         return new Promise((resolve, reject) => {
             try {
-                const point = options.point;
                 if (point === undefined) {
                     reject("Please set the 'point' parameter");
                     return;
                 }
+                if (!options) {
+                    options = {};
+                }
 
-                const mapboxPoint = new com.mapbox.mapboxsdk.geometry.LatLng(options.point.lat, options.point.lng);
+                const mapboxPoint = new com.mapbox.mapboxsdk.geometry.LatLng(point.lat, point.lng);
                 const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
 
                 if (this._mapboxMapInstance.queryRenderedFeatures) {
-                    const features = this._mapboxMapInstance.queryRenderedFeatures(screenLocation, null, options.layerIds);                    const result = [];
+                    const features = this._mapboxMapInstance.queryRenderedFeatures(screenLocation, null, options.layers);
+                    const result = [];
                     for (let i = 0; i < features.size(); i++) {
                         const feature: com.mapbox.geojson.Feature = features.get(i);
                         result.push(JSON.parse(feature.toJson()));

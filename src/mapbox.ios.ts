@@ -794,7 +794,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         this.eventCallbacks['click'].forEach((eventListener) => {
-            this.queryRenderedFeatures({ layerIds: [eventListener.id], point }, nativeMap).then((response) => {
+            this.queryRenderedFeatures(point, { layers: [eventListener.id] }, nativeMap).then((response) => {
                 if (response.length > 0) {
                     eventListener.callback(response);
                 }
@@ -1467,20 +1467,22 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // --------------------------------------------------------------
 
-    queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?): Promise<any[]> {
+    queryRenderedFeatures(point: LatLng, options?: QueryRenderedFeaturesOptions, nativeMap?): Promise<any[]> {
         return new Promise((resolve, reject) => {
             try {
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
-                const point = options.point;
                 if (point === undefined) {
                     reject("Please set the 'point' parameter");
                     return;
                 }
+                if (!options) {
+                    options = {};
+                }
 
                 const { x, y } = theMap.convertCoordinateToPointToView({ latitude: point.lat, longitude: point.lng }, theMap);
                 let features = null;
-                if (options.layerIds) {
-                    const nativeLayerIds = NSSet.setWithArray<string>(iOSNativeHelper.collections.jsArrayToNSArray(options.layerIds));
+                if (options.layers) {
+                    const nativeLayerIds = NSSet.setWithArray<string>(iOSNativeHelper.collections.jsArrayToNSArray(options.layers));
                     features = theMap.visibleFeaturesAtPointInStyleLayersWithIdentifiers({ x, y }, nativeLayerIds);
                 } else {
                     features = theMap.visibleFeaturesAtPoint({ x, y });

@@ -110,10 +110,8 @@ export function onMapReady(args) {
             console.log('main-page Markers added');
             setTimeout(() => {
                 map.queryRenderedFeatures({
-                    point: {
-                        lat: 52.360216,
-                        lng: 4.889168,
-                    },
+                    lat: 52.360216,
+                    lng: 4.889168,
                 }).then((result) => console.log(JSON.stringify(result)));
             }, 1000);
         })
