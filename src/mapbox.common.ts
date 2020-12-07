@@ -36,6 +36,7 @@ export interface LatLng {
 
 export interface QueryRenderedFeaturesOptions {
     layers?: string[];
+    filter?: any[];
 }
 
 // ------------------------------------------------------------

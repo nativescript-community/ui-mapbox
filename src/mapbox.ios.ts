@@ -1480,13 +1480,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 const { x, y } = theMap.convertCoordinateToPointToView({ latitude: point.lat, longitude: point.lng }, theMap);
-                let features = null;
-                if (options.layers) {
-                    const nativeLayerIds = NSSet.setWithArray<string>(iOSNativeHelper.collections.jsArrayToNSArray(options.layers));
-                    features = theMap.visibleFeaturesAtPointInStyleLayersWithIdentifiers({ x, y }, nativeLayerIds);
-                } else {
-                    features = theMap.visibleFeaturesAtPoint({ x, y });
-                }
+                const queryLayerIds = options.layers ? NSSet.setWithArray<string>(iOSNativeHelper.collections.jsArrayToNSArray(options.layers)) : null;
+                const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                const features = theMap.visibleFeaturesAtPointInStyleLayersWithIdentifiersPredicate({ x, y }, queryLayerIds, queryFilter);
 
                 const result = [];
                 for (let i = 0; i < features.count; i++) {

@@ -108,12 +108,6 @@ export function onMapReady(args) {
     ])
         .then(() => {
             console.log('main-page Markers added');
-            setTimeout(() => {
-                map.queryRenderedFeatures({
-                    lat: 52.360216,
-                    lng: 4.889168,
-                }).then((result) => console.log(JSON.stringify(result)));
-            }, 1000);
         })
         .catch((error) => {
             console.error('main-page: error adding markers:', error);

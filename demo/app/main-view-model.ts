@@ -426,12 +426,31 @@ export class HelloWorldModel extends Observable {
                     source: {
                         type: 'geojson',
                         data: {
-                            type: 'Feature',
-                            properties: {},
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [4.823684692382513, 52.3701494345567],
-                            },
+                            type: 'FeatureCollection',
+                            features: [
+                                {
+                                    id: '1',
+                                    type: 'Feature',
+                                    properties: {
+                                        querySample: '1',
+                                    },
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: [4.823684692382513, 52.3701494345567],
+                                    },
+                                },
+                                {
+                                    id: '2',
+                                    type: 'Feature',
+                                    properties: {
+                                        querySample: '2',
+                                    },
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: [4.823684692382513, 52.3701494345567],
+                                    },
+                                },
+                            ],
                         },
                     },
                     paint: {
@@ -449,6 +468,18 @@ export class HelloWorldModel extends Observable {
                     this.mapbox.onMapEvent('click', 'circle-with-source-object', (features) => {
                         console.log('clicked', 'circle-with-source-object', features);
                     });
+
+                    setTimeout(() => {
+                        this.mapbox
+                            .queryRenderedFeatures(
+                                {
+                                    lat: 52.3701494345567,
+                                    lng: 4.823684692382513,
+                                },
+                                { layers: ['circle-with-source-object'], filter: ['all', ['==', '$id', '2']] }
+                            )
+                            .then((result) => console.log('query rendered features', JSON.stringify(result)));
+                    }, 3000);
                 });
 
             this.mapbox

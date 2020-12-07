@@ -1852,7 +1852,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
 
                 if (this._mapboxMapInstance.queryRenderedFeatures) {
-                    const features = this._mapboxMapInstance.queryRenderedFeatures(screenLocation, null, options.layers);
+                    const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                    const features = this._mapboxMapInstance.queryRenderedFeatures(screenLocation, queryFilter, options.layers);
                     const result = [];
                     for (let i = 0; i < features.size(); i++) {
                         const feature: com.mapbox.geojson.Feature = features.get(i);
