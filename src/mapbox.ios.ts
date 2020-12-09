@@ -12,6 +12,7 @@ import {
     CLogTypes,
     DeleteOfflineRegionOptions,
     DownloadOfflineRegionOptions,
+    Feature,
     LatLng,
     ListOfflineRegionsOptions,
     MapStyle,
@@ -1467,7 +1468,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // --------------------------------------------------------------
 
-    queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?): Promise<any[]> {
+    queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?): Promise<Feature[]> {
         return new Promise((resolve, reject) => {
             try {
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;

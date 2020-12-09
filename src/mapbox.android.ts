@@ -21,6 +21,7 @@ import {
     CLogTypes,
     DeleteOfflineRegionOptions,
     DownloadOfflineRegionOptions,
+    Feature,
     LatLng,
     LayerCommon,
     ListOfflineRegionsOptions,
@@ -1837,7 +1838,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @link https://www.mapbox.com/android-docs/api/mapbox-java/libjava-geojson/3.4.1/com/mapbox/geojson/Feature.html
      */
-    queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<any[]> {
+    queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<Feature[]> {
         return new Promise((resolve, reject) => {
             try {
                 if (options.point === undefined) {
