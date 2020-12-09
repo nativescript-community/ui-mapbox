@@ -607,10 +607,14 @@ Remove a source by id
 ```
 
 ### addLayer
-NOTE: For version 5 the API for addLayer() has changed and is now a subset of the web-gl-js API.
-
 https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers
  
+Supported layer types:
+ - Line
+ - Circle 
+ - Fill
+ - Symbol
+
 To add a line:
 
 ```js
@@ -647,7 +651,6 @@ To add a circle:
   mapbox.addLayer({
     "id": someid,
     "type": 'circle',
-    "radius-meters": 500,   // FIXME: radius in meters used for in-circle click detection. 
     "source": {
       "type": 'geojson',
       "data": {
@@ -693,10 +696,11 @@ Dynamically add a point to a line.
 
 where lnglat is an array of two points, a longitude and a latitude.
 
-### addPolygon
+### addPolygon (**deprecated**, use addLayer() instead)
+
 Draw a shape. Just connect the dots like we did as a toddler.
 
-The first person to tweet a snowman drawn with this function gets a T-shirt.
+The first person to tweet a snowman drawn with this function gets a T-shirt (from @eddyverbruggen ;-)).
 
 ```typescript
   // after adding this, scroll to Amsterdam to see a semi-transparent red square
@@ -791,47 +795,6 @@ or remove specific polyline id's (which you specified previously).
 
   // remove specific polylines by id
   mapbox.removePolylines([1, 2]);
-```
-
-### addSource
-Add a source that can be used by `addLayer`. Note only `vector` type is currently supported.
-
-```js
-  mapbox.addSource(
-    id: "terrain-source", // required
-    type: "vector", // supported types: vector
-    url: "mapbox://mapbox.mapbox-terrain-v2"
-  );
-```
-
-### removeSource
-Remove a source by `id`.
-
-```js
-  mapbox.removeSource("terrain-source");
-```
-
-### addLayer
-Add a layer from a source to the map. Note only `circle`, `fill` and `line` types are currently supported.
-
-```js
-  mapbox.addLayer(
-    id: "terrain-data",  // required
-    source: "terrain-source",  // id of source
-    sourceLayer: "contour",  // id of layer from source
-    type: "line", // supported types: circle, fill, line
-    lineJoin: "round",
-    lineCap: "round",
-    lineColor: "#ff69b4",
-    lineWidth: 1,
-  );
-```
-
-### removeLayer
-Remove a layer by `id`.
-
-```js
-  mapbox.removeLayer("terrain-data");
 ```
 
 ### setOnMapClickListener
