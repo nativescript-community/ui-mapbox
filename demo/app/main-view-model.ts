@@ -471,13 +471,14 @@ export class HelloWorldModel extends Observable {
 
                     setTimeout(() => {
                         this.mapbox
-                            .queryRenderedFeatures(
-                                {
+                            .queryRenderedFeatures({
+                                point: {
                                     lat: 52.3701494345567,
-                                    lng: 4.823684692382513,
+                                    lng: 4.823684692382513
                                 },
-                                { layers: ['circle-with-source-object'], filter: ['all', ['==', '$id', '2']] }
-                            )
+                                layers: ['circle-with-source-object'],
+                                filter: ['all', ['==', '$id', '2']],
+                            })
                             .then((result) => console.log('query rendered features', JSON.stringify(result)));
                     }, 3000);
                 });

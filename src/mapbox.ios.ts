@@ -794,7 +794,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         this.eventCallbacks['click'].forEach((eventListener) => {
-            this.queryRenderedFeatures(point, { layers: [eventListener.id] }, nativeMap).then((response) => {
+            this.queryRenderedFeatures({ point, layers: [eventListener.id] }, nativeMap).then((response) => {
                 if (response.length > 0) {
                     eventListener.callback(response);
                 }
@@ -1467,11 +1467,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // --------------------------------------------------------------
 
-    queryRenderedFeatures(point: LatLng, options?: QueryRenderedFeaturesOptions, nativeMap?): Promise<any[]> {
+    queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?): Promise<any[]> {
         return new Promise((resolve, reject) => {
             try {
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
-                if (point === undefined) {
+                if (options.point === undefined) {
                     reject("Please set the 'point' parameter");
                     return;
                 }
@@ -1479,7 +1479,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     options = {};
                 }
 
-                const { x, y } = theMap.convertCoordinateToPointToView({ latitude: point.lat, longitude: point.lng }, theMap);
+                const { x, y } = theMap.convertCoordinateToPointToView({ latitude: options.point.lat, longitude: options.point.lng }, theMap);
                 const queryLayerIds = options.layers ? NSSet.setWithArray<string>(iOSNativeHelper.collections.jsArrayToNSArray(options.layers)) : null;
                 const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
                 const features = theMap.visibleFeaturesAtPointInStyleLayersWithIdentifiersPredicate({ x, y }, queryLayerIds, queryFilter);

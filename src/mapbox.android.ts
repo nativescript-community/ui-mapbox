@@ -1220,7 +1220,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         this.eventCallbacks['click'].forEach((eventListener) => {
-            this.queryRenderedFeatures(point, { layers: [eventListener.id] }).then((response) => {
+            this.queryRenderedFeatures({ point, layers: [eventListener.id] }).then((response) => {
                 if (response.length > 0) {
                     eventListener.callback(response);
                 }
@@ -1837,10 +1837,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @link https://www.mapbox.com/android-docs/api/mapbox-java/libjava-geojson/3.4.1/com/mapbox/geojson/Feature.html
      */
-    queryRenderedFeatures(point: LatLng, options?: QueryRenderedFeaturesOptions): Promise<any[]> {
+    queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<any[]> {
         return new Promise((resolve, reject) => {
             try {
-                if (point === undefined) {
+                if (options.point === undefined) {
                     reject("Please set the 'point' parameter");
                     return;
                 }
@@ -1848,7 +1848,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     options = {};
                 }
 
-                const mapboxPoint = new com.mapbox.mapboxsdk.geometry.LatLng(point.lat, point.lng);
+                const mapboxPoint = new com.mapbox.mapboxsdk.geometry.LatLng(options.point.lat, options.point.lng);
                 const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
 
                 if (this._mapboxMapInstance.queryRenderedFeatures) {
