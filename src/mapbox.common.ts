@@ -35,15 +35,17 @@ export interface LatLng {
 // ------------------------------------------------------------
 
 export interface QueryRenderedFeaturesOptions {
-    point: LatLng;
-    layerIds?: string[];
+    point?: LatLng;
+    layers?: string[];
+    filter?: any[];
 }
 
 // ------------------------------------------------------------
 
 export interface Feature {
-    id: any;
-    type?: string;
+    id?: any;
+    type: string;
+    geometry: Object;
     properties: Object;
 }
 

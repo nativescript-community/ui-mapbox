@@ -426,12 +426,31 @@ export class HelloWorldModel extends Observable {
                     source: {
                         type: 'geojson',
                         data: {
-                            type: 'Feature',
-                            properties: {},
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [4.823684692382513, 52.3701494345567],
-                            },
+                            type: 'FeatureCollection',
+                            features: [
+                                {
+                                    id: '1',
+                                    type: 'Feature',
+                                    properties: {
+                                        querySample: '1',
+                                    },
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: [4.823684692382513, 52.3701494345567],
+                                    },
+                                },
+                                {
+                                    id: '2',
+                                    type: 'Feature',
+                                    properties: {
+                                        querySample: '2',
+                                    },
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: [4.823684692382513, 52.3701494345567],
+                                    },
+                                },
+                            ],
                         },
                     },
                     paint: {
@@ -444,7 +463,25 @@ export class HelloWorldModel extends Observable {
                         'circle-stroke-opacity': 0.75,
                     },
                 })
-                .then(() => console.log('circle-with-source-object added'));
+                .then(() => {
+                    console.log('circle-with-source-object added');
+                    this.mapbox.onMapEvent('click', 'circle-with-source-object', (features) => {
+                        console.log('clicked', 'circle-with-source-object', features);
+                    });
+
+                    setTimeout(() => {
+                        this.mapbox
+                            .queryRenderedFeatures({
+                                point: {
+                                    lat: 52.3701494345567,
+                                    lng: 4.823684692382513
+                                },
+                                layers: ['circle-with-source-object'],
+                                filter: ['all', ['==', '$id', '2']],
+                            })
+                            .then((result) => console.log('query rendered features', JSON.stringify(result)));
+                    }, 3000);
+                });
 
             this.mapbox
                 .addLayer({
@@ -476,7 +513,12 @@ export class HelloWorldModel extends Observable {
                         'line-dash-array': [1, 1, 1, 1],
                     },
                 })
-                .then(() => console.log('line-with-source-object added'));
+                .then(() => {
+                    console.log('line-with-source-object added');
+                    this.mapbox.onMapEvent('click', 'line-with-source-object', (features) => {
+                        console.log('clicked', 'line-with-source-object', features);
+                    });
+                });
 
             this.mapbox
                 .addLayer({
@@ -510,7 +552,12 @@ export class HelloWorldModel extends Observable {
                         'fill-translate-anchor': 'map',
                     },
                 })
-                .then(() => console.log('fill-with-source-object added'));
+                .then(() => {
+                    console.log('fill-with-source-object added');
+                    this.mapbox.onMapEvent('click', 'fill-with-source-object', (features) => {
+                        console.log('clicked', 'fill-with-source-object', features);
+                    });
+                });
 
             await this.mapbox.addImage('bee', 'res://bee');
             await this.mapbox.addImage('pizza', '~/assets/pizza-slice.png');
@@ -532,7 +579,12 @@ export class HelloWorldModel extends Observable {
                         'text-color': '#d6c80d',
                     },
                 })
-                .then(() => console.log('symbol-with-source-object added')); 
+                .then(() => {
+                    console.log('symbol-with-source-object added');
+                    this.mapbox.onMapEvent('click', 'symbol-with-source-object', (features) => {
+                        console.log('clicked', 'symbol-with-source-object', features);
+                    });
+                });
 
             this.mapbox
                 .addLayer({
@@ -567,10 +619,10 @@ export class HelloWorldModel extends Observable {
 
     public doRemoveLayerAndSource(): void {
         Promise.all([
-            this.mapbox.removeLayer('circle-with-source-object'),
-            this.mapbox.removeLayer('line-with-source-object'),
-            this.mapbox.removeLayer('fill-with-source-object'),
-            this.mapbox.removeLayer('symbol-with-source-object'),
+            this.mapbox.removeLayer('circle-with-source-object').then(() => this.mapbox.offMapEvent('click', 'circle-with-source-object')),
+            this.mapbox.removeLayer('line-with-source-object').then(() => this.mapbox.offMapEvent('click', 'line-with-source-object')),
+            this.mapbox.removeLayer('fill-with-source-object').then(() => this.mapbox.offMapEvent('click', 'fill-with-source-object')),
+            this.mapbox.removeLayer('symbol-with-source-object').then(() => this.mapbox.offMapEvent('click', 'symbol-with-source-object')),
             this.mapbox.removeLayer('symbol-with-source-object2'),
         ]).then(() => {
             return Promise.all([

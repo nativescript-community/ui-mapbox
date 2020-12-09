@@ -335,6 +335,7 @@ export class MapboxView extends MapboxViewBase {
                     // here in MapboxView, however the mapbox api still needs a reference to it.
 
                     this.mapbox.setMapboxViewInstance(this.nativeMapView);
+                    this.mapbox.initEventHandlerShim(this.settings, this.nativeMapView);
 
                     this.notify({
                         eventName: MapboxViewBase.mapReadyEvent,
@@ -706,7 +707,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // registered callbacks.
 
-    private eventCallbacks: any[] = [];
+    private eventCallbacks: { [key: string]: any[] } = {};
 
     // user location marker render mode
 
@@ -751,7 +752,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             CLog(CLogTypes.info, 'Mapbox:initEventHandlerShim(): top');
         }
 
-        this.setOnMapClickListener((point: LatLng) => this.checkForCircleClickEvent(point), mapboxNativeViewInstance);
+        this.setOnMapClickListener((point: LatLng) => this.checkForClickEvent(point), mapboxNativeViewInstance);
     }
 
     // --------------------------------------------------------------------------------
@@ -762,67 +763,47 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * The NativeScript ContentView base class as on() and off() methods.
      */
 
-    onMapEvent(eventName, id, callback, nativeMapView?): void {}
+    onMapEvent(eventName, id, callback, nativeMapView?): void {
+        if (typeof this.eventCallbacks[eventName] == 'undefined') {
+            this.eventCallbacks[eventName] = [];
+        }
+
+        this.eventCallbacks[eventName].push({
+            id,
+            callback,
+        });
+    }
 
     // -------------------------------------------------------------------------------
 
-    offMapEvent(eventName, id, nativeMapView?): void {}
+    offMapEvent(eventName, id, nativeMapView?): void {
+        if (typeof this.eventCallbacks[eventName] == 'undefined') {
+            return;
+        }
+
+        this.eventCallbacks[eventName] = this.eventCallbacks[eventName].filter((entry) => entry.id !== id);
+    }
 
     // ------------------------------------------------------------------------
 
     /**
-     * checks for a click event on a circle.
-     *
-     * For the moment we have to handle map click events long hand ourselves for circles.
-     *
-     * When we catch an event we'll check the eventHandlers map to see if the
-     * given layer is listed. If it is we invoke it's callback.
-     *
-     * If there are multiple overlapping circles only the first one in the list will be called.
-     *
-     * We also check the location of the click to see if it's inside any
-     * circles and raise the event accordingly.
-     *
-     * @todo detect the top circle in the overlapping circles case.
+     * If click events registered and a feature found for the event, then fire listener.
      */
-
-    private checkForCircleClickEvent(point: LatLng) {
+    private checkForClickEvent(point: LatLng, nativeMap?) {
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'Mapbox:checkForCircleClickEvent(): got click event with point:', point);
+            CLog(CLogTypes.info, 'Mapbox:checkForClickEvent(): got click event with point:', point);
         }
 
-        // is this point within a circle?
-
-        for (let i = 0; i < this.circles.length; i++) {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'Mapbox:checkForCircleClickEvent(): checking circle with radius:', this.circles[i].radius);
-            }
-
-            if (GeoUtils.isLocationInCircle(point.lng, point.lat, this.circles[i].center[0], this.circles[i].center[1], this.circles[i].radius)) {
-                if (Trace.isEnabled()) {
-                    CLog(
-                        CLogTypes.info,
-                        "Mapbox:checkForCircleClickEvent() Point is in circle with id '" + this.circles[i].id + "' invoking callbacks, if any. Callback list is:",
-                        this.eventCallbacks
-                    );
+        this.eventCallbacks['click'].forEach((eventListener) => {
+            this.queryRenderedFeatures({ point, layers: [eventListener.id] }, nativeMap).then((response) => {
+                if (response.length > 0) {
+                    eventListener.callback(response);
                 }
-
-                for (let x = 0; x < this.eventCallbacks['click'].length; x++) {
-                    const entry = this.eventCallbacks['click'][x];
-
-                    if (entry.id === this.circles[i].id) {
-                        if (Trace.isEnabled()) {
-                            CLog(CLogTypes.info, "Mapbox:checkForCircleClickEvent(): calling callback for '" + entry.id + "'");
-                        }
-
-                        return entry.callback(point);
-                    }
-                } // end of for loop over events.
-            }
-        } // end of loop over circles.
+            });
+        });
 
         return false;
-    } // end of checkForCircleClickEvent()
+    }
 
     // -------------------------------------------------------------------------------
     private _addMarkers(markers: MapboxMarker[], nativeMap?) {
@@ -1491,35 +1472,24 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return new Promise((resolve, reject) => {
             try {
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
-                const point = options.point;
-                if (point === undefined) {
+                if (options.point === undefined) {
                     reject("Please set the 'point' parameter");
                     return;
                 }
+                if (!options) {
+                    options = {};
+                }
 
-                const { x, y } = theMap.convertCoordinateToPointToView({ latitude: point.lat, longitude: point.lng }, theMap);
-                const features = theMap.visibleFeaturesAtPoint({ x, y });
+                const { x, y } = theMap.convertCoordinateToPointToView({ latitude: options.point.lat, longitude: options.point.lng }, theMap);
+                const queryLayerIds = options.layers ? NSSet.setWithArray<string>(iOSNativeHelper.collections.jsArrayToNSArray(options.layers)) : null;
+                const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                const features = theMap.visibleFeaturesAtPointInStyleLayersWithIdentifiersPredicate({ x, y }, queryLayerIds, queryFilter);
 
                 const result = [];
                 for (let i = 0; i < features.count; i++) {
                     const feature: MGLFeature = features.objectAtIndex(i);
-                    const properties = [];
-
-                    if (feature.attributes && feature.attributes.count > 0) {
-                        const keys = iOSNativeHelper.collections.nsArrayToJSArray(feature.attributes.allKeys);
-
-                        for (const key of keys) {
-                            properties.push({
-                                key,
-                                value: feature.attributes.valueForKey(key),
-                            });
-                        }
-                    }
-
-                    result.push({
-                        id: feature.identifier,
-                        properties,
-                    });
+                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0);
+                    result.push(JSON.parse(NSString.alloc().initWithDataEncoding(featureJson, NSUTF8StringEncoding) as any));
                 }
 
                 resolve(result);
