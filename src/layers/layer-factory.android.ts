@@ -69,7 +69,7 @@ export class LayerFactory {
             line-translate ✓
             line-translate-anchor ✓
             line-width ✓
-            visibility
+            visibility ✓
         */
         const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
         const Property = com.mapbox.mapboxsdk.style.layers.Property;
@@ -170,6 +170,10 @@ export class LayerFactory {
             lineProperties.push(PropertyFactory.lineWidth(new java.lang.Float(propertiesObject['line-width'])));
         }
 
+        if (propertiesObject['visibility']) {
+            lineProperties.push(PropertyFactory.visibility(propertiesObject['visibility']));
+        }
+
         return lineProperties;
     }
 
@@ -184,16 +188,16 @@ export class LayerFactory {
             circle-blur ✓
             circle-color ✓
             circle-opacity ✓
-            circle-pitch-alignment
-            circle-pitch-scale
+            circle-pitch-alignment ✓
+            circle-pitch-scale ✓
             circle-radius ✓
             circle-sort-key
             circle-stroke-color ✓
             circle-stroke-opacity ✓
             circle-stroke-width ✓
-            circle-translate
-            circle-translate-anchor
-            visibility    
+            circle-translate ✓
+            circle-translate-anchor ✓
+            visibility ✓
         */
 
         const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
@@ -209,6 +213,14 @@ export class LayerFactory {
 
         if (propertiesObject['circle-opacity']) {
             circleProperties.push(PropertyFactory.circleOpacity(new java.lang.Float(propertiesObject['circle-opacity'])));
+        }
+
+        if (propertiesObject['circle-pitch-alignment']) {
+            circleProperties.push(PropertyFactory.circlePitchAlignment(propertiesObject['circle-pitch-alignment']));
+        }
+
+        if (propertiesObject['circle-pitch-scale']) {
+            circleProperties.push(PropertyFactory.circlePitchScale(propertiesObject['circle-pitch-scale']));
         }
 
         if (propertiesObject['circle-radius']) {
@@ -258,6 +270,23 @@ export class LayerFactory {
             circleProperties.push(PropertyFactory.circleStrokeWidth(new java.lang.Float(propertiesObject['circle-stroke-width'])));
         }
 
+        if (propertiesObject['circle-translate']) {
+            const fillTranslateArray = Array.create('java.lang.Float', propertiesObject['circle-translate'].length);
+
+            for (let i = 0; i < propertiesObject['circle-translate'].length; i++) {
+                fillTranslateArray[i] = new java.lang.Float(propertiesObject['circle-translate'][i]);
+            }
+            circleProperties.push(PropertyFactory.circleTranslate(fillTranslateArray));
+        }
+
+        if (propertiesObject['circle-translate-anchor']) {
+            circleProperties.push(PropertyFactory.circleTranslateAnchor(propertiesObject['circle-translate-anchor']));
+        }
+
+        if (propertiesObject['visibility']) {
+            circleProperties.push(PropertyFactory.visibility(propertiesObject['visibility']));
+        }
+
         return circleProperties;
     }
 
@@ -277,7 +306,7 @@ export class LayerFactory {
             fill-sort-key
             fill-translate ✓
             fill-translate-anchor ✓
-            visibility
+            visibility ✓
         */
 
         const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
@@ -314,6 +343,10 @@ export class LayerFactory {
 
         if (propertiesObject['fill-translate-anchor']) {
             fillProperties.push(PropertyFactory.fillTranslateAnchor(propertiesObject['fill-translate-anchor']));
+        }
+
+        if (propertiesObject['visibility']) {
+            fillProperties.push(PropertyFactory.visibility(propertiesObject['visibility']));
         }
 
         return fillProperties;
@@ -382,7 +415,7 @@ export class LayerFactory {
             text-translate-anchor
             text-variable-anchor
             text-writing-mode
-            visibility
+            visibility ✓
         */
 
         const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
@@ -407,6 +440,10 @@ export class LayerFactory {
             symbolProperties.push(PropertyFactory.textField(propertiesObject['text-field']));
         }
 
+        if (propertiesObject['visibility']) {
+            symbolProperties.push(PropertyFactory.visibility(propertiesObject['visibility']));
+        }
+ 
         return symbolProperties;
     }
 }

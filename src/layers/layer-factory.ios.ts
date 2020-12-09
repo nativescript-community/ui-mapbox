@@ -75,7 +75,7 @@ export class LayerFactory {
             line-translate ✓
             line-translate-anchor ✓
             line-width ✓
-            visibility
+            visibility ✓
         */
 
         if (propertiesObject['line-blur']) {
@@ -130,6 +130,10 @@ export class LayerFactory {
             lineProperties['lineWidth'] = NSExpression.expressionForConstantValue(propertiesObject['line-width']);
         }
 
+        if (propertiesObject['visibility']) {
+            lineProperties['visibility'] = NSExpression.expressionForConstantValue(propertiesObject['visibility']);
+        }
+
         return lineProperties;
     }
 
@@ -144,16 +148,16 @@ export class LayerFactory {
             circle-blur ✓
             circle-color ✓
             circle-opacity ✓
-            circle-pitch-alignment
-            circle-pitch-scale
+            circle-pitch-alignment ✓
+            circle-pitch-scale ✓
             circle-radius ✓
             circle-sort-key
             circle-stroke-color ✓
             circle-stroke-opacity ✓
             circle-stroke-width ✓
-            circle-translate
-            circle-translate-anchor
-            visibility    
+            circle-translate ✓
+            circle-translate-anchor ✓
+            visibility ✓
         */
 
         if (propertiesObject['circle-blur']) {
@@ -166,6 +170,14 @@ export class LayerFactory {
 
         if (propertiesObject['circle-opacity']) {
             circleProperties['circleOpacity'] = NSExpression.expressionForConstantValue(propertiesObject['circle-opacity']);
+        }
+
+        if (propertiesObject['circle-pitch-alignment']) {
+            circleProperties['circlePitchAlignment'] = NSExpression.expressionForConstantValue(propertiesObject['circle-pitch-alignment']);
+        }
+
+        if (propertiesObject['circle-pitch-scale']) {
+            circleProperties['circleScaleAlignment'] = NSExpression.expressionForConstantValue(propertiesObject['circle-pitch-scale']);
         }
 
         if (propertiesObject['circle-radius']) {
@@ -187,6 +199,18 @@ export class LayerFactory {
             circleProperties['circleStrokeWidth'] = NSExpression.expressionForConstantValue(propertiesObject['circle-stroke-width']);
         }
 
+        if (propertiesObject['circle-translate']) {
+            circleProperties['circleTranslation'] = NSExpression.expressionForConstantValue(propertiesObject['circle-translate']);
+        }
+
+        if (propertiesObject['circle-translate-anchor']) {
+            circleProperties['circleTranslationAnchor'] = NSExpression.expressionForConstantValue(propertiesObject['circle-translate-anchor']);
+        }
+
+        if (propertiesObject['visibility']) {
+            circleProperties['visibility'] = NSExpression.expressionForConstantValue(propertiesObject['visibility']);
+        }
+
         return circleProperties;
     }
 
@@ -206,7 +230,7 @@ export class LayerFactory {
             fill-sort-key
             fill-translate ✓
             fill-translate-anchor ✓
-            visibility
+            visibility ✓
         */
 
         if (propertiesObject['fill-antialias']) {
@@ -237,14 +261,18 @@ export class LayerFactory {
             fillProperties['fillTranslationAnchor'] = NSExpression.expressionForConstantValue(propertiesObject['fill-translate-anchor']);
         }
 
+        if (propertiesObject['visibility']) {
+            fillProperties['visibility'] = NSExpression.expressionForConstantValue(propertiesObject['visibility']);
+        }
+
         return fillProperties;
     }
 
     private static parsePropertiesForSymbolLayer(propertiesObject) {
-        const fillProperties = {};
+        const symbolProperties = {};
 
         if (!propertiesObject) {
-            return fillProperties;
+            return symbolProperties;
         }
 
         /*
@@ -303,29 +331,33 @@ export class LayerFactory {
             text-translate-anchor
             text-variable-anchor
             text-writing-mode
-            visibility
+            visibility ✓
         */
 
         if (propertiesObject['icon-image']) {
-            fillProperties['iconImageName'] = NSExpression.expressionForConstantValue(propertiesObject['icon-image']);
+            symbolProperties['iconImageName'] = NSExpression.expressionForConstantValue(propertiesObject['icon-image']);
         }
 
         if (propertiesObject['icon-rotate']) {
-            fillProperties['iconRotation'] = NSExpression.expressionForConstantValue(propertiesObject['icon-rotate']);
+            symbolProperties['iconRotation'] = NSExpression.expressionForConstantValue(propertiesObject['icon-rotate']);
         }
 
         if (propertiesObject['icon-size']) {
-            fillProperties['iconScale'] = NSExpression.expressionForConstantValue(propertiesObject['icon-size']);
+            symbolProperties['iconScale'] = NSExpression.expressionForConstantValue(propertiesObject['icon-size']);
         }
 
         if (propertiesObject['text-color']) {
-            fillProperties['textColor'] = NSExpression.expressionForConstantValue(new Color(propertiesObject['text-color']).ios);
+            symbolProperties['textColor'] = NSExpression.expressionForConstantValue(new Color(propertiesObject['text-color']).ios);
         }
 
         if (propertiesObject['text-field']) {
-            fillProperties['text'] = NSExpression.expressionForConstantValue(propertiesObject['text-field']);
+            symbolProperties['text'] = NSExpression.expressionForConstantValue(propertiesObject['text-field']);
         }
 
-        return fillProperties;
+        if (propertiesObject['visibility']) {
+            symbolProperties['visibility'] = NSExpression.expressionForConstantValue(propertiesObject['visibility']);
+        }
+
+        return symbolProperties;
     }
 }
