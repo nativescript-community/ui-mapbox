@@ -2659,10 +2659,23 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         break;
 
                     case 'raster':
-                        const tileSet = new com.mapbox.mapboxsdk.style.sources.TileSet('tileset', options.tiles);
-                        tileSet.setMinZoom(options.minzoom);
-                        tileSet.setMaxZoom(options.maxzoom);
-                        tileSet.setScheme(options.scheme);
+                        // use Array.create because a marshal error throws on TileSet if options.tiles directly passed.
+                        const tiles = Array.create(java.lang.String, options.tiles.length);
+                        options.tiles.forEach((val, i) => tiles[i] = val);
+
+                        const tileSet = new com.mapbox.mapboxsdk.style.sources.TileSet('tileset', tiles);
+
+                        if (options.minzoom) {
+                            tileSet.setMinZoom(options.minzoom);
+                        }
+
+                        if (options.maxzoom) {
+                            tileSet.setMaxZoom(options.maxzoom);
+                        }
+
+                        if (options.scheme) {
+                            tileSet.setScheme(options.scheme);
+                        }
 
                         if (options.bounds) {
                             tileSet.setBounds(options.bounds.map((val) => new java.lang.Float(val)));
