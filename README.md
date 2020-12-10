@@ -574,6 +574,11 @@ The map will continuously move along with the last known location.
 
 https://docs.mapbox.com/mapbox-gl-js/api/#map#addsource 
 
+Supported source types:
+ - Vector
+ - GeoJson 
+ - Raster
+
 Adds a vector to GeoJSON source to the map.
 
 ```js
@@ -614,6 +619,7 @@ Supported layer types:
  - Circle 
  - Fill
  - Symbol
+ - Raster
 
 To add a line:
 
