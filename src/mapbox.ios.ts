@@ -2253,16 +2253,14 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
         let source = null;
         if (typeof style.source != 'string') {
-            this.addSource(style.id + '_source', style.source);
+            await this.addSource(style.id + '_source', style.source);
             source = theMap.style.sourceWithIdentifier(style.id + '_source');
         } else {
-            source = style.source;
+            source = theMap.style.sourceWithIdentifier(style.source);
         }
 
         const layer = await LayerFactory.createLayer(style, source);
         theMap.style.addLayer(layer.getNativeInstance());
-
-        return Promise.resolve();
     }
 
     /**
