@@ -26,7 +26,7 @@ export class LayerFactory {
                 throw new Error(`Unknown layer type: ${style.type}`);
         }
 
-        const layerProperties = this.parseProperties(style.type, Object.assign(style.paint, style.layout)); // TODO: handle defaults
+        const layerProperties = this.parseProperties(style.type, Object.assign(style.paint || {}, style.layout || {})); // TODO: handle defaults
 
         for (const propKey in layerProperties) {
             if (Object.prototype.hasOwnProperty.call(layerProperties, propKey)) {
@@ -367,7 +367,7 @@ export class LayerFactory {
     }
 
     private static parsePropertiesForRasterLayer(propertiesObject) {
-        const rasterProperties = [];
+        const rasterProperties = {};
 
         if (!propertiesObject) {
             return rasterProperties;
@@ -394,7 +394,7 @@ export class LayerFactory {
         }
 
         if (propertiesObject['raster-contrast']) {
-            rasterProperties['rasterContrast'] = NSExpression.expressionForConstantValue(propertiesObject['raster-constrast']);
+            rasterProperties['rasterContrast'] = NSExpression.expressionForConstantValue(propertiesObject['raster-contrast']);
         }
 
         if (propertiesObject['raster-fade-duration']) {
@@ -429,7 +429,7 @@ export class LayerFactory {
         if (propertiesObject['visibility']) {
             rasterProperties['visibility'] = NSExpression.expressionForConstantValue(propertiesObject['visibility']);
         }
- 
+
         return rasterProperties;
     }
 }

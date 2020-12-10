@@ -3,7 +3,7 @@ import { LayerCommon } from '../mapbox.common';
 
 export class LayerFactory {
     static async createLayer(style, source): Promise<LayerCommon> {
-        const layerProperties = this.parseProperties(style.type, Object.assign(style.paint, style.layout)); // TODO: handle defaults
+        const layerProperties = this.parseProperties(style.type, Object.assign(style.paint || {}, style.layout || {})); // TODO: handle defaults
 
         const sourceId = source.getId();
         let nativeLayer: com.mapbox.mapboxsdk.style.layers.Layer;
@@ -509,7 +509,7 @@ export class LayerFactory {
         if (propertiesObject['visibility']) {
             rasterProperties.push(PropertyFactory.visibility(propertiesObject['visibility']));
         }
- 
+
         return rasterProperties;
     }
 }
