@@ -2627,7 +2627,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     addSource(id: string, options: AddSourceOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                const { url, type } = options;
+                const { type } = options;
                 const theMap = nativeMap || this._mapboxMapInstance;
                 let source;
 
@@ -2641,9 +2641,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                switch (type) {
+                switch (options.type) {
                     case 'vector':
-                        source = new com.mapbox.mapboxsdk.style.sources.VectorSource(id, url);
+                        source = new com.mapbox.mapboxsdk.style.sources.VectorSource(id, options.url);
                         break;
 
                     case 'geojson':
@@ -2659,6 +2659,18 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                         break;
 
+                    case 'raster':
+                        const tileSet = new com.mapbox.mapboxsdk.style.sources.TileSet('tileset', options.tiles);
+                        tileSet.setMinZoom(options.minzoom);
+                        tileSet.setMaxZoom(options.maxzoom);
+                        tileSet.setScheme(options.scheme);
+
+                        if (options.bounds) {
+                            tileSet.setBounds(options.bounds.map((val) => new java.lang.Float(val)));
+                        }
+
+                        source = new com.mapbox.mapboxsdk.style.sources.RasterSource(id, tileSet, options.tileSize);
+                        break;
                     default:
                         reject('Invalid source type: ' + type);
                         return;

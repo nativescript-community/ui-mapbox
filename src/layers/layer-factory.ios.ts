@@ -19,6 +19,9 @@ export class LayerFactory {
             case 'symbol':
                 nativeLayer = MGLSymbolStyleLayer.alloc().initWithIdentifierSource(style.id, source);
                 break;
+            case 'raster':
+                nativeLayer = MGLRasterStyleLayer.alloc().initWithIdentifierSource(style.id, source);
+                break;
             default:
                 throw new Error(`Unknown layer type: ${style.type}`);
         }
@@ -31,12 +34,12 @@ export class LayerFactory {
             }
         }
 
-        var layer = new Layer(nativeLayer);
+        const layer = new Layer(nativeLayer);
 
         return layer;
     }
 
-    private static parseProperties(layerType, propertiesObject) {
+    private static parseProperties(layerType, propertiesObject): any {
         switch (layerType) {
             case 'line':
                 return this.parsePropertiesForLineLayer(propertiesObject);
@@ -46,6 +49,8 @@ export class LayerFactory {
                 return this.parsePropertiesForFillLayer(propertiesObject);
             case 'symbol':
                 return this.parsePropertiesForSymbolLayer(propertiesObject);
+            case 'raster':
+                return this.parsePropertiesForRasterLayer(propertiesObject);
             default:
                 throw new Error(`Unknown layer type: ${layerType}`);
         }
@@ -359,5 +364,72 @@ export class LayerFactory {
         }
 
         return symbolProperties;
+    }
+
+    private static parsePropertiesForRasterLayer(propertiesObject) {
+        const rasterProperties = [];
+
+        if (!propertiesObject) {
+            return rasterProperties;
+        }
+
+        /*
+            raster-brightness-max ✓
+            raster-brightness-min ✓
+            raster-contrast ✓
+            raster-fade-duration ✓
+            raster-hue-rotate ✓
+            raster-opacity ✓
+            raster-resampling ✓
+            raster-saturation ✓
+            visibility ✓
+        */
+
+        if (propertiesObject['raster-brightness-max']) {
+            rasterProperties['maximumRasterBrightness'] = NSExpression.expressionForConstantValue(propertiesObject['raster-brightness-max']);
+        }
+
+        if (propertiesObject['raster-brightness-min']) {
+            rasterProperties['minimumRasterBrightness'] = NSExpression.expressionForConstantValue(propertiesObject['raster-brightness-min']);
+        }
+
+        if (propertiesObject['raster-contrast']) {
+            rasterProperties['rasterContrast'] = NSExpression.expressionForConstantValue(propertiesObject['raster-constrast']);
+        }
+
+        if (propertiesObject['raster-fade-duration']) {
+            rasterProperties['rasterFadeDuration'] = NSExpression.expressionForConstantValue(propertiesObject['raster-fade-duration']);
+        }
+
+        if (propertiesObject['raster-hue-rotate']) {
+            rasterProperties['rasterHueRotation'] = NSExpression.expressionForConstantValue(propertiesObject['raster-hue-rotate']);
+        }
+
+        if (propertiesObject['raster-opacity']) {
+            rasterProperties['rasterOpacity'] = NSExpression.expressionForConstantValue(propertiesObject['raster-opacity']);
+        }
+
+        if (propertiesObject['raster-resampling']) {
+            switch (propertiesObject['raster-resampling']) {
+                case 'linear':
+                    rasterProperties['rasterResamplingMode'] = MGLRasterResamplingMode.Linear;
+                    break;
+                case 'nearest':
+                    rasterProperties['rasterResamplingMode'] = MGLRasterResamplingMode.Nearest;
+                    break;
+                default:
+                    throw new Error('Unknown raster resampling value.');
+            }
+        }
+
+        if (propertiesObject['raster-saturation']) {
+            rasterProperties['rasterSaturation'] = NSExpression.expressionForConstantValue(propertiesObject['raster-saturation']);
+        }
+
+        if (propertiesObject['visibility']) {
+            rasterProperties['visibility'] = NSExpression.expressionForConstantValue(propertiesObject['visibility']);
+        }
+ 
+        return rasterProperties;
     }
 }
