@@ -2627,7 +2627,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     addSource(id: string, options: AddSourceOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                const { type } = options;
                 const theMap = nativeMap || this._mapboxMapInstance;
                 let source;
 
@@ -2672,7 +2671,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         source = new com.mapbox.mapboxsdk.style.sources.RasterSource(id, tileSet, options.tileSize);
                         break;
                     default:
-                        reject('Invalid source type: ' + type);
+                        reject('Invalid source type: ' + options['type']);
                         return;
                 }
 

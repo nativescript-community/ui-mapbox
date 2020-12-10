@@ -2110,7 +2110,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     addSource(id: string, options: AddSourceOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                const { type } = options;
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
                 let source;
 
@@ -2173,7 +2172,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                         break;
                     default:
-                        reject('Invalid source type: ' + type);
+                        reject('Invalid source type: ' + options['type']);
                         return;
                 }
 
