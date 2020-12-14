@@ -1005,4 +1005,27 @@ export class HelloWorldModel extends Observable {
             });
         });
     }
+
+    public doAddRasterLayer(): void {
+        this.mapbox
+            .addLayer({
+                id: 'raster-layer',
+                type: 'raster',
+                source: {
+                    type: 'raster',
+                    tiles: ['https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'],
+                    tileSize: 256
+                }
+            })
+            .then(() => {
+                console.log('raster layer added');
+            });
+    }
+
+    public doRemoveRasterLayer(): void {
+        this.mapbox.removeLayer('raster-layer').then(() => {
+            this.mapbox.removeSource('raster-layer_source');
+            console.log('layer removed');
+        });
+    }
 }
