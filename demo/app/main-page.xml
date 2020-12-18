@@ -152,6 +152,8 @@
 
             <Button row="12" col="0" text="get layers" tap="{{ doGetLayers }}" class="button" />
             <Button row="12" col="1" text="toggle all layers" tap="{{ doToggleLayers }}" class="button" />
+            <Button row="12" col="2" text="+ raster" tap="{{ doAddRasterLayer }}" class="button" />
+            <Button row="12" col="3" text="- raster" tap="{{ doRemoveRasterLayer }}" class="button" />
 
             <StackLayout row="13" col="0" colSpan="4">
               <ContentView with="100%" height="100%" id="mapContainer" />

@@ -2110,7 +2110,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     addSource(id: string, options: AddSourceOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                const { url, type } = options;
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
                 let source;
 
@@ -2124,9 +2123,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                switch (type) {
+                switch (options.type) {
                     case 'vector':
-                        source = MGLVectorTileSource.alloc().initWithIdentifierConfigurationURL(id, NSURL.URLWithString(url));
+                        source = MGLVectorTileSource.alloc().initWithIdentifierConfigurationURL(id, NSURL.URLWithString(options.url));
                         break;
 
                     case 'geojson':
@@ -2138,13 +2137,42 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         const content: NSString = NSString.stringWithString(JSON.stringify(options.data));
                         const nsData: NSData = content.dataUsingEncoding(NSUTF8StringEncoding);
                         const geoJsonShape = MGLShape.shapeWithDataEncodingError(nsData, NSUTF8StringEncoding);
-                        
+
                         source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, geoJsonShape, null);
 
                         break;
+                    case 'raster':
+                        const sourceOptions: any = {
+                            [MGLTileSourceOptionMinimumZoomLevel]: options.minzoom,
+                            [MGLTileSourceOptionMaximumZoomLevel]: options.maxzoom,
+                            [MGLTileSourceOptionTileSize]: options.tileSize
+                        };
 
+                        if (options.scheme) {
+                            switch (options.scheme || 'xyz') {
+                                case 'xyz':
+                                    sourceOptions[MGLTileSourceOptionTileCoordinateSystem] = MGLTileCoordinateSystem.XYZ;
+                                    break;
+                                case 'tms':
+                                    sourceOptions[MGLTileSourceOptionTileCoordinateSystem] = MGLTileCoordinateSystem.TMS;
+                                    break;
+                                default:
+                                    throw new Error('Unknown raster tile scheme.');
+                            }
+                        }
+
+                        if (options.bounds) {
+                            sourceOptions[MGLTileSourceOptionCoordinateBounds] = {
+                                sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
+                                ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2])
+                            } as MGLCoordinateBounds;
+                        }
+
+                        source = MGLRasterTileSource.alloc().initWithIdentifierTileURLTemplatesOptions(id, options.tiles, sourceOptions);
+
+                        break;
                     default:
-                        reject('Invalid source type: ' + type);
+                        reject('Invalid source type: ' + options['type']);
                         return;
                 }
 
@@ -2224,16 +2252,14 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
         let source = null;
         if (typeof style.source != 'string') {
-            this.addSource(style.id + '_source', style.source);
+            await this.addSource(style.id + '_source', style.source);
             source = theMap.style.sourceWithIdentifier(style.id + '_source');
         } else {
-            source = style.source;
+            source = theMap.style.sourceWithIdentifier(style.source);
         }
 
         const layer = await LayerFactory.createLayer(style, source);
         theMap.style.addLayer(layer.getNativeInstance());
-
-        return Promise.resolve();
     }
 
     /**

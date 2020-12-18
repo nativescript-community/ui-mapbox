@@ -1,4 +1,4 @@
-import { Color, ContentView, Property, Trace, booleanConverter, ImageSource } from '@nativescript/core';
+import { Color, ContentView, Property, Trace, booleanConverter } from '@nativescript/core';
 
 export const MapboxTraceCategory = 'NativescriptMapbox';
 export enum CLogTypes {
@@ -285,9 +285,37 @@ export type UserTrackingMode = 'NONE' | 'FOLLOW' | 'FOLLOW_WITH_HEADING' | 'FOLL
 
 // -------------------------------------------------------------
 
-export interface AddSourceOptions {
+export type AddSourceOptions = VectorSource | GeoJSONSource | RasterSource;
+
+// -------------------------------------------------------------
+
+export interface Source {
+    type: 'vector' | 'raster' | 'geojson';
+}
+
+// -------------------------------------------------------------
+
+export interface RasterSource extends Source {
+    type: 'raster';
+    tiles: string[];
+    bounds?: number[];
+    minzoom?: number;
+    maxzoom?: number;
+    tileSize?: number;
+    scheme?: 'xyz' | 'tms';
+}
+
+// -------------------------------------------------------------
+
+export interface VectorSource extends Source {
+    type: 'vector';
     url: string;
-    type: string;
+}
+
+// -------------------------------------------------------------
+
+export interface GeoJSONSource extends Source {
+    type: 'geojson';
     data?: any;
 }
 

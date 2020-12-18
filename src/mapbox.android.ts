@@ -2627,7 +2627,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     addSource(id: string, options: AddSourceOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                const { url, type } = options;
                 const theMap = nativeMap || this._mapboxMapInstance;
                 let source;
 
@@ -2641,9 +2640,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                switch (type) {
+                switch (options.type) {
                     case 'vector':
-                        source = new com.mapbox.mapboxsdk.style.sources.VectorSource(id, url);
+                        source = new com.mapbox.mapboxsdk.style.sources.VectorSource(id, options.url);
                         break;
 
                     case 'geojson':
@@ -2659,8 +2658,33 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                         break;
 
+                    case 'raster':
+                        // use Array.create because a marshal error throws on TileSet if options.tiles directly passed.
+                        const tiles = Array.create(java.lang.String, options.tiles.length);
+                        options.tiles.forEach((val, i) => tiles[i] = val);
+
+                        const tileSet = new com.mapbox.mapboxsdk.style.sources.TileSet('tileset', tiles);
+
+                        if (options.minzoom) {
+                            tileSet.setMinZoom(options.minzoom);
+                        }
+
+                        if (options.maxzoom) {
+                            tileSet.setMaxZoom(options.maxzoom);
+                        }
+
+                        if (options.scheme) {
+                            tileSet.setScheme(options.scheme);
+                        }
+
+                        if (options.bounds) {
+                            tileSet.setBounds(options.bounds.map((val) => new java.lang.Float(val)));
+                        }
+
+                        source = new com.mapbox.mapboxsdk.style.sources.RasterSource(id, tileSet, options.tileSize);
+                        break;
                     default:
-                        reject('Invalid source type: ' + type);
+                        reject('Invalid source type: ' + options['type']);
                         return;
                 }
 
@@ -2739,17 +2763,14 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
         let source = null;
         if (typeof style.source != 'string') {
-            this.addSource(style.id + '_source', style.source);
+            await this.addSource(style.id + '_source', style.source);
             source = theMap.getStyle().getSource(style.id + '_source');
         } else {
-            source = style.source;
+            source = theMap.getStyle().getSource(style.source);
         }
-        
+
         const layer = await LayerFactory.createLayer(style, source);
-
         this._mapboxMapInstance.getStyle().addLayer(layer.getNativeInstance());
-
-        return Promise.resolve();
     }
 
     /**

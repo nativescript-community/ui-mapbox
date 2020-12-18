@@ -3,7 +3,7 @@ import { LayerCommon } from '../mapbox.common';
 
 export class LayerFactory {
     static async createLayer(style, source): Promise<LayerCommon> {
-        const layerProperties = this.parseProperties(style.type, Object.assign(style.paint, style.layout)); // TODO: handle defaults
+        const layerProperties = this.parseProperties(style.type, Object.assign(style.paint || {}, style.layout || {})); // TODO: handle defaults
 
         const sourceId = source.getId();
         let nativeLayer: com.mapbox.mapboxsdk.style.layers.Layer;
@@ -21,11 +21,14 @@ export class LayerFactory {
             case 'symbol':
                 nativeLayer = new com.mapbox.mapboxsdk.style.layers.SymbolLayer(style.id, sourceId).withProperties(layerProperties);
                 break;
+            case 'raster':
+                nativeLayer = new com.mapbox.mapboxsdk.style.layers.RasterLayer(style.id, sourceId).withProperties(layerProperties);
+                break;
             default:
                 throw new Error(`Unknown layer type: ${style.type}`);
         }
 
-        var layer = new Layer(nativeLayer);
+        const layer = new Layer(nativeLayer);
 
         return layer;
     }
@@ -40,6 +43,8 @@ export class LayerFactory {
                 return this.parsePropertiesForFillLayer(propertiesObject);
             case 'symbol':
                 return this.parsePropertiesForSymbolLayer(propertiesObject);
+            case 'raster':
+                return this.parsePropertiesForRasterLayer(propertiesObject);
             default:
                 throw new Error(`Unknown layer type: ${layerType}`);
         }
@@ -246,15 +251,7 @@ export class LayerFactory {
                     base = propertiesObject['circle-radius'].stops.base;
                 }
 
-                circleProperties.push(
-                    PropertyFactory.circleRadius(
-                        Expression.interpolate(
-                            Expression.exponential(new java.lang.Float(base)),
-                            Expression.zoom(),
-                            stopArgs
-                        )
-                    )
-                );
+                circleProperties.push(PropertyFactory.circleRadius(Expression.interpolate(Expression.exponential(new java.lang.Float(base)), Expression.zoom(), stopArgs)));
             }
         }
 
@@ -443,7 +440,76 @@ export class LayerFactory {
         if (propertiesObject['visibility']) {
             symbolProperties.push(PropertyFactory.visibility(propertiesObject['visibility']));
         }
- 
+
         return symbolProperties;
+    }
+
+    private static parsePropertiesForRasterLayer(propertiesObject) {
+        const rasterProperties = [];
+
+        if (!propertiesObject) {
+            return rasterProperties;
+        }
+
+        /*
+            raster-brightness-max ✓
+            raster-brightness-min ✓
+            raster-contrast ✓
+            raster-fade-duration ✓
+            raster-hue-rotate ✓
+            raster-opacity ✓
+            raster-resampling ✓
+            raster-saturation ✓
+            visibility ✓
+        */
+
+        const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+
+        if (propertiesObject['raster-brightness-max']) {
+            rasterProperties.push(PropertyFactory.rasterBrightnessMax(new java.lang.Float(propertiesObject['raster-brightness-max'])));
+        }
+
+        if (propertiesObject['raster-brightness-min']) {
+            rasterProperties.push(PropertyFactory.rasterBrightnessMin(new java.lang.Float(propertiesObject['raster-brightness-min'])));
+        }
+
+        if (propertiesObject['raster-contrast']) {
+            rasterProperties.push(PropertyFactory.rasterContrast(new java.lang.Float(propertiesObject['raster-contrast'])));
+        }
+
+        if (propertiesObject['raster-fade-duration']) {
+            rasterProperties.push(PropertyFactory.rasterFadeDuration(new java.lang.Float(propertiesObject['raster-fade-duration'])));
+        }
+
+        if (propertiesObject['raster-hue-rotate']) {
+            rasterProperties.push(PropertyFactory.rasterHueRotate(new java.lang.Float(propertiesObject['raster-hue-rotate'])));
+        }
+
+        if (propertiesObject['raster-opacity']) {
+            rasterProperties.push(PropertyFactory.rasterOpacity(new java.lang.Float(propertiesObject['raster-opacity'])));
+        }
+
+        if (propertiesObject['raster-resampling']) {
+            switch (propertiesObject['raster-resampling']) {
+                case 'linear':
+                    rasterProperties.push(com.mapbox.mapboxsdk.style.layers.Property.RASTER_RESAMPLING_LINEAR);
+                    break;
+                case 'nearest':
+                    rasterProperties.push(com.mapbox.mapboxsdk.style.layers.Property.RASTER_RESAMPLING_NEAREST);
+                    break;
+                default:
+                    throw new Error('Unknown raster resampling value.');
+            }
+        }
+
+        if (propertiesObject['raster-saturation']) {
+            rasterProperties.push(PropertyFactory.rasterSaturation(new java.lang.Float(propertiesObject['raster-saturation'])));
+        }
+
+        if (propertiesObject['visibility']) {
+            rasterProperties.push(PropertyFactory.visibility(propertiesObject['visibility']));
+        }
+
+        return rasterProperties;
     }
 }
