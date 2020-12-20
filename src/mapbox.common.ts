@@ -35,15 +35,17 @@ export interface LatLng {
 // ------------------------------------------------------------
 
 export interface QueryRenderedFeaturesOptions {
-    point: LatLng;
-    layerIds?: string[];
+    point?: LatLng;
+    layers?: string[];
+    filter?: any[];
 }
 
 // ------------------------------------------------------------
 
 export interface Feature {
-    id: any;
-    type?: string;
+    id?: any;
+    type: string;
+    geometry: Object;
     properties: Object;
 }
 
@@ -283,9 +285,37 @@ export type UserTrackingMode = 'NONE' | 'FOLLOW' | 'FOLLOW_WITH_HEADING' | 'FOLL
 
 // -------------------------------------------------------------
 
-export interface AddSourceOptions {
+export type AddSourceOptions = VectorSource | GeoJSONSource | RasterSource;
+
+// -------------------------------------------------------------
+
+export interface Source {
+    type: 'vector' | 'raster' | 'geojson';
+}
+
+// -------------------------------------------------------------
+
+export interface RasterSource extends Source {
+    type: 'raster';
+    tiles: string[];
+    bounds?: number[];
+    minzoom?: number;
+    maxzoom?: number;
+    tileSize?: number;
+    scheme?: 'xyz' | 'tms';
+}
+
+// -------------------------------------------------------------
+
+export interface VectorSource extends Source {
+    type: 'vector';
     url: string;
-    type: string;
+}
+
+// -------------------------------------------------------------
+
+export interface GeoJSONSource extends Source {
+    type: 'geojson';
     data?: any;
 }
 
@@ -487,6 +517,9 @@ export interface LayerCommon {
     visibility(): boolean;
     show(): void;
     hide(): void;
+    getNativeInstance(): any;
+    setFilter(filter: any[]): void;
+    getFilter(): any[];
 }
 
 // ------------------------------------------------------------
@@ -628,9 +661,7 @@ export interface MapboxApi {
 
     getLayers(nativeMap?: any): Promise<LayerCommon[]>;
 
-    // addSource(options: AddSourceOptions): Promise<any>;
-
-    // addExtrusion(options: AddExtrusionOptions): Promise<any>;
+    addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
 }
 
 // ------------------------------------------------------------

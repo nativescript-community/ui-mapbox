@@ -39,6 +39,8 @@ import {
 import { GeoUtils } from './geo.utils';
 import { iOSNativeHelper } from '@nativescript/core/utils';
 import { getImage } from '@nativescript/core/http';
+import { LayerFactory } from './layers/layer-factory';
+import { FilterParser } from './filter/filter-parser.ios';
 
 // Export the enums for devs not using TS
 
@@ -333,6 +335,7 @@ export class MapboxView extends MapboxViewBase {
                     // here in MapboxView, however the mapbox api still needs a reference to it.
 
                     this.mapbox.setMapboxViewInstance(this.nativeMapView);
+                    this.mapbox.initEventHandlerShim(this.settings, this.nativeMapView);
 
                     this.notify({
                         eventName: MapboxViewBase.mapReadyEvent,
@@ -704,7 +707,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // registered callbacks.
 
-    private eventCallbacks: any[] = [];
+    private eventCallbacks: { [key: string]: any[] } = {};
 
     // user location marker render mode
 
@@ -749,7 +752,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             CLog(CLogTypes.info, 'Mapbox:initEventHandlerShim(): top');
         }
 
-        this.setOnMapClickListener((point: LatLng) => this.checkForCircleClickEvent(point), mapboxNativeViewInstance);
+        this.setOnMapClickListener((point: LatLng) => this.checkForClickEvent(point), mapboxNativeViewInstance);
     }
 
     // --------------------------------------------------------------------------------
@@ -760,67 +763,47 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * The NativeScript ContentView base class as on() and off() methods.
      */
 
-    onMapEvent(eventName, id, callback, nativeMapView?): void {}
+    onMapEvent(eventName, id, callback, nativeMapView?): void {
+        if (typeof this.eventCallbacks[eventName] == 'undefined') {
+            this.eventCallbacks[eventName] = [];
+        }
+
+        this.eventCallbacks[eventName].push({
+            id,
+            callback,
+        });
+    }
 
     // -------------------------------------------------------------------------------
 
-    offMapEvent(eventName, id, nativeMapView?): void {}
+    offMapEvent(eventName, id, nativeMapView?): void {
+        if (typeof this.eventCallbacks[eventName] == 'undefined') {
+            return;
+        }
+
+        this.eventCallbacks[eventName] = this.eventCallbacks[eventName].filter((entry) => entry.id !== id);
+    }
 
     // ------------------------------------------------------------------------
 
     /**
-     * checks for a click event on a circle.
-     *
-     * For the moment we have to handle map click events long hand ourselves for circles.
-     *
-     * When we catch an event we'll check the eventHandlers map to see if the
-     * given layer is listed. If it is we invoke it's callback.
-     *
-     * If there are multiple overlapping circles only the first one in the list will be called.
-     *
-     * We also check the location of the click to see if it's inside any
-     * circles and raise the event accordingly.
-     *
-     * @todo detect the top circle in the overlapping circles case.
+     * If click events registered and a feature found for the event, then fire listener.
      */
-
-    private checkForCircleClickEvent(point: LatLng) {
+    private checkForClickEvent(point: LatLng, nativeMap?) {
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'Mapbox:checkForCircleClickEvent(): got click event with point:', point);
+            CLog(CLogTypes.info, 'Mapbox:checkForClickEvent(): got click event with point:', point);
         }
 
-        // is this point within a circle?
-
-        for (let i = 0; i < this.circles.length; i++) {
-            if (Trace.isEnabled()) {
-                CLog(CLogTypes.info, 'Mapbox:checkForCircleClickEvent(): checking circle with radius:', this.circles[i].radius);
-            }
-
-            if (GeoUtils.isLocationInCircle(point.lng, point.lat, this.circles[i].center[0], this.circles[i].center[1], this.circles[i].radius)) {
-                if (Trace.isEnabled()) {
-                    CLog(
-                        CLogTypes.info,
-                        "Mapbox:checkForCircleClickEvent() Point is in circle with id '" + this.circles[i].id + "' invoking callbacks, if any. Callback list is:",
-                        this.eventCallbacks
-                    );
+        this.eventCallbacks['click'].forEach((eventListener) => {
+            this.queryRenderedFeatures({ point, layers: [eventListener.id] }, nativeMap).then((response) => {
+                if (response.length > 0) {
+                    eventListener.callback(response);
                 }
-
-                for (let x = 0; x < this.eventCallbacks['click'].length; x++) {
-                    const entry = this.eventCallbacks['click'][x];
-
-                    if (entry.id === this.circles[i].id) {
-                        if (Trace.isEnabled()) {
-                            CLog(CLogTypes.info, "Mapbox:checkForCircleClickEvent(): calling callback for '" + entry.id + "'");
-                        }
-
-                        return entry.callback(point);
-                    }
-                } // end of for loop over events.
-            }
-        } // end of loop over circles.
+            });
+        });
 
         return false;
-    } // end of checkForCircleClickEvent()
+    }
 
     // -------------------------------------------------------------------------------
     private _addMarkers(markers: MapboxMarker[], nativeMap?) {
@@ -1100,6 +1083,37 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     }
 
     // --------------------------------------------
+
+    async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+            
+            if (!theMap) {
+                reject('No map has been loaded');
+                return;
+            }
+
+            if (!image.startsWith("res://")) {
+                const appPath = knownFolders.currentApp().path;
+                image = appPath + '/' + image.replace('~/', '');
+            }
+            
+            const img = ImageSource.fromFileOrResourceSync(image);
+
+            try {
+                theMap.style.setImageForName(img.ios, imageId);
+                resolve();
+            } catch (ex) {
+                reject("Error during addImage: " + ex);
+
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.addImage: ' + ex);
+                }
+                throw ex;
+            }
+            
+        });
+    }
 
     addMarkers(markers: MapboxMarker[], nativeMap?: any): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -1458,35 +1472,24 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return new Promise((resolve, reject) => {
             try {
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
-                const point = options.point;
-                if (point === undefined) {
+                if (options.point === undefined) {
                     reject("Please set the 'point' parameter");
                     return;
                 }
+                if (!options) {
+                    options = {};
+                }
 
-                const { x, y } = theMap.convertCoordinateToPointToView({ latitude: point.lat, longitude: point.lng }, theMap);
-                const features = theMap.visibleFeaturesAtPoint({ x, y });
+                const { x, y } = theMap.convertCoordinateToPointToView({ latitude: options.point.lat, longitude: options.point.lng }, theMap);
+                const queryLayerIds = options.layers ? NSSet.setWithArray<string>(iOSNativeHelper.collections.jsArrayToNSArray(options.layers)) : null;
+                const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                const features = theMap.visibleFeaturesAtPointInStyleLayersWithIdentifiersPredicate({ x, y }, queryLayerIds, queryFilter);
 
                 const result = [];
                 for (let i = 0; i < features.count; i++) {
                     const feature: MGLFeature = features.objectAtIndex(i);
-                    const properties = [];
-
-                    if (feature.attributes && feature.attributes.count > 0) {
-                        const keys = iOSNativeHelper.collections.nsArrayToJSArray(feature.attributes.allKeys);
-
-                        for (const key of keys) {
-                            properties.push({
-                                key,
-                                value: feature.attributes.valueForKey(key),
-                            });
-                        }
-                    }
-
-                    result.push({
-                        id: feature.identifier,
-                        properties,
-                    });
+                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0);
+                    result.push(JSON.parse(NSString.alloc().initWithDataEncoding(featureJson, NSUTF8StringEncoding) as any));
                 }
 
                 resolve(result);
@@ -2095,8 +2098,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    // -------------------------------------------------------------------------------------
-
     /**
      * add a vector or geojson source
      *
@@ -2109,7 +2110,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     addSource(id: string, options: AddSourceOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                const { url, type } = options;
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
                 let source;
 
@@ -2123,140 +2123,56 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                switch (type) {
+                switch (options.type) {
                     case 'vector':
-                        source = MGLVectorTileSource.alloc().initWithIdentifierConfigurationURL(id, NSURL.URLWithString(url));
+                        source = MGLVectorTileSource.alloc().initWithIdentifierConfigurationURL(id, NSURL.URLWithString(options.url));
                         break;
 
                     case 'geojson':
-                        // has a source with this id already been defined? If so, then it is an error (because attempting
-                        // to add another source with the same id will crash the app.
-
                         if (theMap.style.sourceWithIdentifier(id)) {
                             reject("Remove the layer with this id first with 'removeLayer': " + id);
                             return;
                         }
 
-                        // under iOS we handle lines and circles differently
+                        const content: NSString = NSString.stringWithString(JSON.stringify(options.data));
+                        const nsData: NSData = content.dataUsingEncoding(NSUTF8StringEncoding);
+                        const geoJsonShape = MGLShape.shapeWithDataEncodingError(nsData, NSUTF8StringEncoding);
 
-                        if (options.data.geometry.type === 'LineString') {
-                            // after hours and hours of trial and error, I finally stumbled upon how to set things
-                            // up so that MGLPolylineFeature.polylineWithCoordinatesCount works.
-                            //
-                            // Allocating an NSArray and passing it in would cause the app to crash.
-                            // Creating a javascript array of CLLocationCoodinate2D entries would cause random
-                            // lines to be drawn on the map.
-                            //
-                            // However, allocating a raw C buffer and accessing it through a reference cast to CLLocationCoordinate2D
-                            // works (to my shock and horror).
-
-                            const coordinates = options.data.geometry.coordinates;
-
-                            const buffer = malloc(coordinates.length * 2 * interop.sizeof(interop.types.double));
-                            const clCoordsArray = new interop.Reference(CLLocationCoordinate2D, buffer);
-
-                            // We need to convert our coordinate array into an array of CLLocationCoodinate2D elements
-                            // which are in lat/lng order and not lng/lat
-
-                            for (let i = 0; i < coordinates.length; i++) {
-                                const newCoord: CLLocationCoordinate2D = CLLocationCoordinate2DMake(coordinates[i][1], coordinates[i][0]);
-                                clCoordsArray[i] = newCoord;
-                            }
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, 'Mapbox:addSource(): after CLLocationCoordinate2D array before creating polyline source from clCoordsArray');
-                            }
-
-                            const polyline = MGLPolylineFeature.polylineWithCoordinatesCount(new interop.Reference(CLLocationCoordinate2D, clCoordsArray), coordinates.length);
-
-                            source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, polyline, null);
-
-                            theMap.style.addSource(source);
-
-                            // To support handling click events on lines and circles, we keep the underlying
-                            // feature.
-                            //
-                            // FIXME: There should be a way to get the original feature back out from the source
-                            // but I have not yet figured out how.
-
-                            this.lines.push({
-                                type: 'line',
-                                id,
-                                clCoordsArray,
-                                numCoords: coordinates.length,
-                                source,
-                            });
-                        } else if (options.data.geometry.type === 'Point') {
-                            // FIXME: should be able to just call addSource here for type geoJson
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, 'Mapbox:addSource(): before addSource with options:', options);
-                            }
-
-                            const geoJSON = `{"type": "FeatureCollection", "features": [ ${JSON.stringify(options.data)}]}`;
-
-                            // this would otherwise crash the app
-
-                            if (theMap.style.sourceWithIdentifier(id)) {
-                                reject("Remove the layer with this id first with 'removeLayer': " + id);
-                                return;
-                            }
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, 'Mapbox:addSource(): after checking for existing style');
-                            }
-
-                            const geoDataStr = NSString.stringWithString(geoJSON);
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, 'Mapbox:addSource(): after string');
-                            }
-
-                            const geoData = geoDataStr.dataUsingEncoding(NSUTF8StringEncoding);
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, 'Mapbox:addSource(): after encoding');
-                            }
-
-                            const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0);
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, 'Mapbox:addSource(): before alloc');
-                            }
-
-                            const geo = NSData.alloc().initWithBase64EncodedStringOptions(geoDataBase64Enc, null);
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, "Mapbox:addSource(): before shape with id '" + id + "'");
-                            }
-
-                            const shape = MGLShape.shapeWithDataEncodingError(geo, NSUTF8StringEncoding);
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, "Mapbox:addSource(): after shape before second alloc with id '" + id + "' and shape '" + shape + "'");
-                            }
-
-                            const source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, shape, null);
-
-                            if (Trace.isEnabled()) {
-                                CLog(CLogTypes.info, 'Mapbox:addSource(): before addSource');
-                            }
-
-                            theMap.style.addSource(source);
-
-                            // probably a circle
-
-                            this.circles.push({
-                                type: 'line',
-                                id,
-                                center: options.data.geometry.coordinates,
-                            });
-                        }
+                        source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, geoJsonShape, null);
 
                         break;
+                    case 'raster':
+                        const sourceOptions: any = {
+                            [MGLTileSourceOptionMinimumZoomLevel]: options.minzoom,
+                            [MGLTileSourceOptionMaximumZoomLevel]: options.maxzoom,
+                            [MGLTileSourceOptionTileSize]: options.tileSize
+                        };
 
+                        if (options.scheme) {
+                            switch (options.scheme || 'xyz') {
+                                case 'xyz':
+                                    sourceOptions[MGLTileSourceOptionTileCoordinateSystem] = MGLTileCoordinateSystem.XYZ;
+                                    break;
+                                case 'tms':
+                                    sourceOptions[MGLTileSourceOptionTileCoordinateSystem] = MGLTileCoordinateSystem.TMS;
+                                    break;
+                                default:
+                                    throw new Error('Unknown raster tile scheme.');
+                            }
+                        }
+
+                        if (options.bounds) {
+                            sourceOptions[MGLTileSourceOptionCoordinateBounds] = {
+                                sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
+                                ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2])
+                            } as MGLCoordinateBounds;
+                        }
+
+                        source = MGLRasterTileSource.alloc().initWithIdentifierTileURLTemplatesOptions(id, options.tiles, sourceOptions);
+
+                        break;
                     default:
-                        reject('Invalid source type: ' + type);
+                        reject('Invalid source type: ' + options['type']);
                         return;
                 }
 
@@ -2280,12 +2196,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    // -------------------------------------------------------------------------------------
-
     /**
-     * remove a vector source by id
+     * remove source by id
      */
-
     removeSource(id: string, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
@@ -2303,22 +2216,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 theMap.style.removeSource(source);
-
-                // if we've cached the underlying feature, remove it.
-                //
-                // since we don't know if it's a line or a circle we have to check both lists.
-
-                let offset = this.lines.findIndex((entry) => entry.id === id);
-
-                if (offset !== -1) {
-                    this.lines.splice(offset, 1);
-                }
-
-                offset = this.circles.findIndex((entry) => entry.id === id);
-
-                if (offset !== -1) {
-                    this.circles.splice(offset, 1);
-                }
 
                 resolve();
             } catch (ex) {
@@ -2350,29 +2247,20 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @link https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers
      */
+    public async addLayer(style, nativeMapView?): Promise<void> {
+        const theMap: MGLMapView = nativeMapView || this._mapboxViewInstance;
 
-    public addLayer(style, nativeMapView?): Promise<void> {
-        let retval;
-
-        switch (style.type) {
-            case 'line':
-                retval = this.addLineLayer(style, nativeMapView);
-                break;
-
-            case 'circle':
-                retval = this.addCircleLayer(style, nativeMapView);
-                break;
-
-            default:
-                retval = Promise.reject("Mapbox:addLayer() Unsupported geometry type '" + style.type + "'");
-
-                break;
+        let source = null;
+        if (typeof style.source != 'string') {
+            await this.addSource(style.id + '_source', style.source);
+            source = theMap.style.sourceWithIdentifier(style.id + '_source');
+        } else {
+            source = theMap.style.sourceWithIdentifier(style.source);
         }
 
-        return retval;
+        const layer = await LayerFactory.createLayer(style, source);
+        theMap.style.addLayer(layer.getNativeInstance());
     }
-
-    // --------------------------------------------------------------
 
     /**
      * remove layer by ID
@@ -2381,8 +2269,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @param {string} id
      */
-
-    public async removeLayer(id: string, nativeMapViewInstance) {
+    public async removeLayer(id: string, nativeMapViewInstance?) {
         const theMap: MGLMapView = nativeMapViewInstance || this._mapboxViewInstance;
 
         if (Trace.isEnabled()) {
@@ -2404,183 +2291,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'Mapbox:removeLayer(): after removing layer ' + id);
         }
-    } // end of removeLayer()
-
-    // -------------------------------------------------------------------------------------
-
-    /**
-     * add a line layer
-     *
-     * Draws a line layer based on a mapbox-gl-js Mapbox Style.
-     *
-     * What sucks about this is that there is apparently no facility to add an event listener to a layer.
-     *
-     * The idea for this method is to make sharing code between mapbox-gl-js Typescript web applications
-     * and {N} native applications easier.
-     *
-     * For the moment this method only supports a source type of 'geojson'.
-     *
-     * Example style for a line:
-     *
-     * {
-     * 'id': someid,
-     * 'type': 'line',
-     * 'source': {
-     *   'type': 'geojson',
-     *   'data': {
-     *     "type": "Feature",
-     *       "geometry": {
-     *       "type": "LineString",
-     *         "coordinates": [ [ lng, lat ], [ lng, lat ], ..... ]
-     *       }
-     *     }
-     *   }
-     * },
-     * 'layout': {
-     *   'line-cap': 'round',
-     *   'line-join': 'round'
-     * },
-     * 'paint': {
-     *   'line-color': '#ed6498',
-     *   'line-width': 5,
-     *   'line-opacity': .8,
-     *   'line-dash-array': [ 1, 1, 1, ..]
-     * }
-     *
-     * Do not call this method directly. Use addLayer().
-     *
-     * 'source' may also refer to a vector source
-     *
-     * 'source': {
-     *    'type': 'vector',
-     *    'url': '<url of vector source>'
-     *  }
-     *
-     * or it may be a string referring to the id of an already added source as in
-     *
-     * 'source': '<id of source>'
-     *
-     * To enable catching of click events on a line, when a click handler is added
-     * to a line (using the onMapEvent() method above), the Annotations plugin is used to
-     * draw an invisible clickable line over the line layer. Sadly, the Annotations
-     * plugin does not support all the nice styling options of the line Layer so we're
-     * pushed into this compromise of drawing two lines, one for it's styling and the
-     * other for it's click handling.
-     *
-     * @param {object} style - a style following the Mapbox style specification.
-     * @param {any} nativeMapView - native map view (com.mapbox.mapboxsdk.maps.MapView)
-     *
-     * @return {Promise<void>}
-     *
-     * @see addLineAnnotation()
-     * @see onMapEvent()
-     *
-     * @link https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers
-     * @link https://docs.mapbox.com/android/api/map-sdk/7.1.2/com/mapbox/mapboxsdk/maps/Style.html#addSource-com.mapbox.mapboxsdk.style.sources.Source-
-     * @link https://docs.nativescript.org/core-concepts/android-runtime/marshalling/java-to-js#array-of-primitive-types
-     */
-
-    private addLineLayer(style, nativeMapViewInstance?): Promise<void> {
-        return new Promise((resolve, reject) => {
-            try {
-                const theMap: MGLMapView = nativeMapViewInstance || this._mapboxViewInstance;
-
-                if (style.type !== 'line') {
-                    reject('Non line style passed to addLineLayer()');
-                }
-
-                // the source may be of type geojson or it may be the id of a source added by addSource().
-
-                let sourceId = null;
-
-                if (typeof style.source != 'string') {
-                    sourceId = style.id + '_source';
-                    this.addSource(sourceId, style.source);
-                } else {
-                    sourceId = style.source;
-                }
-
-                const layer = MGLLineStyleLayer.alloc().initWithIdentifierSource(style.id, theMap.style.sourceWithIdentifier(sourceId));
-
-                // color
-
-                let color = 'black';
-
-                if (style.paint && style.paint['line-color']) {
-                    color = style.paint['line-color'];
-                }
-
-                layer.lineColor = NSExpression.expressionForConstantValue(new Color(color).ios);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): after line color');
-                }
-
-                // line width
-
-                let width = 5;
-
-                if (style.paint && style.paint['line-width']) {
-                    width = style.paint['line-width'];
-                }
-
-                layer.lineWidth = NSExpression.expressionForConstantValue(width);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): after line width');
-                }
-
-                let opacity = 1;
-
-                if (style.paint && style.paint['line-opacity']) {
-                    opacity = style.paint['line-opacity'];
-                }
-
-                layer.lineOpacity = NSExpression.expressionForConstantValue(opacity);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): after opacity');
-                }
-
-                // line dash array
-
-                if (style.paint && style.paint['line-dash-array']) {
-                    const dashArray = [];
-
-                    for (let i = 0; i < style.paint['line-dash-array'].length; i++) {
-                        dashArray[i] = NSExpression.expressionForConstantValue(style.paint['line-dash-array'][i]);
-                    }
-
-                    layer.lineDashPattern = NSExpression.expressionForConstantValue(dashArray);
-                }
-
-                theMap.style.addLayer(layer);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): after adding layer.');
-                }
-
-                const lineEntry = this.lines.find((entry) => entry.id === sourceId);
-
-                if (lineEntry) {
-                    lineEntry.layer = layer;
-                }
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer(): pushed line:', this.lines[this.lines.length - 1]);
-                }
-
-                resolve();
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLineLayer() Error : ' + ex);
-                }
-                reject(ex);
-            }
-        }); // end of Promise()
-    } // end of addLineLayer
-
-    // -------------------------------------------------------------------------------------
+    } 
 
     /**
      * Add a point to a line
@@ -2657,212 +2368,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 reject(ex);
             }
         });
-    } // end of addLinePoint()
-
-    // -------------------------------------------------------------------------------------
-
-    /**
-     * add a circle Layer
-     *
-     * Draw a circle based on a Mapbox style.
-     *
-     * Mapbox Native Android layers do not support click handlers. Unfortunately, we cannot use
-     * the same Annotations approach that we do for lines to get a click handler because
-     * circles drawn by the Annotations plugin do not support stops so there's no making them
-     * smaller as we zoom out. Instead, we have our own click handler (see handleClickEvent() above)
-     * to determine when a click has occured inside a circle.
-     *
-     * In order to support the click handler an additional circle-radius property, in meters, must
-     * be included.
-     *
-     * {
-     *  "id": someid,
-     *  "type": 'circle',
-     *  "radius-meters": 500,   // FIXME: radius in meters used for in-circle click detection.
-     *  "source": {
-     *    "type": 'geojson',
-     *    "data": {
-     *      "type": "Feature",
-     *      "geometry": {
-     *        "type": "Point",
-     *        "coordinates": [ lng, lat ]
-     *      }
-     *    }
-     *  },
-     *  "paint": {
-     *    "circle-radius": {
-     *      "stops": [
-     *        [0, 0],
-     *        [20, 8000 ]
-     *      ],
-     *      "base": 2
-     *    },
-     *    'circle-opacity': 0.05,
-     *    'circle-color': '#ed6498',
-     *    'circle-stroke-width': 2,
-     *    'circle-stroke-color': '#ed6498'
-     *  }
-     *
-     * @param {object} style a Mapbox style describing the circle draw.
-     * @param {object} nativeMap view.
-     *
-     * @link https://github.com/NativeScript/NativeScript/issues/6971
-     * @link https://stackoverflow.com/questions/54890753/how-to-call-objective-c-nsexpression-format-from-nativescript/54913932#54913932
-     */
-
-    private addCircleLayer(style, nativeMapViewInstance?): Promise<void> {
-        return new Promise((resolve, reject) => {
-            try {
-                const theMap: MGLMapView = nativeMapViewInstance || this._mapboxViewInstance;
-
-                if (style.type !== 'circle') {
-                    reject('Non circle style passed to addCircleLayer()');
-                }
-
-                if (typeof style.source != 'undefined') {
-                    reject('Missing source.');
-                }
-
-                // the source may be of type geojson, vector,  or it may be the id of a source added by addSource().
-
-                let sourceId = null;
-
-                if (typeof style.source != 'string') {
-                    sourceId = style.id + '_source';
-
-                    this.addSource(sourceId, style.source);
-                } else {
-                    sourceId = style.source;
-                }
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after adding source');
-                }
-
-                const layer = MGLCircleStyleLayer.alloc().initWithIdentifierSource(style.id, theMap.style.sourceWithIdentifier(sourceId));
-
-                // color
-
-                let color = 'black';
-
-                if (style.paint && style.paint['circle-color']) {
-                    color = style.paint['circle-color'];
-                }
-
-                layer.circleColor = NSExpression.expressionForConstantValue(new Color(color).ios);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after circle color');
-                }
-
-                // stroke color
-
-                let strokeColor = 'black';
-
-                if (style.paint && style.paint['circle-stroke-color']) {
-                    strokeColor = style.paint['circle-stroke-color'];
-                }
-
-                layer.circleStrokeColor = NSExpression.expressionForConstantValue(new Color(strokeColor).ios);
-
-                // stroke width
-
-                let width = 5;
-
-                if (style.paint && style.paint['circle-stroke-width']) {
-                    width = style.paint['circle-stroke-width'];
-                }
-
-                layer.circleStrokeWidth = NSExpression.expressionForConstantValue(width);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after stroke width');
-                }
-
-                let opacity = 1;
-
-                if (style.paint && style.paint['circle-opacity']) {
-                    opacity = style.paint['circe-opacity'];
-                }
-
-                layer.circleOpacity = NSExpression.expressionForConstantValue(opacity);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after opacity');
-                }
-
-                // we have two options for a radius. We might have a fixed float or an expression
-
-                const radius = 15;
-
-                if (style.paint && typeof style.paint['circle-radius'] == 'number') {
-                    layer.circleRadius = NSExpression.expressionForConstantValue(style.paint['circle-radius']);
-                } else {
-                    if (!style.paint['circle-radius'].stops) {
-                        reject('No radius or stops provided to addCircleLayer.');
-                        return;
-                    }
-
-                    // for the moment we assume we have a set of stops and a base.
-
-                    const stopKeys = [];
-                    const stopValues = [];
-
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, "Mapbox:addCircleLayer(): adding '" + style.paint['circle-radius'].stops.length + "' stops");
-                    }
-
-                    // this took forever to figure out. There is some NativeScript bug and the type definition for
-                    // NSExpression is not clear. We have to create an NSDictionary with two arrays. The first array is the
-                    // values and the second one is the keys. They have to be in ascending order. Once an NSDictionary is created
-                    // we have to create an NSArray with that.
-
-                    for (let i = 0; i < style.paint['circle-radius'].stops.length; i++) {
-                        stopKeys[i] = style.paint['circle-radius'].stops[i][0];
-                        stopValues[i] = style.paint['circle-radius'].stops[i][1];
-                    }
-
-                    let base = 2;
-
-                    if (style.paint['circle-radius'].stops.base) {
-                        base = style.paint['circle-radius'].stops.base;
-                    }
-
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): pushing circleRadius with base:', base);
-                    }
-
-                    const nsDict = new (NSDictionary as any)(stopValues, stopKeys);
-
-                    const nsArray = NSArray.arrayWithArray([nsDict]);
-
-                    layer.circleRadius = NSExpression.expressionWithFormatArgumentArray("mgl_interpolate:withCurveType:parameters:stops:( $zoomLevel, 'exponential', 2, %@)", nsArray);
-
-                    if (Trace.isEnabled()) {
-                        CLog(CLogTypes.info, 'Mapbox:addCircleLayer(): after setting circle radius expression');
-                    }
-                }
-
-                theMap.style.addLayer(layer);
-
-                const circleEntry = this.circles.find((entry) => entry.id === sourceId);
-
-                if (circleEntry) {
-                    circleEntry.radius = style['circle-radius'];
-                    circleEntry.layer = layer;
-                }
-
-                resolve();
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addCircleLayer() Error : ' + ex);
-                }
-                reject(ex);
-            }
-        }); // end of Promise()
-    } // end of addCircleLayer()
-
-    // ---------------------------------------------------------------------
+    }
 
     addGeoJsonClustered(options: AddGeoJsonClusteredOptions, nativeMapViewInstance?): Promise<void> {
         throw new Error('Method not implemented.');
@@ -3409,7 +2915,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
                 }
             } else if (cachedMarker.iconPath) {
                 const appPath = knownFolders.currentApp().path;
-                const iconFullPath = appPath + '/' + cachedMarker.iconPath;
+                const iconFullPath = appPath + '/' + cachedMarker.iconPath.replace('~/', '');
                 if (File.exists(iconFullPath)) {
                     const image = ImageSource.fromFileSync(iconFullPath).ios;
                     // perhaps add resize options for nice retina rendering (although you can now use the 'icon' param instead)
@@ -3703,5 +3209,23 @@ export class Layer implements LayerCommon {
     hide(): void {
         this.instance.visible = false;
     }
+
+    getNativeInstance() {
+        return this.instance;
+    }
+    
+    setFilter(filter: any[]) {
+        if (this.instance instanceof MGLVectorStyleLayer) {
+            // MGLVectorStyleLayer is the base type of many layer types. Predicates only supported on vector style layers.
+            // See https://docs.mapbox.com/ios/maps/api/6.3.0/Classes/MGLVectorStyleLayer.html
+
+            this.instance.predicate = FilterParser.parseJson(filter);
+        } else {
+            throw new Error('Set filter only support for vector layer.');
+        }
+    }
+
+    getFilter(): any[] {
+        return FilterParser.toJson(this.instance.predicate);
+    }
 }
-  

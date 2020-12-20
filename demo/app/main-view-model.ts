@@ -4,6 +4,7 @@ import { ContentView } from '@nativescript/core/ui/content-view';
 import { AlertOptions, alert } from '@nativescript/core/ui/dialogs';
 import { DownloadProgress, LatLng, MapStyle, Mapbox, MapboxMarker, MapboxView, OfflineRegion, Viewport } from '@nativescript-community/ui-mapbox';
 import { SETTINGS } from '../../mapbox_config';
+import { AmsterdamHoneyBees } from './sample-data';
 
 const isIOS = platform.Device.os === platform.platformNames.ios;
 
@@ -59,7 +60,7 @@ export class HelloWorldModel extends Observable {
                 lng: 4.895168,
             },
             zoomLevel: 9, // 0 (most of the world) to 20, default 0
-            showUserLocation: true, // default false
+            showUserLocation: false, // default false
             hideAttribution: true, // default false
             hideLogo: true, // default false
             hideCompass: false, // default false
@@ -234,13 +235,13 @@ export class HelloWorldModel extends Observable {
                     lat: 52.360216,
                     lng: 5,
                     onTap: () => console.log('Titleless marker tapped!'),
-                    icon: 'http://www.bme.be/wp-content/uploads/2014/04/marker.png',
+                    icon: 'https://www.emojimeaning.com/img/img-google-64/1f35e.png',
                 },
                 {
                     id: 4,
                     lat: 52.360216,
                     lng: 4.789168,
-                    title: 'One-line title here 3', // no popup unless set
+                    title: 'Home Marker', // no popup unless set
                     subtitle: 'And a one-liner here as well.',
                     iconPath: '~/assets/markers/home_marker.png',
                     selected: true,
@@ -253,7 +254,7 @@ export class HelloWorldModel extends Observable {
                     lng: 5.1,
                     title: 'This title is cut off on iOS, but multi-line on Android', // no popup unless set
                     subtitle: 'Same for this subtitle. Same for this subtitle. Same for this subtitle. Same for this subtitle. Same for this subtitle.',
-                    icon: 'https://maryjanekirkland.com/wp-content/uploads/2016/01/map-marker.png',
+                    icon: 'https://www.emojimeaning.com/img/img-google-64/1f420.png',
                     onTap: () => console.log('Marker tapped'),
                     onCalloutTap: () => console.log('Marker callout tapped'),
                 },
@@ -380,8 +381,6 @@ export class HelloWorldModel extends Observable {
         );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doAddAndClusterGeoJSON(): void {
         this.mapbox
             .addGeoJsonClustered({
@@ -418,68 +417,224 @@ export class HelloWorldModel extends Observable {
             );
     }
 
-    // ===================================================================================
-    /**
-*
-* @todo INTEGRATE THIS
-*
-  public doAddLayerAndSource(): void {
-    this.mapbox.addSource(
-        {
-          id: "terrain-source",
-          type: "vector",
-          url: "mapbox://mapbox.mapbox-terrain-v2"
-        }
-    ).then(
-      () => {
-          this.mapbox.addLayer(
-            {
-              id: "terrain-data",
-              source: "terrain-source",
-              sourceLayer: "contour",
-              type: "line",
-              lineJoin: "round",
-              lineCap: "round",
-              lineColor: "#ff69b4",
-              lineWidth: 1,
-            }
-          ).then(
-            () => {
-              console.log("Mapbox doAddLayerAndSource done");
-            },
-            (error: string) => {
-              console.log("mapbox doAddLayerAndSource error: " + error);
-            }
-          );
-        },
-        (error: string) => {
-          console.log("mapbox doAddLayerAndSource error: " + error);
-        }
-    );
-  }
+    public async doAddLayerAndSource(): Promise<void> {
+        try {
+            this.mapbox
+                .addLayer({
+                    id: 'circle-with-source-object',
+                    type: 'circle',
+                    source: {
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: [
+                                {
+                                    id: '1',
+                                    type: 'Feature',
+                                    properties: {
+                                        querySample: '1',
+                                    },
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: [4.823684692382513, 52.3701494345567],
+                                    },
+                                },
+                                {
+                                    id: '2',
+                                    type: 'Feature',
+                                    properties: {
+                                        querySample: '2',
+                                    },
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: [4.823684692382513, 52.3701494345567],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    paint: {
+                        'circle-blur': 0.2,
+                        'circle-radius': 10,
+                        'circle-opacity': 0.65,
+                        'circle-color': '#ed6498',
+                        'circle-stroke-width': 4,
+                        'circle-stroke-color': '#3b0619',
+                        'circle-stroke-opacity': 0.75,
+                    },
+                })
+                .then(() => {
+                    console.log('circle-with-source-object added');
+                    this.mapbox.onMapEvent('click', 'circle-with-source-object', (features) => {
+                        console.log('clicked', 'circle-with-source-object', features);
+                    });
 
-  public doRemoveLayerAndSource(): void {
-    this.mapbox.removeLayer("terrain-data").then(
-      () => {
-          this.mapbox.removeSource("terrain-source").then(
-            () => {
-              console.log("Mapbox doRemoveLayerAndSource done");
-            },
-            (error: string) => {
-              console.log("mapbox doAddSource error: " + error);
-            }
-          );
-        },
-        (error: string) => {
-          console.log("mapbox doAddSource error: " + error);
+                    setTimeout(() => {
+                        this.mapbox
+                            .queryRenderedFeatures({
+                                point: {
+                                    lat: 52.3701494345567,
+                                    lng: 4.823684692382513
+                                },
+                                layers: ['circle-with-source-object'],
+                                filter: ['all', ['==', '$id', '2']],
+                            })
+                            .then((result) => console.log('query rendered features', JSON.stringify(result)));
+                    }, 3000);
+                });
+
+            this.mapbox
+                .addLayer({
+                    id: 'line-with-source-object',
+                    type: 'line',
+                    source: {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: [
+                                    [4.80926513671875, 52.27403984182285],
+                                    [4.9383544921875, 52.30931825948968],
+                                ],
+                            },
+                        },
+                    },
+                    layout: {
+                        'line-cap': 'round',
+                        'line-join': 'round',
+                        'line-blur': 0.2,
+                    },
+                    paint: {
+                        'line-color': '#ab111b',
+                        'line-width': 5,
+                        'line-opacity': 0.7,
+                        'line-dash-array': [1, 1, 1, 1],
+                    },
+                })
+                .then(() => {
+                    console.log('line-with-source-object added');
+                    this.mapbox.onMapEvent('click', 'line-with-source-object', (features) => {
+                        console.log('clicked', 'line-with-source-object', features);
+                    });
+                });
+
+            this.mapbox
+                .addLayer({
+                    id: 'fill-with-source-object',
+                    type: 'fill',
+                    source: {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'Polygon',
+                                coordinates: [
+                                    [
+                                        [4.864797592163086, 52.346980527061895],
+                                        [4.923677444458008, 52.346980527061895],
+                                        [4.923677444458008, 52.36742431104005],
+                                        [4.864797592163086, 52.36742431104005],
+                                        [4.864797592163086, 52.346980527061895],
+                                    ],
+                                ],
+                            },
+                        },
+                    },
+                    paint: {
+                        'fill-antialias': 'true',
+                        'fill-color': '#5dbcd2',
+                        'fill-opacity': 0.65,
+                        'fill-outline-color': '#23474f',
+                        'fill-translate': [0, 0],
+                        'fill-translate-anchor': 'map',
+                    },
+                })
+                .then(() => {
+                    console.log('fill-with-source-object added');
+                    this.mapbox.onMapEvent('click', 'fill-with-source-object', (features) => {
+                        console.log('clicked', 'fill-with-source-object', features);
+                    });
+                });
+
+            await this.mapbox.addImage('bee', 'res://bee');
+            await this.mapbox.addImage('pizza', '~/assets/pizza-slice.png');
+
+            this.mapbox
+                .addLayer({
+                    id: 'symbol-with-source-object',
+                    type: 'symbol',
+                    source: {
+                        type: 'geojson',
+                        data: AmsterdamHoneyBees,
+                    },
+                    layout: {
+                        'text-field': 'Honey',
+                        'icon-size': 0.2,
+                        'icon-image': 'bee',
+                    },
+                    paint: {
+                        'text-color': '#d6c80d',
+                    },
+                })
+                .then(() => {
+                    console.log('symbol-with-source-object added');
+                    this.mapbox.onMapEvent('click', 'symbol-with-source-object', (features) => {
+                        console.log('clicked', 'symbol-with-source-object', features);
+                    });
+                });
+
+            this.mapbox
+                .addLayer({
+                    id: 'symbol-with-source-object2',
+                    type: 'symbol',
+                    source: {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            properties: {},
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [4.8916793, 52.3690958]
+                            },
+                        },
+                    },
+                    layout: {
+                        'text-field': 'New York Pizza',
+                        'icon-size': 0.99,
+                        'icon-image': 'pizza',
+                        'icon-rotate': 180
+                    },
+                    paint: {
+                        'text-color': '#d6c80d'
+                    }
+                })
+                .then(() => console.log('symbol-with-source-object2 added'));
+        } catch (error) {
+            console.error('Mapbox doAddLayerAndSource error :', error);
         }
-    );
-  }
+    }
 
-*/
-    // ===============================================================
-
-    // -------------------------------------------------------------------------------
+    public doRemoveLayerAndSource(): void {
+        Promise.all([
+            this.mapbox.removeLayer('circle-with-source-object').then(() => this.mapbox.offMapEvent('click', 'circle-with-source-object')),
+            this.mapbox.removeLayer('line-with-source-object').then(() => this.mapbox.offMapEvent('click', 'line-with-source-object')),
+            this.mapbox.removeLayer('fill-with-source-object').then(() => this.mapbox.offMapEvent('click', 'fill-with-source-object')),
+            this.mapbox.removeLayer('symbol-with-source-object').then(() => this.mapbox.offMapEvent('click', 'symbol-with-source-object')),
+            this.mapbox.removeLayer('symbol-with-source-object2'),
+        ]).then(() => {
+            return Promise.all([
+                this.mapbox.removeSource('custom-collection-1'),
+                this.mapbox.removeSource('line-with-source-object_source'),
+                this.mapbox.removeSource('circle-with-source-object_source'),
+                this.mapbox.removeSource('fill-with-source-object_source'),
+                this.mapbox.removeSource('symbol-with-source-object_source'),
+                this.mapbox.removeSource('symbol-with-source-object2_source'),
+            ]);
+        });
+    }
 
     public doListOfflineRegions(): void {
         this.mapbox
@@ -505,8 +660,6 @@ export class HelloWorldModel extends Observable {
                 }
             );
     }
-
-    // -------------------------------------------------------------------------------
 
     public doDeleteOfflineRegion(): void {
         this.mapbox
@@ -827,11 +980,11 @@ export class HelloWorldModel extends Observable {
 
     public doGetLayers(): void {
         this.mapbox.getLayers().then((layers) => {
-            layers.map(l => console.log(l.id));
+            layers.map((l) => console.log(l.id));
 
             const alertOptions: AlertOptions = {
                 title: 'All map style layers',
-                message: JSON.stringify(layers.map(l => l.id)),
+                message: JSON.stringify(layers.map((l) => l.id)),
                 okButtonText: 'OK',
             };
             alert(alertOptions);
@@ -841,7 +994,7 @@ export class HelloWorldModel extends Observable {
             if (!!waterwayLayer) {
                 console.log(`getLayer("${waterwayLayer.id}") visible?: ${waterwayLayer.visibility()}`);
             }
-        })
+        });
     }
 
     public doToggleLayers(): void {
@@ -850,6 +1003,29 @@ export class HelloWorldModel extends Observable {
             everySecondElement.map((layer) => {
                 layer.visibility() ? layer.hide() : layer.show();
             });
+        });
+    }
+
+    public doAddRasterLayer(): void {
+        this.mapbox
+            .addLayer({
+                id: 'raster-layer',
+                type: 'raster',
+                source: {
+                    type: 'raster',
+                    tiles: ['https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'],
+                    tileSize: 256
+                }
+            })
+            .then(() => {
+                console.log('raster layer added');
+            });
+    }
+
+    public doRemoveRasterLayer(): void {
+        this.mapbox.removeLayer('raster-layer').then(() => {
+            this.mapbox.removeSource('raster-layer_source');
+            console.log('layer removed');
         });
     }
 }
