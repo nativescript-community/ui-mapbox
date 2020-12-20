@@ -85,12 +85,8 @@ cd ./demo
 ns run <platform>
 ```
 
-## Breaking Changes
-
-This version includes breaking API changes. 
-
-The intent moving forward is to mirror, to the maximum extent practical, the Mapbox GL JS API to enable
-sharing of mapping code between browser based and native applications. 
+## Roadmap
+[https://github.com/orgs/nativescript-community/projects/4](https://github.com/orgs/nativescript-community/projects/4)
 
 ## Issues
 
