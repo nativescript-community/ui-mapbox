@@ -49,12 +49,6 @@ import {
 
 export { MapboxTraceCategory, MapStyle };
 
-// declare const android, com, java, org: any;
-
-// export namespace BundleKludge {
-//     export const bundle = { test: 'test' };
-// }
-
 function _getLocation(loc: globalAndroid.location.Location) {
     if (loc === null) {
         return null;
@@ -68,7 +62,6 @@ function _getLocation(loc: globalAndroid.location.Location) {
         } as UserLocation;
     }
 }
-// ------------------------------------------------------------
 
 /**
  * A map view created in XML.
@@ -85,7 +78,6 @@ function _getLocation(loc: globalAndroid.location.Location) {
  *
  * @see MapboxViewBase
  */
-
 export class MapboxView extends MapboxViewBase {
     // reference to the map view inside the frame.
 
@@ -106,14 +98,10 @@ export class MapboxView extends MapboxViewBase {
         }
     }
 
-    // ------------------------------------------------------
 
     /**
      * programmatically include settings
-     *
-     * @todo
      */
-
     setConfig(settings: any) {
         // zoom level is not applied unless center is set
 
@@ -132,8 +120,6 @@ export class MapboxView extends MapboxViewBase {
         return this.nativeMapView;
     }
 
-    // ------------------------------------------------------
-
     /**
      * Return the Mapbox() API Shim instance
      *
@@ -142,12 +128,9 @@ export class MapboxView extends MapboxViewBase {
      *
      * @see Mapbox
      */
-
     public getMapboxApi(): any {
         return this.mapbox;
     }
-
-    // -------------------------------------------------------
 
     /**
      * Creates the native view.
@@ -182,8 +165,6 @@ export class MapboxView extends MapboxViewBase {
         return nativeView;
     }
 
-    // -------------------------------------------------------
-
     public onLoaded() {
         super.onLoaded();
         if (Trace.isEnabled()) {
@@ -209,8 +190,6 @@ export class MapboxView extends MapboxViewBase {
         super.initNativeView();
     }
 
-    // -------------------------------------------------------
-
     /**
      * when the view is destroyed.
      *
@@ -220,7 +199,6 @@ export class MapboxView extends MapboxViewBase {
      *
      * @link https://docs.nativescript.org/plugins/ui-plugin-custom
      */
-
     disposeNativeView() {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'disposeNativeView(): top');
@@ -237,8 +215,6 @@ export class MapboxView extends MapboxViewBase {
         super.disposeNativeView();
     }
 
-    // -------------------------------------------------------------------------------------------
-
     /**
      * initialize the map
      *
@@ -251,7 +227,6 @@ export class MapboxView extends MapboxViewBase {
      *
      * @todo FIXME: this.nativeMapView is unused and never actually set to anything.
      */
-
     private initMap(): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, "MapboxView:initMap(): top - accessToken is '" + this.config.accessToken + "'", this.config);
@@ -338,7 +313,7 @@ export class MapboxView extends MapboxViewBase {
                         android: this.nativeMapView,
                     });
                 },
-            }; // end of options
+            };
 
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'initMap(): this.config is:', this.config);
@@ -380,7 +355,6 @@ export class MapboxView extends MapboxViewBase {
  * - directly via let mapbox = new Mapbox(); mapbox.show( ... )
  * - via the Mapbox XML tag in which case a MapboxView object is created which hosts a reference to this class. (See MapboxView::getMapboxAPI())
  */
-
 export class Mapbox extends MapboxCommon implements MapboxApi {
     // reference to the native mapbox API
     private _mapboxMapInstance: com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -416,10 +390,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     private _polylines = [];
     private _polygons = [];
 
-    // list of circle layers
-
-    private circles: any = [];
-
     // list of polylines
 
     private lines: any = [];
@@ -429,8 +399,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     private eventCallbacks: { [key: string]: any[] } = {};
 
     _markerIconDownloadCache = [];
-
-    // --------------------------------------------------------------------
 
     constructor() {
         super();
@@ -449,16 +417,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     /**
      * not used
      */
-
     setMapboxViewInstance(mapboxViewInstance: any): void {}
 
     /**
      * not used
      */
-
     setMapboxMapInstance(mapboxMapInstance: any): void {}
-
-    // ---------------------------------------------------------------------------------
 
     /**
      * show the map programmatically.
@@ -479,7 +443,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @todo FIXME: the timeout delay before showing the map works around some race condition. The source error needs to be figured out.
      */
-
     show(options: ShowOptions): Promise<any> {
         return new Promise((resolve, reject) => {
             try {
@@ -672,14 +635,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 reject(ex);
             }
         });
-    } // end of show()
-
-    // ----------------------------------------------------------------------------------
+    }
 
     /**
      * hide the map
      */
-
     hide(): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
@@ -698,8 +658,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
         });
     }
-
-    // ----------------------------------------------------------------------------------
 
     unhide(): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -724,7 +682,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * Destroy the map instance.
      */
-
     destroy(nativeMap?: any): Promise<void> {
         return new Promise(async (resolve, reject) => {
             this.clearEventListeners();
@@ -794,7 +751,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * but given the complication of NativeScript's garbage collection scheme it seems like a good
      * idea to remove these handlers explicitly.
      */
-
     private clearEventListeners() {
         if (this.onDidFailLoadingMapListener) {
             this._mapboxViewInstance.removeOnDidFailLoadingMapListener(this.onDidFailLoadingMapListener);
@@ -870,7 +826,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     // ------------------------------------------------
     // Life Cycle Hooks
     // ------------------------------------------------
-
     async onStart(nativeMap?: any) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'onStart()');
@@ -913,7 +868,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
         this._mapboxViewInstance.onDestroy();
     }
-    // --------------------------------------------------------------------
 
     /**
      * event handler shim
@@ -923,7 +877,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @param { any } settings
      * @param { MapboxView } mapboxView
      */
-
     initEventHandlerShim(settings, mapboxNativeViewInstance: any) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'Mapbox:initEventHandlerShim(): top');
@@ -958,7 +911,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @link https://github.com/mapbox/mapbox-android-demo/issues/540
      */
-
     public onMapEvent(eventName, id, callback, nativeMapView?): void {
         if (typeof this.eventCallbacks[eventName] == 'undefined') {
             this.eventCallbacks[eventName] = [];
@@ -976,7 +928,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * This will remove all event handlers (that we manage here) for
      * the given layer id and event.
      */
-
     public offMapEvent(eventName, id, nativeMapView?) {
         if (typeof this.eventCallbacks[eventName] == 'undefined') {
             return;
@@ -1010,7 +961,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * Given a click on a line overlay, find the id of the underlying line layer
      * an invoke any registered callbacks.
      */
-
     private handleLineClickEvent(clickOverlay) {
         const lineEntry = this.lines.find((entry) => {
             if (Trace.isEnabled()) {
@@ -1062,7 +1012,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @link https://docs.mapbox.com/android/core/overview/#permissionsmanager
      */
-
     async requestFineLocationPermission() {
         return request('location');
     }

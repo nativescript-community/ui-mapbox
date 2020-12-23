@@ -1,9 +1,8 @@
-import { Color, File, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
+import { Color, File, ImageSource, Trace, knownFolders, path } from '@nativescript/core';
 
 import {
     AddExtrusionOptions,
     AddGeoJsonClusteredOptions,
-    AddLayerOptions,
     AddPolygonOptions,
     AddPolylineOptions,
     AddSourceOptions,
@@ -36,7 +35,6 @@ import {
     LayerCommon,
 } from './mapbox.common';
 
-import { GeoUtils } from './geo.utils';
 import { iOSNativeHelper } from '@nativescript/core/utils';
 import { getImage } from '@nativescript/core/http';
 import { LayerFactory } from './layers/layer-factory';
@@ -49,8 +47,6 @@ export { MapboxTraceCategory, MapStyle };
 let _markers = [];
 const _markerIconDownloadCache = [];
 
-// let _mapView: MGLMapView;
-
 const _setMapboxMapOptions = (mapView: MGLMapView, settings) => {
     mapView.logoView.hidden = settings.hideLogo;
     mapView.attributionButton.hidden = settings.hideAttribution;
@@ -59,10 +55,6 @@ const _setMapboxMapOptions = (mapView: MGLMapView, settings) => {
     mapView.scrollEnabled = !settings.disableScroll;
     mapView.zoomEnabled = !settings.disableZoom;
     mapView.allowsTilting = !settings.disableTilt;
-
-    // mapView.showsScale = settings.showScale; // TODO, default false
-    // mapView.showsHeading = true;
-    // mapView.showsUserHeadingIndicator = true;
 
     if (settings.center && settings.center.lat && settings.center.lng) {
         const centerCoordinate = CLLocationCoordinate2DMake(settings.center.lat, settings.center.lng);
@@ -80,7 +72,7 @@ const _getMapStyle = (input: any): NSURL => {
     if (input.startsWith('mapbox://styles') || input.startsWith('http://') || input.startsWith('https://')) {
         return NSURL.URLWithString(input);
     } else if (input.startsWith('~/')) {
-        return NSURL.URLWithString( 'file://' + path.join(knownFolders.currentApp().path, input.replace('~/', '')));
+        return NSURL.URLWithString('file://' + path.join(knownFolders.currentApp().path, input.replace('~/', '')));
     } else if (input === MapStyle.LIGHT) {
         return MGLStyle.lightStyleURL;
     } else if (input === MapStyle.DARK) {
@@ -115,7 +107,7 @@ function _getTrackingMode(input: UserLocationCameraMode): MGLUserTrackingMode {
     return MGLUserTrackingMode.None;
 }
 
-function _getLocation (loc: MGLUserLocation) {
+function _getLocation(loc: MGLUserLocation) {
     if (loc === null) {
         return null;
     } else {
@@ -129,15 +121,12 @@ function _getLocation (loc: MGLUserLocation) {
     }
 }
 
-// ------------------------------------------------------------------------
-
 /**
  * Map View Class instantiated from XML
  *
  * This class is created by the NativeScript XML view parsing
  * code.
  */
-
 export class MapboxView extends MapboxViewBase {
     private nativeMapView: MGLMapView = null;
     private delegate: MGLMapViewDelegate = null;
@@ -151,12 +140,9 @@ export class MapboxView extends MapboxViewBase {
 
     private initCountHack: number = 50;
 
-    // ------------------------------------------------------
-
     /**
      * programmatically include settings
      */
-
     setConfig(settings: any) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'setConfig(): settings:', settings);
@@ -165,13 +151,9 @@ export class MapboxView extends MapboxViewBase {
         this.settings = settings;
     }
 
-    // ------------------------------------------------------
-
     getNativeMapView(): any {
         return this.nativeMapView;
     }
-
-    // ---------------------------------------------------------
 
     public createNativeView(): Object {
         if (Trace.isEnabled()) {
@@ -181,8 +163,6 @@ export class MapboxView extends MapboxViewBase {
         const v = super.createNativeView();
         return v;
     }
-
-    // -------------------------------------------------------
 
     /**
      * init the native view.
@@ -197,26 +177,24 @@ export class MapboxView extends MapboxViewBase {
      * I'm sure there is something I do not understand about how this is supposed to work
      * and that the handstands below are not necessary.
      */
-
     public onLoaded() {
         super.onLoaded();
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'initNativeView(): on - loaded');
         }
         if (this.telemetry === false) {
-            NSUserDefaults.standardUserDefaults.setBoolForKey(false, "MGLMapboxMetricsEnabled");
+            NSUserDefaults.standardUserDefaults.setBoolForKey(false, 'MGLMapboxMetricsEnabled');
         }
         if (!this.initialized) {
             this.initMap();
             this.initialized = true;
         }
     }
+
     public initNativeView(): void {
         super.initNativeView();
         this.nativeView.owner = this;
     }
-
-    // -------------------------------------------------------
 
     /**
      * when the view is destroyed.
@@ -248,8 +226,6 @@ export class MapboxView extends MapboxViewBase {
         }
     }
 
-    // ---------------------------------------------------
-
     /**
      * returns a reference to the class Mapbox API shim instance
      *
@@ -260,8 +236,6 @@ export class MapboxView extends MapboxViewBase {
         return this.mapbox;
     }
 
-    // ----------------------------------------------------
-
     /**
      * initialize the map
      *
@@ -269,7 +243,6 @@ export class MapboxView extends MapboxViewBase {
      *
      * @todo FIXME: figure out why the accessToken property (which is using a binding in the demo XML) isn't set before we arrive here.
      */
-
     initMap(): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'initMap() top with settings:', this.settings);
@@ -382,8 +355,6 @@ export class MapboxView extends MapboxViewBase {
         }
     } // end of initMap()
 
-    // ----------------------------------
-
     public onLayout(left: number, top: number, right: number, bottom: number): void {
         super.onLayout(left, top, right, bottom);
         if (this.nativeMapView) {
@@ -391,12 +362,10 @@ export class MapboxView extends MapboxViewBase {
         }
     }
 
-    [telemetryProperty.setNative](value:boolean) {
-        NSUserDefaults.standardUserDefaults.setBoolForKey(false, "MGLMapboxMetricsEnabled");
+    [telemetryProperty.setNative](value: boolean) {
+        NSUserDefaults.standardUserDefaults.setBoolForKey(false, 'MGLMapboxMetricsEnabled');
     }
 }
-
-// -----------------------------------------------------------------------------------------------------------------------
 
 /**
  * a custom user location marker
@@ -689,55 +658,33 @@ export class CustomUserLocationAnnotationView extends MGLUserLocationAnnotationV
     }
 } // end of class CustomUserLocationAnnotationView
 
-// ----------------------------------------------------------------------
-
 export class Mapbox extends MapboxCommon implements MapboxApi {
     // reference to the native mapbox API
 
     private _mapboxMapInstance: any;
     private _mapboxViewInstance: any;
 
-    // list of circle layers
-
-    private circles: any = [];
-
-    // list of polylines
-
-    private lines: any = [];
-
-    // registered callbacks.
-
     private eventCallbacks: { [key: string]: any[] } = {};
 
-    // user location marker render mode
-
     private userLocationRenderMode: string;
-
-    // --------------------------------------------------------------------
 
     /**
      * set the mapboxMapInstance
      *
      * @see MapboxView::initMap()
      */
-
     setMapboxMapInstance(mapboxMapInstance: any) {
         this._mapboxMapInstance = mapboxMapInstance;
     }
-
-    // --------------------------------------------------------------------
 
     /**
      * set the mapboxViewInstance
      *
      * @see MapboxView::initMap();
      */
-
     setMapboxViewInstance(mapboxViewInstance: any) {
         this._mapboxViewInstance = mapboxViewInstance;
     }
-
-    // --------------------------------------------------------------------
 
     /**
      * event handler shim
@@ -746,7 +693,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @param { MapboxView } mapboxView
      */
-
     initEventHandlerShim(settings: any, mapboxNativeViewInstance: any) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'Mapbox:initEventHandlerShim(): top');
@@ -755,14 +701,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         this.setOnMapClickListener((point: LatLng) => this.checkForClickEvent(point), mapboxNativeViewInstance);
     }
 
-    // --------------------------------------------------------------------------------
-
     /**
      * register a map event handler
      *
      * The NativeScript ContentView base class as on() and off() methods.
      */
-
     onMapEvent(eventName, id, callback, nativeMapView?): void {
         if (typeof this.eventCallbacks[eventName] == 'undefined') {
             this.eventCallbacks[eventName] = [];
@@ -774,8 +717,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    // -------------------------------------------------------------------------------
-
     offMapEvent(eventName, id, nativeMapView?): void {
         if (typeof this.eventCallbacks[eventName] == 'undefined') {
             return;
@@ -783,8 +724,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
         this.eventCallbacks[eventName] = this.eventCallbacks[eventName].filter((entry) => entry.id !== id);
     }
-
-    // ------------------------------------------------------------------------
 
     /**
      * If click events registered and a feature found for the event, then fire listener.
@@ -805,7 +744,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return false;
     }
 
-    // -------------------------------------------------------------------------------
     private _addMarkers(markers: MapboxMarker[], nativeMap?) {
         if (!markers) {
             if (Trace.isEnabled()) {
@@ -985,75 +923,33 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     // ----------------------------------------
     // Life Cycle Hooks - Required on Android
     // ----------------------------------------
-
-    /**
-     * on Start
-     */
-
     onStart(nativeMap?: any): Promise<void> {
         return Promise.resolve();
     }
-
-    // ----------------------------------------------
-
-    /**
-     * on Resume
-     */
 
     onResume(nativeMap?: any): Promise<void> {
         return Promise.resolve();
     }
 
-    // ----------------------------------------------
-
-    /**
-     * on Pause
-     */
-
     onPause(nativeMap?: any): Promise<void> {
         return Promise.resolve();
     }
-
-    // ----------------------------------------------
-
-    /**
-     * on Stop
-     */
 
     onStop(nativeMap?: any): Promise<void> {
         return Promise.resolve();
     }
 
-    // ----------------------------------------------
-
-    /**
-     * on Low Memory
-     */
-
     onLowMemory(nativeMap?: any): Promise<void> {
         return Promise.resolve();
     }
-
-    // ----------------------------------------------
-
-    /**
-     * on Destroy
-     */
 
     onDestroy(nativeMap?: any): Promise<void> {
         return Promise.resolve();
     }
 
-    // ---------------------------------------------
-
-    // onSaveInstanceState( Bundle outState)
-
-    // ----------------------------------------
-
     /**
      * explicitly set a map style
      */
-
     setMapStyle(style: string | MapStyle, nativeMap?: any): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
@@ -1082,36 +978,33 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    // --------------------------------------------
-
     async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
         return new Promise((resolve, reject) => {
             const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
-            
+
             if (!theMap) {
                 reject('No map has been loaded');
                 return;
             }
 
-            if (!image.startsWith("res://")) {
+            if (!image.startsWith('res://')) {
                 const appPath = knownFolders.currentApp().path;
                 image = appPath + '/' + image.replace('~/', '');
             }
-            
+
             const img = ImageSource.fromFileOrResourceSync(image);
 
             try {
                 theMap.style.setImageForName(img.ios, imageId);
                 resolve();
             } catch (ex) {
-                reject("Error during addImage: " + ex);
+                reject('Error during addImage: ' + ex);
 
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.addImage: ' + ex);
                 }
                 throw ex;
             }
-            
         });
     }
 
@@ -1296,7 +1189,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @todo come up with a reasonable set of cross platform defaults.
      */
-
     _stringToCameraMode(mode: UserLocationCameraMode): any {
         switch (mode) {
             case 'NONE':
@@ -1322,17 +1214,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
             case 'TRACKING_GPS':
                 // a reasonable approximation.
-
                 return MGLUserTrackingMode.Follow;
 
             case 'TRACK_GPS_NORTH':
                 return MGLUserTrackingMode.FollowWithCourse;
         }
     }
-
-    /**
-     * convert string to render mode
-     */
 
     _stringToRenderMode(mode): any {
         let renderMode: any;
@@ -1365,18 +1252,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @param {object} options
      */
-
     showUserLocationMarker(options, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
 
-                // userLocation marker.
-
                 theMap.showsUserLocation = true;
-
                 theMap.userTrackingMode = this._stringToCameraMode(options.cameraMode);
-
                 theMap.showsUserHeadingIndicator = true;
 
                 this.userLocationRenderMode = this._stringToRenderMode(options.renderMode);
@@ -1387,7 +1269,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 // tell the delegate to tell the CustomerLocationAnnotationView to change the
                 // appearance of the marker.
-
                 delegate.changeUserLocationRenderMode(this.userLocationRenderMode);
 
                 if (typeof options.clickListener != 'undefined') {
@@ -1404,14 +1285,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    // ------------------------------------------------------------------------------
-
     /**
      * hide the user location marker
      *
      * @todo unfinished
      */
-
     hideUserLocationMarker(nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
@@ -1425,8 +1303,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    // --------------------------------------------------------------------------------
-
     /**
      * Change the mode of the user location marker
      *
@@ -1436,7 +1312,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * The marker must be configured using showUserLocationMarker before this method
      * can called.
      */
-
     changeUserLocationMarkerMode(renderModeString, cameraModeString: UserLocationCameraMode, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
@@ -1463,10 +1338,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     /**
      * ignored on iOS
      */
-
     forceUserLocationUpdate(location: any, nativeMap?: any): void {}
-
-    // --------------------------------------------------------------
 
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?): Promise<Feature[]> {
         return new Promise((resolve, reject) => {
@@ -1502,6 +1374,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
+    /**
+     * @deprecated
+    */
     addPolygon(options: AddPolygonOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             const theMap = nativeMap || this._mapboxViewInstance;
@@ -1523,20 +1398,20 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
 
             const geoJSON = `{
-        "type": "FeatureCollection",
-        "features": [
-          {
-            "id": ${JSON.stringify(polygonID)},
-            "type": "Feature",
-            "properties": {
-            },
-            "geometry": {
-              "type": "Polygon",
-              "coordinates": [${JSON.stringify(coordinateArray)}]
-            }
-          }
-        ]
-      }`;
+                "type": "FeatureCollection",
+                "features": [
+                {
+                    "id": ${JSON.stringify(polygonID)},
+                    "type": "Feature",
+                    "properties": {
+                    },
+                    "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [${JSON.stringify(coordinateArray)}]
+                    }
+                }
+                ]
+            }`;
             const geoDataStr = NSString.stringWithString(geoJSON);
             const geoData = geoDataStr.dataUsingEncoding(NSUTF8StringEncoding);
             const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0);
@@ -1566,8 +1441,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             resolve();
         });
     }
-
-    // --------------------------------------------------------------------
 
     addPolyline(options: AddPolylineOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -1608,8 +1481,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             resolve();
         });
     }
-
-    // --------------------------------------------------------------------
 
     private removePolyById(theMap, id: string): void {
         let layer = theMap.style.layerWithIdentifier(id);
@@ -1686,13 +1557,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    // ------------------------------------------------------------------------------
-
     /**
      * sets a map level click listener
      *
      */
-
     setOnMapClickListener(listener: (data: LatLng) => void, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
@@ -2145,7 +2013,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         const sourceOptions: any = {
                             [MGLTileSourceOptionMinimumZoomLevel]: options.minzoom,
                             [MGLTileSourceOptionMaximumZoomLevel]: options.maxzoom,
-                            [MGLTileSourceOptionTileSize]: options.tileSize
+                            [MGLTileSourceOptionTileSize]: options.tileSize,
                         };
 
                         if (options.scheme) {
@@ -2164,7 +2032,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         if (options.bounds) {
                             sourceOptions[MGLTileSourceOptionCoordinateBounds] = {
                                 sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
-                                ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2])
+                                ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
                             } as MGLCoordinateBounds;
                         }
 
@@ -2226,8 +2094,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
         });
     }
-
-    // -------------------------------------------------------------------------------------
 
     /**
      * a rough analogue to the mapbox-gl-js addLayer() method
@@ -2291,7 +2157,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'Mapbox:removeLayer(): after removing layer ' + id);
         }
-    } 
+    }
 
     /**
      * @deprecated
@@ -2310,35 +2176,32 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      */
     public async addLinePoint(id: string, lnglat, sourceId?: string, nativeMapView?): Promise<void> {
         const theMap: MGLMapView = nativeMapView || this._mapboxViewInstance;
-        
+
         const sId = !!sourceId ? sourceId : id + '_source';
         const lineSource = theMap.style.sourceWithIdentifier(sId) as MGLShapeSource;
-        
+
         if (!lineSource) {
             throw new Error(`no source found with id: ${sId}`);
         }
 
         try {
-            const lineFeatures = lineSource.featuresMatchingPredicate(
-                FilterParser.parseJson(['==', '$type', 'LineString'])
-            );
-                       
+            const lineFeatures = lineSource.featuresMatchingPredicate(FilterParser.parseJson(['==', '$type', 'LineString']));
+
             if (lineFeatures.count === 0) {
-                throw new Error("no line string feature found");
+                throw new Error('no line string feature found');
             }
-    
+
             const lineFeature = lineFeatures.objectAtIndex(0) as MGLPolylineFeature;
-            
+
             const newCoord = CLLocationCoordinate2DMake(lnglat[1], lnglat[0]);
             const newCoordPointer = new interop.Reference(newCoord);
-            
+
             lineFeature.appendCoordinatesCount(newCoordPointer, 1);
             lineSource.shape = lineFeature;
         } catch (error) {
             console.log(error);
             throw error;
         }
-        
     }
 
     addGeoJsonClustered(options: AddGeoJsonClusteredOptions, nativeMapViewInstance?): Promise<void> {
@@ -2417,126 +2280,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         //     }
         // });
     }
-
-    /**
-*
-* @todo CHECK THIS
-
-  addLayer(options: AddLayerOptions, nativeMap?): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        const { id, source, sourceLayer, type } = options;
-        let theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
-        let layer;
-
-        if (!theMap) {
-          reject("No map has been loaded");
-          return;
-        }
-
-        if (theMap.style.layerWithIdentifier(id)) {
-          reject("Layer exists: " + id);
-          return;
-        }
-
-        switch (type) {
-          case "circle":
-            const circleColor = !options.circleColor ? UIColor.blackColor : (options.circleColor instanceof Color ? options.circleColor.ios : new Color(options.circleColor).ios);
-            const circleOpacity = options.circleOpacity === undefined ? 1 : options.circleOpacity;
-            const circleRadius = options.circleRadius || 5;
-            const circleStrokeColor = !options.circleStrokeColor ? UIColor.blackColor : (options.circleStrokeColor instanceof Color ? options.circleStrokeColor.ios : new Color(options.circleStrokeColor).ios);
-            const circleStrokeWidth = options.circleStrokeWidth === undefined ? 2 : options.circleStrokeWidth;
-
-            layer = MGLCircleStyleLayer.alloc().initWithIdentifierSource(id, theMap.style.sourceWithIdentifier(source));
-            layer.sourceLayerIdentifier = sourceLayer;
-
-            layer.circleColor = NSExpression.expressionForConstantValue(circleColor);
-            layer.circleOpacity = NSExpression.expressionForConstantValue(circleOpacity);
-            layer.circleRadius = NSExpression.expressionForConstantValue(circleRadius);
-            layer.circleStrokeColor = NSExpression.expressionForConstantValue(circleStrokeColor);
-            layer.circleStrokeWidth = NSExpression.expressionForConstantValue(circleStrokeWidth);
-            break;
-          case "fill":
-            const fillColor = !options.fillColor ? UIColor.blackColor : (options.fillColor instanceof Color ? options.fillColor.ios : new Color(options.fillColor).ios);
-            const fillOpacity = options.fillOpacity === undefined ? 1 : options.fillOpacity;
-
-            layer = MGLFillStyleLayer.alloc().initWithIdentifierSource(id, theMap.style.sourceWithIdentifier(source));
-            layer.sourceLayerIdentifier = sourceLayer;
-
-            layer.fillColor = NSExpression.expressionForConstantValue(fillColor);
-            layer.fillOpacity = NSExpression.expressionForConstantValue(fillOpacity);
-            break;
-          case "line":
-            const lineCap = options.lineCap === undefined ? 'round' : options.lineCap;
-            const lineJoin = options.lineJoin === undefined ? 'round' : options.lineJoin;
-
-            const lineColor = options.lineColor === undefined ? UIColor.blackColor : (options.lineColor instanceof Color ? options.lineColor.ios : new Color(options.lineColor).ios);
-            const lineOpacity = options.lineOpacity === undefined ? 1 : options.lineOpacity;
-            const lineWidth = options.lineWidth === undefined ? 2 : options.lineWidth;
-
-            layer = MGLLineStyleLayer.alloc().initWithIdentifierSource(id, theMap.style.sourceWithIdentifier(source));
-            layer.sourceLayerIdentifier = sourceLayer;
-
-            layer.lineCap = NSExpression.expressionForConstantValue(lineCap);
-            layer.lineJoin = NSExpression.expressionForConstantValue(lineJoin);
-            layer.lineColor = NSExpression.expressionForConstantValue(lineColor);
-            layer.lineOpacity = NSExpression.expressionForConstantValue(lineOpacity);
-            layer.lineWidth = NSExpression.expressionForConstantValue(lineWidth);
-            break;
-          default:
-            reject("Invalid layer type: " + options.type);
-            break;
-        }
-
-        if (!layer) {
-          const ex = "No layer to add";
-          if (Trace.isEnabled()) {
-    CLog(CLogTypes.info, "Error in mapbox.addLayer: " + ex);
-}
-          reject(ex);
-        }
-        if (Trace.isEnabled()) {
-    CLog(CLogTypes.info, 'adding the layer!');
-}
-        console.log(layer);
-        theMap.style.addLayer(layer);
-        resolve();
-      } catch (ex) {
-        if (Trace.isEnabled()) {
-    CLog(CLogTypes.info, "Error in mapbox.addLayer: " + ex);
-}
-        reject(ex);
-      }
-    });
-  }
-
-  removeLayer(id: string, nativeMap?): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        let theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
-
-        if (!theMap) {
-          reject("No map has been loaded");
-          return;
-        }
-
-        const layer = theMap.style.layerWithIdentifier(id);
-        if (!layer) {
-          reject("Layer does not exist");
-          return;
-        }
-
-        theMap.style.removeLayer(layer);
-        resolve();
-      } catch (ex) {
-        if (Trace.isEnabled()) {
-    CLog(CLogTypes.info, "Error in mapbox.removeLayer: " + ex);
-}
-        reject(ex);
-      }
-    });
-  }
-*/
 
     trackUser(options: TrackUserOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -2644,7 +2387,6 @@ function _downloadImage(marker) {
             }
         );
     });
-
 }
 
 const _downloadMarkerImages = (markers: MapboxMarker[]) => {
@@ -2662,14 +2404,12 @@ const _downloadMarkerImages = (markers: MapboxMarker[]) => {
     return Promise.all(iterations).then(() => result);
 };
 
-// -------------------------------------------------------------------------------------------------
 
 /**
  * "Delegate" for catching mapview events
  *
  * @link https://docs.nativescript.org/core-concepts/ios-runtime/how-to/ObjC-Subclassing#typescript-delegate-example
  */
-
 @NativeClass
 class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
     public static ObjCProtocols = [MGLMapViewDelegate];
@@ -2683,17 +2423,15 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
 
     private mapboxApi: any;
 
-    private userLocationClickListener: (annotation: MGLAnnotation)=>void;
-    private userLocationChangedListener: (location: UserLocation)=>void;
+    private userLocationClickListener: (annotation: MGLAnnotation) => void;
+    private userLocationChangedListener: (location: UserLocation) => void;
     private userLocationRenderMode: any;
     private userLocationAnnotationView: CustomUserLocationAnnotationView;
 
-    // -----------------------
 
     /**
      * initialize with the mapReady callback
      */
-
     public initWithCallback(mapLoadedCallback: (mapView: MGLMapView) => void): MGLMapViewDelegateImpl {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::initWithCallback()');
@@ -2703,44 +2441,34 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         return this;
     }
 
-    // -----------------------
 
     /**
      * set a reference to the mapboxAPI instance
      */
-
     setMapboxApi(api) {
         this.mapboxApi = api;
     }
 
-    // -----------------------
-
     /**
      * set the user location click listener callback
      */
-
     setUserLocationClickListener(callback) {
         this.userLocationClickListener = callback;
     }
+
     /**
      * set the user location click listener callback
      */
-
     setUserLocationChangedistener(callback) {
         this.userLocationChangedListener = callback;
     }
 
-    // -----------------------
-
     /**
      * set user location marker modes
      */
-
     changeUserLocationRenderMode(userLocationRenderMode) {
         this.userLocationAnnotationView.changeUserLocationRenderMode(userLocationRenderMode);
     }
-
-    // -----------------------
 
     /**
      * set style loaded callback.
@@ -2752,17 +2480,13 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
      *
      * @see Mapbox:setMapStyle()
      */
-
     setStyleLoadedCallback(callback) {
         this.styleLoadedCallback = callback;
     }
 
-    // -----------------------
-
     /**
      * map ready callback
      */
-
     mapViewDidFinishLoadingMap(mapView: MGLMapView): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl:mapViewDidFinishLoadingMap(): top');
@@ -2777,15 +2501,12 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         }
     }
 
-    // ------------------------
-
     mapViewDidFinishRenderingMapFullyRendered(mapView: MGLMapView, fullyRendered: boolean): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl:mapViewDidFinishRenderingMapFullyRendered(): rendered is:', fullyRendered);
         }
     }
 
-    // ------------------------
 
     /**
      * Callback when the style has been loaded.
@@ -2796,7 +2517,6 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
      *
      * @link https://mapbox.github.io/mapbox-gl-native/macos/0.3.0/Protocols/MGLMapViewDelegate.html#/c:objc(pl)MGLMapViewDelegate(im)mapView:didFinishLoadingStyle:
      */
-
     mapViewDidFinishLoadingStyle(mapView: MGLMapView): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl:mapViewDidFinishLoadingStyle(): callback called.');
@@ -2811,8 +2531,6 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         }
     }
 
-    // ------------------------
-
     /**
      * disable the default user location callout
      *
@@ -2820,7 +2538,6 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
      * marker is about useless. It just displays "You Are Here". The examples do not
      * show how to disable it.
      */
-
     mapViewAnnotationCanShowCallout(mapView: MGLMapView, annotation: MGLAnnotation): boolean {
         if (annotation.isKindOfClass(MGLUserLocation.class())) {
             return false;
@@ -2829,15 +2546,11 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         }
     }
 
-    // -------------------------
-
     mapViewDidFailLoadingMapWithError(mapView: MGLMapView, error: NSError): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'mapViewDidFailLoadingMapWithError: ' + error);
         }
     }
-
-    // ---------------------------------------
 
     mapViewDidChangeUserTrackingModeAnimated(mapView: MGLMapView, mode: MGLUserTrackingMode, animated: boolean): void {
         if (Trace.isEnabled()) {
@@ -2845,12 +2558,9 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         }
     }
 
-    // ----------------------------------------
-
     /**
      * fired when the marker icon is about to be rendered - return null for the default icon
      */
-
     mapViewImageForAnnotation(mapView: MGLMapView, annotation: MGLAnnotation): MGLAnnotationImage {
         const cachedMarker = this.getTappedMarkerDetails(annotation);
         if (cachedMarker) {
@@ -2898,20 +2608,14 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         return null;
     }
 
-    // ---------------------------------------------
-
     /**
      * fired when one of the callout's accessoryviews is tapped (not currently used)
      */
-
     mapViewAnnotationCalloutAccessoryControlTapped(mapView: MGLMapView, annotation: MGLAnnotation, control: UIControl): void {}
-
-    // --------------------------------------------
 
     /**
      * fired when a marker is tapped
      */
-
     mapViewDidSelectAnnotation(mapView: MGLMapView, annotation: MGLAnnotation): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::mapViewDidSelectAnntation()');
@@ -2936,20 +2640,15 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         }
     }
 
-    // ----------------------------------------------------------------------------------
-
     /**
      * fired when a callout is tapped
      */
-
     mapViewTapOnCalloutForAnnotation(mapView: MGLMapView, annotation: MGLAnnotation): void {
         const cachedMarker = this.getTappedMarkerDetails(annotation);
         if (cachedMarker && cachedMarker.onCalloutTap) {
             cachedMarker.onCalloutTap(cachedMarker);
         }
     }
-
-    // -----------------------------------------------------------------------------------
 
     private getTappedMarkerDetails(tapped): any {
         for (const m in _markers) {
@@ -2970,12 +2669,9 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         }
     }
 
-    // ------------------------------------------------------------------------------------
-
     /**
      * override the standard location marker
      */
-
     mapViewViewForAnnotation(mapView: MGLMapView, annotation: MGLAnnotation): MGLAnnotationView {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::mapViewViewForAnnotation() top');
@@ -2997,11 +2693,8 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         if (this.userLocationChangedListener) {
             this.userLocationChangedListener(_getLocation(userLocation));
         }
-
     }
-} // end of MGLMapViewDelegateImpl
-
-// --------------------------------------------------------------------------------------
+}
 
 @NativeClass
 class MapTapHandlerImpl extends NSObject {
@@ -3065,7 +2758,6 @@ class MapLongPressHandlerImpl extends NSObject {
  *
  * This is used by the OnScrollListener
  */
-
 @NativeClass
 class MapPanHandlerImpl extends NSObject {
     private _owner: WeakRef<Mapbox>;
@@ -3131,7 +2823,6 @@ class MapPanHandlerImpl extends NSObject {
  *
  * Current unused
  */
-
 @NativeClass
 class MapSwipeHandlerImpl extends NSObject {
     private _owner: WeakRef<Mapbox>;
@@ -3184,7 +2875,7 @@ export class Layer implements LayerCommon {
     getNativeInstance() {
         return this.instance;
     }
-    
+
     setFilter(filter: any[]) {
         if (this.instance instanceof MGLVectorStyleLayer) {
             // MGLVectorStyleLayer is the base type of many layer types. Predicates only supported on vector style layers.

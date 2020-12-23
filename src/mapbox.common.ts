@@ -819,8 +819,6 @@ export interface MapboxViewApi {
     onLowMemory(): Promise<any>;
 
     onDestroy(): Promise<any>;
-
-    // onSaveInstanceState( Bundle outState)
 }
 
 // ----------------------------------------------------------------------------------------
@@ -1170,5 +1168,3 @@ export abstract class MapboxViewBase extends MapboxViewCommonBase {
         this.config.disableTilt = value;
     }
 }
-
-// END
