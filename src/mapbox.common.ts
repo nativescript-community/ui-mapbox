@@ -45,7 +45,6 @@ export interface QueryRenderedFeaturesOptions {
 export interface QuerySourceFeaturesOptions {
     sourceLayer?: string;
     filter?: any[];
-    validate?: boolean;
 }
 
 // ------------------------------------------------------------
