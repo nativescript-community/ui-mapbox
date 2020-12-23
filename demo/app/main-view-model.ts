@@ -1,6 +1,7 @@
-import { Button, Color, Observable, Page } from '@nativescript/core';
+import { Button, Color, Observable, Page, ContentView } from '@nativescript/core';
+import { setInterval, clearInterval } from '@nativescript/core/timer';
 import * as platform from '@nativescript/core/platform';
-import { ContentView } from '@nativescript/core/ui/content-view';
+
 import { AlertOptions, alert } from '@nativescript/core/ui/dialogs';
 import { DownloadProgress, LatLng, MapStyle, Mapbox, MapboxMarker, MapboxView, OfflineRegion, Viewport } from '@nativescript-community/ui-mapbox';
 import { SETTINGS } from '../../mapbox_config';
@@ -474,7 +475,7 @@ export class HelloWorldModel extends Observable {
                             .queryRenderedFeatures({
                                 point: {
                                     lat: 52.3701494345567,
-                                    lng: 4.823684692382513
+                                    lng: 4.823684692382513,
                                 },
                                 layers: ['circle-with-source-object'],
                                 filter: ['all', ['==', '$id', '2']],
@@ -483,6 +484,38 @@ export class HelloWorldModel extends Observable {
                     }, 3000);
                 });
 
+            const longLineCoordinates = [
+                [4.825401306152344, 52.29105258647392],
+                [4.833984374999999, 52.293992398835414],
+                [4.843597412109375, 52.29147257161407],
+                [4.8566436767578125, 52.29105258647392],
+                [4.862480163574219, 52.29084259241063],
+                [4.866600036621093, 52.29630211452998],
+                [4.871406555175781, 52.30302060261101],
+                [4.872779846191406, 52.31057768336975],
+                [4.870719909667969, 52.31645452105213],
+                [4.8690032958984375, 52.32065178453125],
+                [4.868316650390625, 52.327996037736995],
+                [4.867973327636719, 52.3342901416433],
+                [4.867973327636719, 52.342051636387865],
+                [4.865913391113281, 52.34645620310868],
+                [4.856300354003906, 52.3447783246691],
+                [4.857673645019531, 52.348972901370985],
+                [4.854240417480469, 52.35757053943562],
+                [4.845657348632812, 52.35840924385213],
+                [4.829521179199219, 52.35819956924031],
+                [4.8113250732421875, 52.35715118125809],
+                [4.810638427734375, 52.354005868078445],
+                [4.791755676269531, 52.350440909192635],
+                [4.785919189453125, 52.348763181988105],
+                [4.77081298828125, 52.35442525610276],
+                [4.775276184082031, 52.35694150067703],
+                [4.7783660888671875, 52.357360860844295],
+                [4.7824859619140625, 52.36176390234046],
+                [4.814414978027344, 52.36910132990146],
+                [4.8175048828125, 52.373083994540266],
+                [4.820594787597656, 52.380629111184575],
+            ];
             this.mapbox
                 .addLayer({
                     id: 'line-with-source-object',
@@ -495,8 +528,8 @@ export class HelloWorldModel extends Observable {
                             geometry: {
                                 type: 'LineString',
                                 coordinates: [
-                                    [4.80926513671875, 52.27403984182285],
-                                    [4.9383544921875, 52.30931825948968],
+                                    [4.8209381103515625, 52.28769256200232],
+                                    [4.8085784912109375, 52.27572040360819]
                                 ],
                             },
                         },
@@ -518,6 +551,21 @@ export class HelloWorldModel extends Observable {
                     this.mapbox.onMapEvent('click', 'line-with-source-object', (features) => {
                         console.log('clicked', 'line-with-source-object', features);
                     });
+
+                    let i = 0;
+                    const intervalId = setInterval(async () => {
+                        if (i < longLineCoordinates.length) {
+                            const element = longLineCoordinates[i];
+                            try {
+                                await this.mapbox.addLinePoint('line-with-source-object', element);
+                            } catch (error) {
+                                console.log('error :', error);
+                            }
+                            i++;
+                        } else {
+                            clearInterval(intervalId);
+                        }
+                    }, 1000);
                 });
 
             this.mapbox
@@ -597,7 +645,7 @@ export class HelloWorldModel extends Observable {
                             properties: {},
                             geometry: {
                                 type: 'Point',
-                                coordinates: [4.8916793, 52.3690958]
+                                coordinates: [4.8916793, 52.3690958],
                             },
                         },
                     },
@@ -605,11 +653,11 @@ export class HelloWorldModel extends Observable {
                         'text-field': 'New York Pizza',
                         'icon-size': 0.99,
                         'icon-image': 'pizza',
-                        'icon-rotate': 180
+                        'icon-rotate': 180,
                     },
                     paint: {
-                        'text-color': '#d6c80d'
-                    }
+                        'text-color': '#d6c80d',
+                    },
                 })
                 .then(() => console.log('symbol-with-source-object2 added'));
         } catch (error) {
@@ -1014,8 +1062,8 @@ export class HelloWorldModel extends Observable {
                 source: {
                     type: 'raster',
                     tiles: ['https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'],
-                    tileSize: 256
-                }
+                    tileSize: 256,
+                },
             })
             .then(() => {
                 console.log('raster layer added');

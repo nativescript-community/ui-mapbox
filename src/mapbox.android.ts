@@ -2402,6 +2402,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     }
 
     /**
+     * @deprecated
      * Add a point to a line
      *
      * This method appends a point to a line and is useful for drawing a users track.
@@ -2412,72 +2413,32 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @link https://github.com/mapbox/mapbox-gl-native/issues/13983
      * @link https://docs.mapbox.com/android/api/mapbox-java/libjava-geojson/3.0.1/com/mapbox/geojson/Feature.html#Feature--
      * @link https://docs.oracle.com/javase/8/docs/api/java/util/List.html
-     *
-     * @todo this does not update the invisible clickable overlay.
      */
-    public addLinePoint(id: string, lnglat, nativeMapView?): Promise<void> {
-        return new Promise((resolve, reject) => {
-            try {
-                // This only works for GeoJSON features.
-                //
-                // The original thought was to query the source to get the points that make up the line
-                // and then add a point to it. Unfortunately, it seems that the points in the source
-                // are modified and do not match the original set of points that make up the map. I kept
-                // adding a LineString and after querying it it would be returned as a MultiLineString
-                // with more points.
-                //
-                // As a result of this, we keep the original feature in the lines list and use that
-                // as the data source for the line. As each point is added, we append it to the
-                // feature and reset the json source for the displayed line.
-
-                const lineEntry = this.lines.find((entry) => entry.id === id);
-
-                if (!lineEntry) {
-                    reject("No such line layer '" + id + "'");
-                    return;
-                }
-
-                const geometry = lineEntry.feature.geometry();
-
-                // const coordinates = geometry.coordinates();
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLinePoint(): adding point:', lnglat);
-                }
-
-                // see https://docs.oracle.com/javase/8/docs/api/java/util/List.html
-
-                const newPoint = com.mapbox.geojson.Point.fromLngLat(lnglat[0], lnglat[1]);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLinePoint(): newPoint is:', newPoint);
-                }
-
-                geometry.coordinates().add(newPoint);
-
-                // sadly it appears we have to recreate the feature. The old feature should get
-                // culled by garbage collection.
-
-                lineEntry.feature = com.mapbox.geojson.Feature.fromGeometry(geometry);
-
-                // now reset the source
-
-                const lineSource = this._mapboxMapInstance.getStyle().getSource(id + '_source') as com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-
-                lineSource.setGeoJson(lineEntry.feature);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLinePoint(): after updating lineSource feature');
-                }
-
-                resolve();
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLinePoint() Error : ' + ex);
-                }
-                reject(ex);
+    public async addLinePoint(id: string, lnglat, sourceId?: string, nativeMapView?): Promise<void> {
+        try {
+            const sId = !!sourceId ? sourceId : id + '_source';
+            const lineSource = this._mapboxMapInstance.getStyle().getSource(sId) as com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+            
+            if (!lineSource) {
+                throw new Error(`no source found with id: ${sId}`);
             }
-        });
+
+            const lineFeatures = lineSource.querySourceFeatures(FilterParser.parseJson(['==', '$type', 'LineString']));
+            
+            if (lineFeatures.size() === 0) {
+                throw new Error("no line string feature found");
+            }
+            
+            const feature = lineFeatures.get(0);
+
+            const newPoints = new java.util.ArrayList<com.mapbox.geojson.Point>(feature.geometry().coordinates());
+            newPoints.add(com.mapbox.geojson.Point.fromLngLat(lnglat[0], lnglat[1]));
+
+            const newFeature = com.mapbox.geojson.LineString.fromLngLats(newPoints);
+            lineSource.setGeoJson(newFeature);
+        } catch (error) {
+            return error;
+        }
     }
 
     addGeoJsonClustered(options: AddGeoJsonClusteredOptions, nativeMap?): Promise<void> {

@@ -2294,6 +2294,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     } 
 
     /**
+     * @deprecated
      * Add a point to a line
      *
      * This method appends a point to a line and is useful for drawing a users track.
@@ -2306,68 +2307,38 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @link https://github.com/mapbox/mapbox-gl-native/issues/13983
      * @link https://docs.mapbox.com/ios/maps/examples/runtime-animate-line/
-     *
-     * @todo this does not update the invisible clickable overlay.
      */
+    public async addLinePoint(id: string, lnglat, sourceId?: string, nativeMapView?): Promise<void> {
+        const theMap: MGLMapView = nativeMapView || this._mapboxViewInstance;
+        
+        const sId = !!sourceId ? sourceId : id + '_source';
+        const lineSource = theMap.style.sourceWithIdentifier(sId) as MGLShapeSource;
+        
+        if (!lineSource) {
+            throw new Error(`no source found with id: ${sId}`);
+        }
 
-    public addLinePoint(id: string, lnglat, nativeMapView?): Promise<void> {
-        return new Promise((resolve, reject) => {
-            try {
-                // The original thought was to query the source to get the points that make up the line
-                // and then add a point to it. Unfortunately, it seems that the points in the source
-                // are modified and do not match the original set of points that make up the map. I kept
-                // adding a LineString and after querying it it would be returned as a MultiLineString
-                // with more points.
-                //
-                // As a result of this, we keep the original feature in the lines list and use that
-                // as the data source for the line. As each point is added, we append it to the
-                // feature and reset the json source for the displayed line.
-
-                const lineEntry = this.lines.find((entry) => entry.id === id);
-
-                if (!lineEntry) {
-                    reject("No such line layer '" + id + "'");
-                    return;
-                }
-
-                // we carry a pointer to the raw buffer of CLLocationCoordinate2D structures.
-                // since we are managing the buffer ourselves we need to allocate space for
-                // the new location entry.
-                //
-                // I originally tried realloc here but as soon as I try to add an entry an exception is thrown
-                // indicating it's a read only property; hence the alloc, copy, and free here.
-
-                const bytes = lineEntry.numCoords * 2 * interop.sizeof(interop.types.double);
-
-                const buffer = malloc(bytes + 2 * interop.sizeof(interop.types.double));
-                const newCoordsArray = new interop.Reference(CLLocationCoordinate2D, buffer);
-
-                for (let i = 0; i < lineEntry.numCoords; i++) {
-                    newCoordsArray[i] = lineEntry.clCoordsArray[i];
-                }
-
-                lineEntry.numCoords++;
-
-                newCoordsArray[lineEntry.numCoords - 1] = CLLocationCoordinate2DMake(lnglat[1], lnglat[0]);
-
-                free(lineEntry.clCoordsArray);
-
-                const polyline = MGLPolylineFeature.polylineWithCoordinatesCount(new interop.Reference(CLLocationCoordinate2D, newCoordsArray), lineEntry.numCoords);
-
-                lineEntry.clCoordsArray = newCoordsArray;
-
-                // now update the source
-
-                lineEntry.source.shape = polyline;
-
-                resolve();
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Mapbox:addLinePoint() Error : ' + ex);
-                }
-                reject(ex);
+        try {
+            const lineFeatures = lineSource.featuresMatchingPredicate(
+                FilterParser.parseJson(['==', '$type', 'LineString'])
+            );
+                       
+            if (lineFeatures.count === 0) {
+                throw new Error("no line string feature found");
             }
-        });
+    
+            const lineFeature = lineFeatures.objectAtIndex(0) as MGLPolylineFeature;
+            
+            const newCoord = CLLocationCoordinate2DMake(lnglat[1], lnglat[0]);
+            const newCoordPointer = new interop.Reference(newCoord);
+            
+            lineFeature.appendCoordinatesCount(newCoordPointer, 1);
+            lineSource.shape = lineFeature;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+        
     }
 
     addGeoJsonClustered(options: AddGeoJsonClusteredOptions, nativeMapViewInstance?): Promise<void> {

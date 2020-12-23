@@ -611,7 +611,7 @@ export interface MapboxApi {
 
     removeLayer(id: string, nativeMap?: any): Promise<any>;
 
-    addLinePoint(id: string, point, nativeMapView?: any): Promise<any>;
+    addLinePoint(id: string, point, sourceId?, nativeMapView?: any): Promise<any>;
 
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?: any): Promise<Feature[]>;
 
@@ -790,7 +790,7 @@ export interface MapboxViewApi {
 
     removeLayer(id: string): Promise<any>;
 
-    addLinePoint(id: string, point): Promise<any>;
+    addLinePoint(id: string, point, sourceId?): Promise<any>;
 
     addPolygon(options: AddPolygonOptions): Promise<any>;
 
@@ -943,8 +943,8 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     removeLayer(id: string): Promise<any> {
         return this.mapbox.removeLayer(id, this.getNativeMapView());
     }
-    addLinePoint(id: string, point): Promise<any> {
-        return this.mapbox.addLinePoint(id, point, this.getNativeMapView());
+    addLinePoint(id: string, point, sourceId?): Promise<any> {
+        return this.mapbox.addLinePoint(id, point, sourceId, this.getNativeMapView());
     }
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<Feature[]> {
         return this.mapbox.queryRenderedFeatures(options, this.getNativeMapView());
