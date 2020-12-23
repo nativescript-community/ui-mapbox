@@ -481,6 +481,10 @@ export class HelloWorldModel extends Observable {
                                 filter: ['all', ['==', '$id', '2']],
                             })
                             .then((result) => console.log('query rendered features', JSON.stringify(result)));
+
+                        this.mapbox
+                            .querySourceFeatures('circle-with-source-object_source', { filter: ['==', ['get', 'querySample'], '2'] })
+                            .then((result) => console.log('query source features', JSON.stringify(result)));
                     }, 3000);
                 });
 
