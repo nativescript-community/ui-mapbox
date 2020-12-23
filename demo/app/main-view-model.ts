@@ -563,9 +563,10 @@ export class HelloWorldModel extends Observable {
                             }
                             i++;
                         } else {
+                            i = 0;
                             clearInterval(intervalId);
                         }
-                    }, 1000);
+                    }, 100);
                 });
 
             this.mapbox
