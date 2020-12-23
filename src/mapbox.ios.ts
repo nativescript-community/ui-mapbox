@@ -978,6 +978,31 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
+    async getImage(imageId: string, nativeMap?: any): Promise<ImageSource> {
+        return new Promise((resolve, reject) => {
+            const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+            
+            if (!theMap) {
+                reject('No map has been loaded');
+                return;
+            }
+
+            try {
+                const nativeImage = theMap.style.imageForName(imageId);
+                const img = new ImageSource(nativeImage);
+                
+                resolve(img); 
+            } catch (ex) {
+                reject("Error during getImage: " + ex);
+
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.getImage: ' + ex);
+                }
+                throw ex;
+            }      
+        });
+    }
+
     async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
         return new Promise((resolve, reject) => {
             const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
@@ -1002,6 +1027,29 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.addImage: ' + ex);
+                }
+                throw ex;
+            }
+        });
+    }
+
+    async removeImage(imageId: string, nativeMap?: any): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+
+            if (!theMap) {
+                reject('No map has been loaded');
+                return;
+            }
+
+            try {
+                theMap.style.removeImageForName(imageId);
+                resolve();
+            } catch (ex) {
+                reject('Error during removeImage: ' + ex);
+
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.removeImage: ' + ex);
                 }
                 throw ex;
             }

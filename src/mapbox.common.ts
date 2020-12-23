@@ -1,4 +1,4 @@
-import { Color, ContentView, Property, Trace, booleanConverter } from '@nativescript/core';
+import { Color, ContentView, Property, Trace, booleanConverter, ImageSource } from '@nativescript/core';
 
 export const MapboxTraceCategory = 'NativescriptMapbox';
 export enum CLogTypes {
@@ -661,7 +661,11 @@ export interface MapboxApi {
 
     getLayers(nativeMap?: any): Promise<LayerCommon[]>;
 
+    getImage(imageId: string, nativeMap?: any): Promise<ImageSource>
+
     addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
+    
+    removeImage(imageId: string, nativeMap?: any): Promise<void>;
 }
 
 // ------------------------------------------------------------
@@ -805,6 +809,12 @@ export interface MapboxViewApi {
     getLayer(name: string, nativeMap?: any): Promise<LayerCommon>;
 
     getLayers(nativeMap?: any): Promise<LayerCommon[]>;
+
+    getImage(imageId: string, nativeMap?: any): Promise<ImageSource>
+
+    addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
+
+    removeImage(imageId: string, nativeMap?: any): Promise<void>;
 
     destroy(): Promise<any>;
 
@@ -967,6 +977,15 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     }
     getLayers(nativeMap?: any): Promise<LayerCommon[]> {
         return this.mapbox.getLayers(nativeMap);
+    }
+    getImage(imageId: string): Promise<ImageSource> {
+        return this.mapbox.getImage(imageId, this.getNativeMapView());
+    }
+    addImage(imageId: string, image: string): Promise<void> {
+        return this.mapbox.addImage(imageId, image, this.getNativeMapView());
+    }
+    removeImage(imageId: string): Promise<void> {
+        return this.mapbox.removeImage(imageId, this.getNativeMapView());
     }
     destroy(): Promise<any> {
         return this.mapbox && this.mapbox.destroy(this.getNativeMapView());

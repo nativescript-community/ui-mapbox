@@ -5,7 +5,7 @@
  */
 
 import { request } from '@nativescript-community/perms';
-import { AndroidApplication, Application, Color, File, Trace, Utils, knownFolders, path, ImageSource } from '@nativescript/core';
+import { AndroidApplication, Application, Color, File, Trace, Utils, knownFolders, path, ImageSource, Image } from '@nativescript/core';
 import { getImage } from '@nativescript/core/http';
 import { FilterParser } from './filter/filter-parser.android';
 import { GeoUtils } from './geo.utils';
@@ -1100,6 +1100,31 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
+    async getImage(imageId: string, nativeMap?: any): Promise<ImageSource> {
+        return new Promise((resolve, reject) => {
+            const theMap = nativeMap || this._mapboxMapInstance;
+            
+            if (!theMap) {
+                reject('No map has been loaded');
+                return;
+            }
+
+            try {
+                const nativeImage = theMap.getStyle().getImage(imageId);
+                const img = new ImageSource(nativeImage);
+
+                resolve(img); 
+            } catch (ex) {
+                reject("Error during getImage: " + ex);
+
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.getImage: ' + ex);
+                }
+                throw ex;
+            }      
+        });
+    }
+
     async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
         return new Promise((resolve, reject) => {
             const theMap = nativeMap || this._mapboxMapInstance;
@@ -1125,8 +1150,30 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     CLog(CLogTypes.info, 'Error in mapbox.addImage: ' + ex);
                 }
                 throw ex;
-            }
+            }      
+        });
+    }
+
+    async removeImage(imageId: string, nativeMap?: any): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const theMap = nativeMap || this._mapboxMapInstance;
             
+            if (!theMap) {
+                reject('No map has been loaded');
+                return;
+            }
+
+            try {
+                theMap.getStyle().removeImage(imageId);
+                resolve();
+            } catch (ex) {
+                reject("Error during removeImage: " + ex);
+
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.removeImage: ' + ex);
+                }
+                throw ex;
+            }      
         });
     }
 
