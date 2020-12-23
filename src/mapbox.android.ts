@@ -33,6 +33,7 @@ import {
     MapboxViewBase,
     OfflineRegion,
     QueryRenderedFeaturesOptions,
+    QuerySourceFeaturesOptions,
     SetCenterOptions,
     SetTiltOptions,
     SetViewportOptions,
@@ -1532,6 +1533,46 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             } catch (ex) {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.queryRenderedFeatures: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
+
+    querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions): Promise<Feature[]> {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!options) {
+                    options = {};
+                }
+
+                const source = this._mapboxMapInstance.getStyle().getSource(sourceId);
+                if (!source) {
+                    throw new Error(`Source with id "${sourceId}" not found.`);
+                }
+
+                let features;
+                const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                if (source instanceof com.mapbox.mapboxsdk.style.sources.GeoJsonSource) {
+                    features = source.querySourceFeatures(queryFilter);
+                } else if (source instanceof com.mapbox.mapboxsdk.style.sources.VectorSource) {
+                    if (!options.sourceLayer) {
+                        throw new Error('The option "sourceLayer" is required for vector sources.');
+                    }
+                    features = source.querySourceFeatures([options.sourceLayer], queryFilter);
+                } else {
+                    throw new Error('Only sources from type "vector" or "geojson" are supported.');
+                }
+
+                const result = [];
+                for (let i = 0; i < features.size(); i++) {
+                    const feature: com.mapbox.geojson.Feature = features.get(i);
+                    result.push(JSON.parse(feature.toJson()));
+                }
+                resolve(result);
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.querySourceFeatures: ' + ex);
                 }
                 reject(ex);
             }
