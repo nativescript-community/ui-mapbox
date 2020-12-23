@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.7...v6.1.0) (2020-12-23)
+
+
+### Bug Fixes
+
+* (android) actually removing source from the map in "removeSource" ([b8b279f](https://github.com/nativescript-community/ui-mapbox/commit/b8b279f96ec4fd1b66ced4accb9149a88978d9d0))
+* (android) circle-radius of type number used wrong property (caused crash) ([3a944b3](https://github.com/nativescript-community/ui-mapbox/commit/3a944b3cadeac81ffa3f97332503b52f9a4dab14))
+* addLinePoint and deprecated for next version ([5865dae](https://github.com/nativescript-community/ui-mapbox/commit/5865dae3cd310c1e0db0772675100038a3ef43b6))
+* addSource on v8-ios-runtime + support for all geojson types including FeatureCollection ([38728b8](https://github.com/nativescript-community/ui-mapbox/commit/38728b8d2629452f4c86a15182396f4b823f81b8))
+* addSource/addLayer on android ([a6dd1c2](https://github.com/nativescript-community/ui-mapbox/commit/a6dd1c289dfc45c24cd57fd4c27881bb552a9b11))
+* replace tilde in markers iconPath (so ~ would work on both android and ios) ([4b72713](https://github.com/nativescript-community/ui-mapbox/commit/4b72713f98dca34d167cfe65c63789909219700d))
+* replaced broken addMarker demo icons ([91979ff](https://github.com/nativescript-community/ui-mapbox/commit/91979ff4b77e18ee27a768345f54f1e995a9a2a5))
+
+
+### Features
+
+* (android) support for all geojson types in addSource ([26ce92a](https://github.com/nativescript-community/ui-mapbox/commit/26ce92a6898283b9bb7cf60d2f3d395c6344c022))
+* added addImage + SymbolLayer support ([d104637](https://github.com/nativescript-community/ui-mapbox/commit/d104637516cced10515ad0ce6b93c2f06016572d))
+* added visibility layout property support to all layer types. added circle-pitch and circle-translate property support ([6510e9d](https://github.com/nativescript-community/ui-mapbox/commit/6510e9d30b44ec48bcf2e34ab8094dc2789ee44e))
+* click event for any layer types ([#9](https://github.com/nativescript-community/ui-mapbox/issues/9)) ([908dbd4](https://github.com/nativescript-community/ui-mapbox/commit/908dbd4e6627d655d200717428d94772e8bc5e84))
+* more paint and layout properties for LineLayer supported ([7a9bd38](https://github.com/nativescript-community/ui-mapbox/commit/7a9bd3846300f6155f5e87d6d54ad76977b5fbf9))
+* raster source & layer support ([#11](https://github.com/nativescript-community/ui-mapbox/issues/11)) ([c485595](https://github.com/nativescript-community/ui-mapbox/commit/c485595a52cb73b5d5f17ece46dc353d10dad130))
+* setFilter/getFilter for layers ([#7](https://github.com/nativescript-community/ui-mapbox/issues/7)) ([e893dd5](https://github.com/nativescript-community/ui-mapbox/commit/e893dd5b4f461b6a432b92d7bb2dc63ffb60c973))
+
+
+
+
+
 ## [6.0.7](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.6...v6.0.7) (2020-11-25)
 
 
