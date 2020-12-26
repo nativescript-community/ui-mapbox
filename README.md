@@ -689,6 +689,33 @@ Remove a layer added with addLayer() by id.
   mapbox.removeLayer( id );
 ```
 
+### queryRenderedFeatures
+https://docs.mapbox.com/mapbox-gl-js/api/map/#map#queryrenderedfeatures
+Returns an array of GeoJSON Feature objects representing visible features that satisfy the query parameters.
+
+```js
+mapbox
+  .queryRenderedFeatures({
+    point: {
+      lat: 52.3701494345567,
+      lng: 4.823684692382513,
+  	},
+    layers: ['circle-with-source-object'],
+    filter: ['==', ['get', 'querySample'], '2'],
+  })
+  .then((result) => console.log('query rendered features', result))
+```
+
+### querySourceFeatures
+https://docs.mapbox.com/mapbox-gl-js/api/map/#map#querysourcefeatures
+Returns an array of GeoJSON Feature objects representing features within the specified vector tile or GeoJSON source that satisfy the query parameters.
+
+```js
+mapbox
+  .querySourceFeatures('source_id', { filter: ['==', ['get', 'querySample'], '2'] })
+  .then((result) => console.log('query source features', result));
+```
+
 ### addLinePoint
 Dynamically add a point to a line.
 

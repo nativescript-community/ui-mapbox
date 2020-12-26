@@ -42,6 +42,13 @@ export interface QueryRenderedFeaturesOptions {
 
 // ------------------------------------------------------------
 
+export interface QuerySourceFeaturesOptions {
+    sourceLayer?: string;
+    filter?: any[];
+}
+
+// ------------------------------------------------------------
+
 export interface Feature {
     id?: any;
     type: string;
@@ -615,6 +622,8 @@ export interface MapboxApi {
 
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?: any): Promise<Feature[]>;
 
+    querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions, nativeMap?: any): Promise<Feature[]>;
+
     addPolygon(options: AddPolygonOptions, nativeMap?: any): Promise<any>;
 
     removePolygons(ids?: any[], nativeMap?: any): Promise<any>;
@@ -661,10 +670,10 @@ export interface MapboxApi {
 
     getLayers(nativeMap?: any): Promise<LayerCommon[]>;
 
-    getImage(imageId: string, nativeMap?: any): Promise<ImageSource>
+    getImage(imageId: string, nativeMap?: any): Promise<ImageSource>;
 
     addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
-    
+
     removeImage(imageId: string, nativeMap?: any): Promise<void>;
 }
 
@@ -739,7 +748,9 @@ export interface MapboxViewApi {
     removeMarkers(options?: any): Promise<any>;
 
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<Feature[]>;
-
+    
+    querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions): Promise<Feature[]>;
+    
     setOnMapClickListener(listener: (data: LatLng) => boolean): Promise<any>;
 
     setOnMapLongClickListener(listener: (data: LatLng) => boolean): Promise<any>;
@@ -956,6 +967,9 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     }
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<Feature[]> {
         return this.mapbox.queryRenderedFeatures(options, this.getNativeMapView());
+    }
+    querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions): Promise<Feature[]> {
+        return this.mapbox.querySourceFeatures(sourceId, options, this.getNativeMapView());
     }
     addPolygon(options: AddPolygonOptions): Promise<any> {
         return this.mapbox.addPolygon(options, this.getNativeMapView());

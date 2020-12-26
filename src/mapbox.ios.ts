@@ -13,6 +13,7 @@ import {
     DownloadOfflineRegionOptions,
     Feature,
     LatLng,
+    LayerCommon,
     ListOfflineRegionsOptions,
     MapStyle,
     MapboxApi,
@@ -22,6 +23,7 @@ import {
     MapboxViewBase,
     OfflineRegion,
     QueryRenderedFeaturesOptions,
+    QuerySourceFeaturesOptions,
     SetCenterOptions,
     SetTiltOptions,
     SetViewportOptions,
@@ -32,7 +34,6 @@ import {
     UserLocationCameraMode,
     Viewport,
     telemetryProperty,
-    LayerCommon,
 } from './mapbox.common';
 
 import { iOSNativeHelper } from '@nativescript/core/utils';
@@ -1416,6 +1417,49 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             } catch (ex) {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.queryRenderedFeatures: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
+
+    querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions, nativeMap?): Promise<Feature[]> {
+        return new Promise((resolve, reject) => {
+            try {
+                const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+                if (!options) {
+                    options = {};
+                }
+
+                const source = theMap.style.sourceWithIdentifier(sourceId);
+                if (!source) {
+                    throw new Error(`Source with id "${sourceId}" not found.`);
+                }
+
+                let features;
+                const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                if (source instanceof MGLShapeSource) {
+                    features = source.featuresMatchingPredicate(queryFilter);
+                } else if (source instanceof MGLVectorTileSource) {
+                    if (!options.sourceLayer) {
+                        throw new Error('The option "sourceLayer" is required for vector sources.');
+                    }
+                    const sourceLayerIds = options.sourceLayer ? NSSet.setWithArray<string>(iOSNativeHelper.collections.jsArrayToNSArray([options.sourceLayer])) : null;
+                    features = source.featuresInSourceLayersWithIdentifiersPredicate(sourceLayerIds, queryFilter);
+                } else {
+                    throw new Error('Only sources from type "vector" or "geojson" are supported.');
+                }
+
+                const result = [];
+                for (let i = 0; i < features.count; i++) {
+                    const feature: MGLFeature = features.objectAtIndex(i);
+                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0);
+                    result.push(JSON.parse(NSString.alloc().initWithDataEncoding(featureJson, NSUTF8StringEncoding) as any));
+                }
+                resolve(result);
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.querySourceFeatures: ' + ex);
                 }
                 reject(ex);
             }
