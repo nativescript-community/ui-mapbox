@@ -11,8 +11,6 @@ const isIOS = platform.Device.os === platform.platformNames.ios;
 
 const ACCESS_TOKEN = SETTINGS.mapbox_access_token;
 
-// -------------------------------------------------------------------------------
-
 export class HelloWorldModel extends Observable {
     private mapboxView: MapboxView;
     private mapbox: Mapbox;
@@ -21,8 +19,6 @@ export class HelloWorldModel extends Observable {
         super();
         console.log('HelloWorldModel::constructor()');
     }
-
-    // --------------------------------------------------------------------
 
     /**
      * show a map programmatically
@@ -128,8 +124,6 @@ export class HelloWorldModel extends Observable {
         contentView.content = mapView;
     }
 
-    // -------------------------------------------------------------------------------
-
     public doHide(): void {
         this.mapbox.hide().then(
             () => {
@@ -140,8 +134,6 @@ export class HelloWorldModel extends Observable {
             }
         );
     }
-
-    // -------------------------------------------------------------------------------
 
     public doDestroy(): void {
         this.mapbox.destroy().then(
@@ -154,8 +146,6 @@ export class HelloWorldModel extends Observable {
         );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doUnhide(): void {
         this.mapbox.unhide().then(
             () => {
@@ -167,8 +157,6 @@ export class HelloWorldModel extends Observable {
         );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doRemoveAllMarkers(): void {
         this.mapbox.removeMarkers().then(
             () => console.log('Mapbox doRemoveAllMarkers done'),
@@ -176,16 +164,12 @@ export class HelloWorldModel extends Observable {
         );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doRemove2Markers(): void {
         this.mapbox.removeMarkers([2, 3]).then(
             () => console.log('Mapbox doRemove2Markers done'),
             (error) => console.log('mapbox doRemove2Markers error: ' + error)
         );
     }
-
-    // -------------------------------------------------------------------------------
 
     public doAddMarkers(): void {
         const onTap = (marker: MapboxMarker) => console.log(`Marker tapped with title: ${marker.title}`);
@@ -266,8 +250,6 @@ export class HelloWorldModel extends Observable {
             );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doGetViewport(): void {
         this.mapbox.getViewport().then(
             (result: Viewport) => {
@@ -281,8 +263,6 @@ export class HelloWorldModel extends Observable {
             (error: string) => console.log('mapbox doGetViewport error: ' + error)
         );
     }
-
-    // -------------------------------------------------------------------------------
 
     public doSetViewport(): void {
         this.mapbox
@@ -300,8 +280,6 @@ export class HelloWorldModel extends Observable {
                 (error: string) => console.log('mapbox doSetViewport error: ' + error)
             );
     }
-
-    // -------------------------------------------------------------------------------
 
     // Add an option to download the current viewport: https://www.mapbox.com/ios-sdk/examples/offline-pack/ (look for visibleCoordinateBounds)
 
@@ -344,8 +322,6 @@ export class HelloWorldModel extends Observable {
 
         alert(alertOptions);
     }
-
-    // -------------------------------------------------------------------------------
 
     public doDownloadCurrentViewportAsOfflineRegion(): void {
         this.mapbox.getViewport().then(
@@ -533,7 +509,7 @@ export class HelloWorldModel extends Observable {
                                 type: 'LineString',
                                 coordinates: [
                                     [4.8209381103515625, 52.28769256200232],
-                                    [4.8085784912109375, 52.27572040360819]
+                                    [4.8085784912109375, 52.27572040360819],
                                 ],
                             },
                         },
@@ -738,8 +714,6 @@ export class HelloWorldModel extends Observable {
             );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doGetTilt(): void {
         this.mapbox.getTilt().then(
             (result: number) => {
@@ -756,25 +730,28 @@ export class HelloWorldModel extends Observable {
         );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doGetUserLocation(): void {
-        this.mapbox.getUserLocation().then(
-            (location) => {
-                const alertOptions: AlertOptions = {
-                    title: 'User location',
-                    message: JSON.stringify(location),
-                    okButtonText: 'Thanks!',
-                };
-                alert(alertOptions);
-            },
-            (error: string) => {
+        this.mapbox
+            .showUserLocationMarker({
+                foregroundTintColor: '#089e00',
+                foregroundStaleTintColor: '#fac878', 
+                backgroundTintColor: '#eb81d5',
+                bearingTintColor: '#02db3c'
+            })
+            .then(() => {
+                this.mapbox.getUserLocation().then((loc) => {
+                    const alertOptions: AlertOptions = {
+                        title: 'User location',
+                        message: JSON.stringify(loc),
+                        okButtonText: 'Thanks!',
+                    };
+                    alert(alertOptions);
+                });
+            })
+            .catch((error: string) => {
                 console.log('mapbox getUserLocation error: ' + error);
-            }
-        );
+            });
     }
-
-    // -------------------------------------------------------------------------------
 
     public doTrackUser(): void {
         this.mapbox
@@ -784,8 +761,6 @@ export class HelloWorldModel extends Observable {
             })
             .then(() => console.log('Following User'));
     }
-
-    // -------------------------------------------------------------------------------
 
     public doSetTilt(): void {
         this.mapbox
@@ -802,8 +777,6 @@ export class HelloWorldModel extends Observable {
                 }
             );
     }
-
-    // -------------------------------------------------------------------------------
 
     public doAnimateCamera(): void {
         this.mapbox
@@ -828,8 +801,6 @@ export class HelloWorldModel extends Observable {
             );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doSetCenter(): void {
         this.mapbox
             .setCenter({
@@ -847,8 +818,6 @@ export class HelloWorldModel extends Observable {
             );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doGetCenter(): void {
         this.mapbox.getCenter().then(
             (result: LatLng) => {
@@ -864,8 +833,6 @@ export class HelloWorldModel extends Observable {
             }
         );
     }
-
-    // -------------------------------------------------------------------------------
 
     public doGetZoomLevel(): void {
         this.mapbox.getZoomLevel().then(
@@ -883,8 +850,6 @@ export class HelloWorldModel extends Observable {
         );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doSetZoomLevel(): void {
         this.mapbox
             .setZoomLevel({
@@ -901,8 +866,6 @@ export class HelloWorldModel extends Observable {
             );
     }
 
-    // -------------------------------------------------------------------------------
-
     public doCheckHasFineLocationPermission(): void {
         this.mapbox.hasFineLocationPermission().then((granted: boolean) => {
             const alertOptions: AlertOptions = {
@@ -914,9 +877,7 @@ export class HelloWorldModel extends Observable {
         });
     }
 
-    // -------------------------------------------------------------------------------
-
-    public doRequestFineLocationPermission(): void {
+     public doRequestFineLocationPermission(): void {
         this.mapbox.requestFineLocationPermission().then(() => {
             console.log('Fine Location permission requested');
         });

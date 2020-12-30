@@ -2759,6 +2759,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * Supported options are:
      *
+     * - foregroundTintColor
+     * - foregroundStaleTintColor
+     * - backgroundTintColor
+     * - bearingTintColor
      * - elevation
      * - accuracyColor
      * - accuracyAlpha
@@ -2796,18 +2800,38 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                const componentOptionsBuilder = com.mapbox.mapboxsdk.location.LocationComponentOptions.builder(Application.android.context);
+                let componentOptionsBuilder = com.mapbox.mapboxsdk.location.LocationComponentOptions.builder(Application.android.context);
 
                 if (typeof options.elevation != 'undefined') {
-                    componentOptionsBuilder.elevation(options.elevation);
+                    componentOptionsBuilder = componentOptionsBuilder.elevation(options.elevation);
                 }
 
                 if (typeof options.accuracyColor != 'undefined') {
-                    componentOptionsBuilder.accuracyColor(android.graphics.Color.parseColor(options.accuracyColor));
+                    componentOptionsBuilder = componentOptionsBuilder.accuracyColor(android.graphics.Color.parseColor(options.accuracyColor));
                 }
 
                 if (typeof options.accuracyAlpha != 'undefined') {
-                    componentOptionsBuilder.accuracyAlpha(options.accuracyAlpha);
+                    componentOptionsBuilder = componentOptionsBuilder.accuracyAlpha(options.accuracyAlpha);
+                }
+
+                if (typeof options.foregroundTintColor != 'undefined') {
+                    const foregroundTintColor = new java.lang.Integer(android.graphics.Color.parseColor(options.foregroundTintColor));
+                    componentOptionsBuilder = componentOptionsBuilder.foregroundTintColor(foregroundTintColor);
+                }
+
+                if (typeof options.foregroundStaleTintColor != 'undefined') {
+                    const foregroundStaleTintColor = new java.lang.Integer(android.graphics.Color.parseColor(options.foregroundStaleTintColor));
+                    componentOptionsBuilder = componentOptionsBuilder.foregroundStaleTintColor(foregroundStaleTintColor);
+                }
+
+                if (typeof options.backgroundTintColor != 'undefined') {
+                    const backgroundTintColor = new java.lang.Integer(android.graphics.Color.parseColor(options.backgroundTintColor));
+                    componentOptionsBuilder = componentOptionsBuilder.backgroundTintColor(backgroundTintColor);
+                }
+
+                if (typeof options.bearingTintColor != 'undefined') {
+                    const bearingTintColor = new java.lang.Integer(android.graphics.Color.parseColor(options.bearingTintColor));
+                    componentOptionsBuilder = componentOptionsBuilder.bearingTintColor(bearingTintColor);
                 }
 
                 const componentOptions = componentOptionsBuilder.build();
