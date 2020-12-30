@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.2.0](https://github.com/nativescript-community/ui-mapbox/compare/v6.1.0...v6.2.0) (2020-12-30)
+
+
+### Features
+
+* (android) color support for LocationComponent ([c81b4d1](https://github.com/nativescript-community/ui-mapbox/commit/c81b4d14e418b011fa7235853645c64f4295cad8))
+* getImage and removeImage ([8aa323b](https://github.com/nativescript-community/ui-mapbox/commit/8aa323b211463879e5f9a5e58a3db7dcb1dbb71c))
+* method querySourceFeatures ([#16](https://github.com/nativescript-community/ui-mapbox/issues/16)) ([1812e00](https://github.com/nativescript-community/ui-mapbox/commit/1812e00429818360a7b041cd3fb168677a17a751))
+
+
+
+
+
 # [6.1.0](https://github.com/nativescript-community/ui-mapbox/compare/v6.0.7...v6.1.0) (2020-12-23)
 
 
