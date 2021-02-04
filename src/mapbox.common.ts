@@ -1,4 +1,4 @@
-import { Color, ContentView, Property, Trace, booleanConverter } from '@nativescript/core';
+import { Color, ContentView, Property, Trace, booleanConverter, ImageSource } from '@nativescript/core';
 
 export const MapboxTraceCategory = 'NativescriptMapbox';
 export enum CLogTypes {
@@ -37,6 +37,13 @@ export interface LatLng {
 export interface QueryRenderedFeaturesOptions {
     point?: LatLng;
     layers?: string[];
+    filter?: any[];
+}
+
+// ------------------------------------------------------------
+
+export interface QuerySourceFeaturesOptions {
+    sourceLayer?: string;
     filter?: any[];
 }
 
@@ -611,9 +618,11 @@ export interface MapboxApi {
 
     removeLayer(id: string, nativeMap?: any): Promise<any>;
 
-    addLinePoint(id: string, point, nativeMapView?: any): Promise<any>;
+    addLinePoint(id: string, point, sourceId?, nativeMapView?: any): Promise<any>;
 
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?: any): Promise<Feature[]>;
+
+    querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions, nativeMap?: any): Promise<Feature[]>;
 
     addPolygon(options: AddPolygonOptions, nativeMap?: any): Promise<any>;
 
@@ -661,7 +670,11 @@ export interface MapboxApi {
 
     getLayers(nativeMap?: any): Promise<LayerCommon[]>;
 
+    getImage(imageId: string, nativeMap?: any): Promise<ImageSource>;
+
     addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
+
+    removeImage(imageId: string, nativeMap?: any): Promise<void>;
 }
 
 // ------------------------------------------------------------
@@ -735,7 +748,9 @@ export interface MapboxViewApi {
     removeMarkers(options?: any): Promise<any>;
 
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<Feature[]>;
-
+    
+    querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions): Promise<Feature[]>;
+    
     setOnMapClickListener(listener: (data: LatLng) => boolean): Promise<any>;
 
     setOnMapLongClickListener(listener: (data: LatLng) => boolean): Promise<any>;
@@ -790,7 +805,7 @@ export interface MapboxViewApi {
 
     removeLayer(id: string): Promise<any>;
 
-    addLinePoint(id: string, point): Promise<any>;
+    addLinePoint(id: string, point, sourceId?): Promise<any>;
 
     addPolygon(options: AddPolygonOptions): Promise<any>;
 
@@ -806,6 +821,12 @@ export interface MapboxViewApi {
 
     getLayers(nativeMap?: any): Promise<LayerCommon[]>;
 
+    getImage(imageId: string, nativeMap?: any): Promise<ImageSource>
+
+    addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
+
+    removeImage(imageId: string, nativeMap?: any): Promise<void>;
+
     destroy(): Promise<any>;
 
     onStart(): Promise<any>;
@@ -819,8 +840,6 @@ export interface MapboxViewApi {
     onLowMemory(): Promise<any>;
 
     onDestroy(): Promise<any>;
-
-    // onSaveInstanceState( Bundle outState)
 }
 
 // ----------------------------------------------------------------------------------------
@@ -943,11 +962,14 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     removeLayer(id: string): Promise<any> {
         return this.mapbox.removeLayer(id, this.getNativeMapView());
     }
-    addLinePoint(id: string, point): Promise<any> {
-        return this.mapbox.addLinePoint(id, point, this.getNativeMapView());
+    addLinePoint(id: string, point, sourceId?): Promise<any> {
+        return this.mapbox.addLinePoint(id, point, sourceId, this.getNativeMapView());
     }
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<Feature[]> {
         return this.mapbox.queryRenderedFeatures(options, this.getNativeMapView());
+    }
+    querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions): Promise<Feature[]> {
+        return this.mapbox.querySourceFeatures(sourceId, options, this.getNativeMapView());
     }
     addPolygon(options: AddPolygonOptions): Promise<any> {
         return this.mapbox.addPolygon(options, this.getNativeMapView());
@@ -969,6 +991,15 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     }
     getLayers(nativeMap?: any): Promise<LayerCommon[]> {
         return this.mapbox.getLayers(nativeMap);
+    }
+    getImage(imageId: string): Promise<ImageSource> {
+        return this.mapbox.getImage(imageId, this.getNativeMapView());
+    }
+    addImage(imageId: string, image: string): Promise<void> {
+        return this.mapbox.addImage(imageId, image, this.getNativeMapView());
+    }
+    removeImage(imageId: string): Promise<void> {
+        return this.mapbox.removeImage(imageId, this.getNativeMapView());
     }
     destroy(): Promise<any> {
         return this.mapbox && this.mapbox.destroy(this.getNativeMapView());
@@ -1170,5 +1201,3 @@ export abstract class MapboxViewBase extends MapboxViewCommonBase {
         this.config.disableTilt = value;
     }
 }
-
-// END
