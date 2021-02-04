@@ -387,8 +387,9 @@ export class MapboxView extends MapboxViewBase {
         Application.android.off(AndroidApplication.activityPausedEvent, this.onPause, this);
         Application.android.off(AndroidApplication.activityResumedEvent, this.onResume, this);
         // Application.android.off(AndroidApplication.activityStartedEvent, this.onStop, this);
-
-        this.mapbox.destroy();
+        if (this.mapbox) {
+            this.mapbox.destroy();
+        }
         super.disposeNativeView();
     }
 
