@@ -3139,7 +3139,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const styleLoadedCallback = new com.mapbox.mapboxsdk.maps.Style.OnStyleLoaded({
                     onStyleLoaded: (style) => {
                         const layer = style.getLayer(name);
-                        console.log('layer :', layer);
                         resolve(layer ? new Layer(layer) : null);
                     },
                 });
