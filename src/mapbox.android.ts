@@ -369,7 +369,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     private circleManager: any = null;
     private lineManager: any = null;
-    private symbolManager: any = null;
+    private symbolManager: com.mapbox.mapboxsdk.plugins.annotation.SymbolManager = null;
 
     private _offlineManager: any;
 
@@ -379,6 +379,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     private onMapReadyCallback;
     private onDidFinishLoadingStyleListener;
     private onAnnotationClickListener;
+    private onMarkerClickListener;
+    private onInfoWindowClickListener;
     private onMapClickListener;
     private onMapLongClickListener;
     private onMoveListener;
@@ -776,6 +778,14 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             this.lineManager.removeClickListener(this.onAnnotationClickListener);
             this.onAnnotationClickListener = null;
         }
+        if (this.onMarkerClickListener) {
+            this._mapboxMapInstance.setOnMarkerClickListener(null);
+            this.onMarkerClickListener = null;
+        }
+        if (this.onInfoWindowClickListener) {
+            this._mapboxMapInstance.setOnInfoWindowClickListener(null);
+            this.onInfoWindowClickListener = null;
+        }
 
         if (this.onDidFailLoadingMapListener) {
             this._mapboxViewInstance.removeOnDidFailLoadingMapListener(this.onDidFailLoadingMapListener);
@@ -1057,9 +1067,22 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         // FIXME: now that the map is initialized and the style is loaded we can
                         // create the annotation managers that allow us to (hopefully) reliably
                         // receive events on lines
-
-                        this.lineManager = new com.mapbox.mapboxsdk.plugins.annotation.LineManager(this._mapboxViewInstance, this._mapboxMapInstance, this._mapboxMapInstance.getStyle());
-
+                        const nMapbox = this._mapboxMapInstance;
+                        const nMapView = this._mapboxViewInstance;
+                        const nStyle = nMapbox.getStyle();
+                        this.lineManager = new com.mapbox.mapboxsdk.plugins.annotation.LineManager(nMapView, nMapbox, nStyle);
+                        // this.symbolManager = new com.mapbox.mapboxsdk.plugins.annotation.SymbolManager(nMapView, nMapbox, nStyle);
+                        // this.symbolManager.addClickListener(
+                        //     new com.mapbox.mapboxsdk.plugins.annotation.OnSymbolClickListener({
+                        //         onAnnotationClick: (marker: com.mapbox.mapboxsdk.plugins.annotation.Symbol) => {
+                        //             const cachedMarker = this._getClickedMarkerDetails(marker);
+                        //             if (cachedMarker && cachedMarker.onTap) {
+                        //                 cachedMarker.onTap(cachedMarker);
+                        //             }
+                        //             return false;
+                        //         },
+                        //     })
+                        // );
                         this.onAnnotationClickListener = new com.mapbox.mapboxsdk.plugins.annotation.OnAnnotationClickListener({
                             onAnnotationClick: (line) => {
                                 if (Trace.isEnabled()) {
@@ -1228,9 +1251,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (!this._mapboxMapInstance) {
             return;
         }
-
-        this._mapboxMapInstance.setOnMarkerClickListener(
-            new com.mapbox.mapboxsdk.maps.MapboxMap.OnMarkerClickListener({
+        if (!this.onMarkerClickListener) {
+            this.onMarkerClickListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnMarkerClickListener({
                 onMarkerClick: (marker) => {
                     const cachedMarker = this._getClickedMarkerDetails(marker);
                     if (cachedMarker && cachedMarker.onTap) {
@@ -1238,11 +1260,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     }
                     return false;
                 },
-            })
-        );
-
-        this._mapboxMapInstance.setOnInfoWindowClickListener(
-            new com.mapbox.mapboxsdk.maps.MapboxMap.OnInfoWindowClickListener({
+            });
+            this._mapboxMapInstance.setOnMarkerClickListener(this.onMarkerClickListener);
+        }
+        if (!this.onInfoWindowClickListener) {
+            this.onInfoWindowClickListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnInfoWindowClickListener({
                 onInfoWindowClick: (marker) => {
                     const cachedMarker = this._getClickedMarkerDetails(marker);
                     if (cachedMarker && cachedMarker.onCalloutTap) {
@@ -1250,10 +1272,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     }
                     return true;
                 },
-            })
-        );
-
-        const iconFactory = com.mapbox.mapboxsdk.annotations.IconFactory.getInstance(Application.android.context);
+            });
+            this._mapboxMapInstance.setOnInfoWindowClickListener(this.onInfoWindowClickListener);
+        }
+        if (!this.iconFactory) {
+            this.iconFactory = com.mapbox.mapboxsdk.annotations.IconFactory.getInstance(Application.android.context);
+        }
+        const iconFactory = this.iconFactory;
 
         // if any markers need to be downloaded from the web they need to be available synchronously, so fetch them first before looping
 
