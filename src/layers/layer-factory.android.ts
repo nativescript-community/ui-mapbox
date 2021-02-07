@@ -41,19 +41,6 @@ export class LayerFactory {
     }
 
     private static parseProperties(layerType, propertiesObject) {
-        switch (layerType) {
-            case 'line':
-                return PropertyParser.parsePropertiesForLineLayer(propertiesObject);
-            case 'circle':
-                return PropertyParser.parsePropertiesForCircleLayer(propertiesObject);
-            case 'fill':
-                return PropertyParser.parsePropertiesForFillLayer(propertiesObject);
-            case 'symbol':
-                return PropertyParser.parsePropertiesForSymbolLayer(propertiesObject);
-            case 'raster':
-                return PropertyParser.parsePropertiesForRasterLayer(propertiesObject);
-            default:
-                throw new Error(`Unknown layer type: ${layerType}`);
-        }
+        return PropertyParser.parsePropertiesForLayer(propertiesObject);
     }
 }
