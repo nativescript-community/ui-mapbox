@@ -11,6 +11,7 @@ const keysMap = {
     'fill-antialias': 'fillAntialiased',
     'fill-translate': 'fillTranslation',
     'fill-translate-anchor': 'fillTranslationAnchor',
+    'icon-allow-overlap': 'iconAllowsOverlap',
     'icon-keep-upright': 'keepsIconUpright',
     'icon-ignore-placement': 'iconIgnoresPlacement',
     'icon-image': 'iconImageName',
@@ -65,7 +66,12 @@ export class PropertyParser {
         if (propertiesObject) {
             Object.keys(propertiesObject).forEach((k) => {
                 const actualKey = keysMap[k] || toCamelCase(k);
-                nProperties[actualKey] = (NSExpression as any).expressionWithMGLJSONObject(transformValue(k, propertiesObject[k]));
+                const value = propertiesObject[k];
+                if (Array.isArray(value)) {
+                    nProperties[actualKey] = (NSExpression as any).expressionWithMGLJSONObject(transformValue(k, value));
+                } else {
+                    nProperties[actualKey] = NSExpression.expressionForConstantValue(transformValue(k, value));
+                }
             });
         }
 
