@@ -2156,11 +2156,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 }
                             }
                             if (options.bounds) {
-                                sourceOptions[MGLTileSourceOptionCoordinateBounds] =  (NSValue as any).valueWithMGLCoordinateBounds({
+                                sourceOptions[MGLTileSourceOptionCoordinateBounds] = (NSValue as any).valueWithMGLCoordinateBounds({
                                     sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
                                     ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
                                 });
-
                             }
                             source = MGLVectorTileSource.alloc().initWithIdentifierTileURLTemplatesOptions(id, options.tiles, sourceOptions);
                         }
@@ -2175,9 +2174,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         if (options.data) {
                             const content: NSString = NSString.stringWithString(JSON.stringify(options.data));
                             const nsData: NSData = content.dataUsingEncoding(NSUTF8StringEncoding);
-                             geoJsonShape = MGLShape.shapeWithDataEncodingError(nsData, NSUTF8StringEncoding);
+                            geoJsonShape = MGLShape.shapeWithDataEncodingError(nsData, NSUTF8StringEncoding);
                         }
-                       
+
                         const sourceOptions: any = {};
                         if (options.minzoom !== undefined) {
                             sourceOptions[MGLShapeSourceOptionMinimumZoomLevel] = options.minzoom;
@@ -2213,11 +2212,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
 
                         if (options.bounds) {
-                            sourceOptions[MGLTileSourceOptionCoordinateBounds] = (NSValue as any).valueWithMGLCoordinateBounds(({
+                            sourceOptions[MGLTileSourceOptionCoordinateBounds] = (NSValue as any).valueWithMGLCoordinateBounds({
                                 sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
                                 ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
-                            }));
-                            console.log('test', sourceOptions[MGLTileSourceOptionCoordinateBounds])
+                            });
+                            console.log('test', sourceOptions[MGLTileSourceOptionCoordinateBounds]);
                         }
                         source = MGLRasterTileSource.alloc().initWithIdentifierTileURLTemplatesOptions(id, options.tiles, sourceOptions);
 

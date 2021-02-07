@@ -1,5 +1,3 @@
-import { Color } from '@nativescript/core';
-
 function toCamelCase(s) {
     return s.replace(/([-_][a-z])/gi, ($1) => $1.toUpperCase().replace('-', '').replace('_', ''));
 }
