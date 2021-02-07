@@ -1803,16 +1803,26 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return Promise.reject("'setOnFlingListener' is not supported on iOS");
     }
 
-    setOnCameraMoveListener(listener: () => void, nativeMap?: any): Promise<void> {
-        return Promise.reject("'setOnCameraMoveListener' not currently supported on iOS");
+    async setOnCameraMoveListener(listener: () => void, nativeMap?: any): Promise<void> {
+        const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+        if (theMap) {
+            (theMap.delegate as MGLMapViewDelegateImpl).setCameraChangedListener(listener);
+        } else {
+            return Promise.reject('No map has been loaded');
+        }
     }
 
     setOnCameraMoveCancelListener(listener: () => void, nativeMap?: any): Promise<void> {
         return Promise.reject("'setOnCameraMoveCancelListener' not currently supported on iOS");
     }
 
-    setOnCameraIdleListener(listener: () => void, nativeMap?: any): Promise<void> {
-        return Promise.reject("'setOnCameraIdleListener' not currently supported on iOS");
+    async setOnCameraIdleListener(listener: () => void, nativeMap?: any): Promise<void> {
+        const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+        if (theMap) {
+            (theMap.delegate as MGLMapViewDelegateImpl).setCameraIdledListener(listener);
+        } else {
+            return Promise.reject('No map has been loaded');
+        }
     }
 
     getViewport(nativeMap?): Promise<Viewport> {
@@ -2517,9 +2527,10 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
 
     private userLocationClickListener: (annotation: MGLAnnotation) => void;
     private userLocationChangedListener: (location: UserLocation) => void;
+    private cameraChangedListener: () => void;
+    private cameraIdledListener: () => void;
     private userLocationRenderMode: any;
     private userLocationAnnotationView: CustomUserLocationAnnotationView;
-
 
     /**
      * initialize with the mapReady callback
@@ -2532,7 +2543,6 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         this.mapLoadedCallback = mapLoadedCallback;
         return this;
     }
-
 
     /**
      * set a reference to the mapboxAPI instance
@@ -2560,6 +2570,20 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
      */
     changeUserLocationRenderMode(userLocationRenderMode) {
         this.userLocationAnnotationView.changeUserLocationRenderMode(userLocationRenderMode);
+    }
+
+    /**
+     * set the camera changd listener callback
+     */
+    setCameraChangedListener(callback) {
+        this.cameraChangedListener = callback;
+    }
+
+    /**
+     * set the camera idled listener callback
+     */
+    setCameraIdledListener(callback) {
+        this.cameraIdledListener = callback;
     }
 
     /**
@@ -2778,9 +2802,26 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         return null;
     }
 
+    mapViewRegionIsChanging() {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::mapViewRegionIsChanging()');
+        }
+        if (this.cameraChangedListener) {
+            this.cameraChangedListener();
+        }
+    }
+    mapViewRegionDidChangeAnimated(animated) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::mapViewRegionDidChangeAnimated()');
+        }
+        if (this.cameraIdledListener) {
+            this.cameraIdledListener();
+        }
+    }
+
     mapViewDidUpdateUserLocation(mapView: MGLMapView, userLocation: MGLUserLocation) {
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::mapViewDidUpdateUserLocation() top');
+            CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::mapViewDidUpdateUserLocation()');
         }
         if (this.userLocationChangedListener) {
             this.userLocationChangedListener(_getLocation(userLocation));
