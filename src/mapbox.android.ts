@@ -1227,6 +1227,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
     }
 
+    iconCache: { [k: string]: com.mapbox.mapboxsdk.annotations.Icon } = {};
     /**
      *
      * @deprecated
