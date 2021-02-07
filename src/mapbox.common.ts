@@ -293,6 +293,7 @@ export type UserTrackingMode = 'NONE' | 'FOLLOW' | 'FOLLOW_WITH_HEADING' | 'FOLL
 // -------------------------------------------------------------
 
 export type AddSourceOptions = VectorSource | GeoJSONSource | RasterSource;
+export type UpdateSourceOptions = VectorSource | GeoJSONSource | RasterSource;
 
 // -------------------------------------------------------------
 
@@ -605,6 +606,7 @@ export interface MapboxApi {
     trackUser(options: TrackUserOptions, nativeMap?: any): Promise<void>;
 
     addSource(id: string, options: AddSourceOptions, nativeMapView?: any): Promise<any>;
+    updateSource(id: string, options: UpdateSourceOptions, nativeMapView?: any): Promise<any>;
 
     removeSource(id: string, nativeMap?: any): Promise<any>;
 
@@ -952,6 +954,9 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     }
     addSource(id: string, options: AddSourceOptions): Promise<any> {
         return this.mapbox.addSource(id, options, this.getNativeMapView());
+    }
+    updateSource(id: string, options: UpdateSourceOptions): Promise<any> {
+        return this.mapbox.updateSource(id, options, this.getNativeMapView());
     }
     removeSource(id: string): Promise<any> {
         return this.mapbox.removeSource(id, this.getNativeMapView());

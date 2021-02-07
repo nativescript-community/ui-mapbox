@@ -30,6 +30,7 @@ import {
     SetZoomLevelOptions,
     ShowOptions,
     TrackUserOptions,
+    UpdateSourceOptions,
     UserLocation,
     UserLocationCameraMode,
     Viewport,
@@ -2069,6 +2070,44 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     }
 
     /**
+     * update a geojson source
+     *
+     */
+    updateSource(id: string, options: UpdateSourceOptions, nativeMap?) {
+        return new Promise((resolve, reject) => {
+            try {
+                const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+                if (!theMap) {
+                    reject('No map has been loaded');
+                    return;
+                }
+
+                const source = theMap.style.sourceWithIdentifier(id);
+                if (!source) {
+                    reject('Source does not exists: ' + id);
+                    return;
+                }
+                switch (options.type) {
+                    case 'geojson':
+                        const content: NSString = NSString.stringWithString(JSON.stringify(options.data));
+                        const nsData: NSData = content.dataUsingEncoding(NSUTF8StringEncoding);
+                        const geoJsonShape = MGLShape.shapeWithDataEncodingError(nsData, NSUTF8StringEncoding);
+                        (source as MGLShapeSource).shape = geoJsonShape;
+                        break;
+                    default:
+                        reject('Invalid source type: ' + options['type']);
+                        return;
+                }
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.addSource: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
+
+    /**
      * add a vector or geojson source
      *
      * Add a source that can then be referenced in the style specification
@@ -2076,7 +2115,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @link https://docs.mapbox.com/mapbox-gl-js/api/#map#addsource
      */
-
     addSource(id: string, options: AddSourceOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {

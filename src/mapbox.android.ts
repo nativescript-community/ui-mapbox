@@ -40,6 +40,7 @@ import {
     SetZoomLevelOptions,
     ShowOptions,
     TrackUserOptions,
+    UpdateSourceOptions,
     UserLocation,
     UserLocationCameraMode,
     Viewport,
@@ -2264,6 +2265,41 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
+    /**
+     * update a geojson source
+     *
+     */
+    updateSource(id: string, options: UpdateSourceOptions, nativeMap?) {
+        return new Promise((resolve, reject) => {
+            try {
+                const theMap: com.mapbox.mapboxsdk.maps.MapboxMap = nativeMap || this._mapboxMapInstance;
+                if (!theMap) {
+                    reject('No map has been loaded');
+                    return;
+                }
+
+                const source = theMap.getStyle().getSource(id);
+                if (!source) {
+                    reject('Source does not exists: ' + id);
+                    return;
+                }
+                switch (options.type) {
+                    case 'geojson':
+                        const geoJsonString = JSON.stringify(options.data);
+                        (source as com.mapbox.mapboxsdk.style.sources.GeoJsonSource).setGeoJson(geoJsonString);
+                        break;
+                    default:
+                        reject('Invalid source type: ' + options['type']);
+                        return;
+                }
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.addSource: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
     /**
      * add a geojson or vector source
      *
