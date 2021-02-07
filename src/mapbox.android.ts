@@ -389,6 +389,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     private onCameraIdleListener;
     private onLocationClickListener;
 
+    private iconFactory;
+
     private _markers = [];
     private _polylines = [];
     private _polygons = [];
@@ -688,7 +690,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     destroy(nativeMap?: any): Promise<void> {
         return new Promise(async (resolve, reject) => {
             this.clearEventListeners();
-
+            this.iconFactory = null;
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'destroy(): destroying mapbox view.');
             }
@@ -1267,13 +1269,19 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (marker.icon) {
                     // for markers from url see UrlMarker in https://github.com/mapbox/mapbox-gl-native/issues/5370
                     if (marker.icon.startsWith('res://')) {
-                        const resourcename = marker.icon.substring(6);
-                        const res = Utils.ad.getApplicationContext().getResources();
-                        const identifier = res.getIdentifier(resourcename, 'drawable', Utils.ad.getApplication().getPackageName());
-                        if (identifier === 0) {
-                            console.log(`No icon found for this device density for icon ' ${marker.icon}'. Falling back to the default icon.`);
+                        let cached = this.iconCache[marker.iconPath];
+                        if (!cached) {
+                            const resourcename = marker.icon.substring(6);
+                            const res = Utils.ad.getApplicationContext().getResources();
+                            const identifier = res.getIdentifier(resourcename, 'drawable', Utils.ad.getApplication().getPackageName());
+                            if (identifier !== 0) {
+                                cached = this.iconCache[marker.iconPath] = iconFactory.fromResource(identifier);
+                            }
+                        }
+                        if (cached) {
+                            markerOptions.setIcon(cached);
                         } else {
-                            markerOptions.setIcon(iconFactory.fromResource(identifier));
+                            console.log(`No icon found for this device density for icon ' ${marker.icon}'. Falling back to the default icon.`);
                         }
                     } else if (marker.icon.startsWith('http')) {
                         if (marker.iconDownloaded !== null) {
@@ -1285,13 +1293,19 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
                     }
                 } else if (marker.iconPath) {
-                    const iconFullPath = path.join(knownFolders.currentApp().path, marker.iconPath.replace('~/', ''));
-                    // if the file doesn't exist the app will crash, so checking it
-                    if (File.exists(iconFullPath)) {
-                        // could set width, height, retina, see https://github.com/Telerik-Verified-Plugins/Mapbox/pull/42/files?diff=unified&short_path=1c65267, but that's what the marker.icon param is for..
-                        markerOptions.setIcon(iconFactory.fromPath(iconFullPath));
+                    let cached = this.iconCache[marker.iconPath];
+                    if (!cached) {
+                        const iconFullPath = path.join(knownFolders.currentApp().path, marker.iconPath.replace('~/', ''));
+                        // if the file doesn't exist the app will crash, so checking it
+                        if (File.exists(iconFullPath)) {
+                            // could set width, height, retina, see https://github.com/Telerik-Verified-Plugins/Mapbox/pull/42/files?diff=unified&short_path=1c65267, but that's what the marker.icon param is for..
+                            cached = this.iconCache[marker.iconPath] = iconFactory.fromPath(iconFullPath);
+                        }
+                    }
+                    if (cached) {
+                        markerOptions.setIcon(cached);
                     } else {
-                        console.log(`Marker icon not found, using the default instead. Requested full path: '" + ${iconFullPath}'.`);
+                        console.log(`Marker icon not found, using the default instead. Requested path: '" + ${marker.iconPath}'.`);
                     }
                 }
                 marker.android = this._mapboxMapInstance.addMarker(markerOptions);
