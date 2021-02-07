@@ -131,7 +131,7 @@ function _getLocation(loc: MGLUserLocation) {
  */
 export class MapboxView extends MapboxViewBase {
     private nativeMapView: MGLMapView = null;
-    private delegate: MGLMapViewDelegate = null;
+    private delegate: MGLMapViewDelegateImpl = null;
 
     private settings: any = null;
 
@@ -328,6 +328,11 @@ export class MapboxView extends MapboxViewBase {
                         ios: this.nativeMapView,
                     });
                 });
+                // this.delegate.setStyleLoadedCallback((map, style)=>{
+                //     this.delegate.setStyleLoadedCallback(null);
+                    
+                // });
+
 
                 _setMapboxMapOptions(this.nativeMapView, this.settings);
                 _markers = [];
@@ -734,8 +739,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'Mapbox:checkForClickEvent(): got click event with point:', point);
         }
-
-        this.eventCallbacks['click'].forEach((eventListener) => {
+        this.eventCallbacks['click'] && this.eventCallbacks['click'].forEach((eventListener) => {
             this.queryRenderedFeatures({ point, layers: [eventListener.id] }, nativeMap).then((response) => {
                 if (response.length > 0) {
                     eventListener.callback(response);
@@ -2608,7 +2612,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
     }
 
     private mapLoadedCallback: (mapView: MGLMapView) => void;
-    private styleLoadedCallback: (mapView: MGLMapView) => void;
+    private styleLoadedCallback: (mapView: MGLMapView, style:MGLStyle) => void;
 
     private mapboxApi: any;
 
@@ -2683,7 +2687,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
      *
      * @see Mapbox:setMapStyle()
      */
-    setStyleLoadedCallback(callback) {
+    setStyleLoadedCallback(callback: (mapView: MGLMapView, style:MGLStyle) => void) {
         this.styleLoadedCallback = callback;
     }
 
@@ -2719,13 +2723,13 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
      *
      * @link https://mapbox.github.io/mapbox-gl-native/macos/0.3.0/Protocols/MGLMapViewDelegate.html#/c:objc(pl)MGLMapViewDelegate(im)mapView:didFinishLoadingStyle:
      */
-    mapViewDidFinishLoadingStyle(mapView: MGLMapView): void {
+    mapViewDidFinishLoadingStyle(mapView: MGLMapView, style:MGLStyle): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl:mapViewDidFinishLoadingStyle(): callback called.');
         }
 
         if (this.styleLoadedCallback !== undefined) {
-            this.styleLoadedCallback(mapView);
+            this.styleLoadedCallback(mapView, style);
 
             // to avoid multiple calls. This is only invoked from setMapStyle().
 
