@@ -4,7 +4,7 @@ import { PropertyParser } from './parser/property-parser.ios';
 
 export class LayerFactory {
     static async createLayer(style, source): Promise<LayerCommon> {
-        let nativeLayer;
+        let nativeLayer: MGLStyleLayer;
         switch (style.type) {
             case 'line':
                 nativeLayer = MGLLineStyleLayer.alloc().initWithIdentifierSource(style.id, source);
@@ -24,7 +24,12 @@ export class LayerFactory {
             default:
                 throw new Error(`Unknown layer type: ${style.type}`);
         }
-
+        if (style.minzoom !== undefined) {
+            nativeLayer.minimumZoomLevel = style.minzoom;
+        }
+        if (style.maxzoom !== undefined) {
+            nativeLayer.maximumZoomLevel = style.maxzoom;
+        }
         const layerProperties = this.parseProperties(style.type, Object.assign(style.paint || {}, style.layout || {})); // TODO: handle defaults
 
         for (const propKey in layerProperties) {

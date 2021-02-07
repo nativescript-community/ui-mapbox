@@ -31,6 +31,12 @@ export class LayerFactory {
 
         const layer = new Layer(nativeLayer);
 
+        if (style.minzoom !== undefined) {
+            nativeLayer.setMinZoom(style.minzoom);
+        }
+        if (style.maxzoom !== undefined) {
+            nativeLayer.setMaxZoom(style.maxzoom);
+        }
         return layer;
     }
 
