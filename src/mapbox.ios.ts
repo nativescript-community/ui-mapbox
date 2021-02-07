@@ -2156,7 +2156,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 }
                             }
                             if (options.bounds) {
-                                sourceOptions[MGLTileSourceOptionCoordinateBounds] =  NSValue.valueWithMGLCoordinateBounds({
+                                sourceOptions[MGLTileSourceOptionCoordinateBounds] =  (NSValue as any).valueWithMGLCoordinateBounds({
                                     sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
                                     ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
                                 });
@@ -2213,7 +2213,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
 
                         if (options.bounds) {
-                            sourceOptions[MGLTileSourceOptionCoordinateBounds] = NSValue.valueWithMGLCoordinateBounds(({
+                            sourceOptions[MGLTileSourceOptionCoordinateBounds] = (NSValue as any).valueWithMGLCoordinateBounds(({
                                 sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
                                 ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
                             }));
