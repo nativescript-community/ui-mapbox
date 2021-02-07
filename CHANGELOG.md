@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.1](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.0...v6.2.1) (2021-02-07)
+
+
+### Bug Fixes
+
+* **android:** cache marker images => crazy faster addMarkers ([f2f4a22](https://github.com/nativescript-community/ui-mapbox/commit/f2f4a22cc680c170a29e0169affeb0c5d4e4dd5f))
+* **android:** ensure map exists on destroy ([1b36396](https://github.com/nativescript-community/ui-mapbox/commit/1b36396ec79a84d852232db57a54245efbee3425))
+
+
+### Features
+
+* added more source options ([a75fc27](https://github.com/nativescript-community/ui-mapbox/commit/a75fc27921c73386f463168db854ecd10f71e22f))
+* almost all style prpoerties are now supported. You can also put any expression you want! ([d3e5e42](https://github.com/nativescript-community/ui-mapbox/commit/d3e5e42b62c830cb255a02e26165f3a85a26cebc))
+* belowLayerId support for addLayer ([4551401](https://github.com/nativescript-community/ui-mapbox/commit/4551401c6181a8749f542443348c38aa7ab938fc))
+* layer minzoom maxzoom support ([880761f](https://github.com/nativescript-community/ui-mapbox/commit/880761f3d21df91677f09af4622965f730a27f37))
+* updateSource (for now only to update geojson data) ([e593480](https://github.com/nativescript-community/ui-mapbox/commit/e593480f24ec819b0ace3adc6e8cb51b58a6c081))
+* **ios:** setOnCameraIdleListener && setOnCameraMoveListener ([fa640cd](https://github.com/nativescript-community/ui-mapbox/commit/fa640cdd44bd5d7efeac89d6c56f05ad32d5cf22))
+
+
+
+
+
 # [6.2.0](https://github.com/nativescript-community/ui-mapbox/compare/v6.1.0...v6.2.0) (2020-12-30)
 
 
