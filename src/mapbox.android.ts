@@ -2440,12 +2440,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @link https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers
      */
 
-    public async addLayer(style, nativeMap?): Promise<void> {
+    public async addLayer(style, belowLayerId?: string, nativeMap?): Promise<void> {
         const theMap = nativeMap || this._mapboxMapInstance;
         if (!theMap) {
             return Promise.reject('No map has been loaded');
         }
-
         let source = null;
         if (typeof style.source != 'string') {
             await this.addSource(style.id + '_source', style.source);
@@ -2455,6 +2454,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         const layer = await LayerFactory.createLayer(style, source);
+        if (belowLayerId) {
+            this._mapboxMapInstance.getStyle().addLayerBelow(layer.getNativeInstance(), belowLayerId);
+            return;
+        }
         this._mapboxMapInstance.getStyle().addLayer(layer.getNativeInstance());
     }
 

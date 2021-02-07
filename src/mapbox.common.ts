@@ -612,9 +612,9 @@ export interface MapboxApi {
 
     removeSource(id: string, nativeMap?: any): Promise<any>;
 
-    addLayer(style, nativeMapView?: any): Promise<any>;
+    addLayer(style, belowLayerId?: string, nativeMapView?: any): Promise<any>;
 
-    addLayer(options: AddLayerOptions): Promise<any>;
+    addLayer(options: AddLayerOptions, belowLayerId?: string): Promise<any>;
 
     removeLayer(id: string, nativeMapView?: any): Promise<any>;
 
@@ -750,9 +750,9 @@ export interface MapboxViewApi {
     removeMarkers(options?: any): Promise<any>;
 
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions): Promise<Feature[]>;
-    
+
     querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions): Promise<Feature[]>;
-    
+
     setOnMapClickListener(listener: (data: LatLng) => boolean): Promise<any>;
 
     setOnMapLongClickListener(listener: (data: LatLng) => boolean): Promise<any>;
@@ -803,7 +803,7 @@ export interface MapboxViewApi {
 
     removeSource(id: string, nativeMap?: any): Promise<any>;
 
-    addLayer(style): Promise<any>;
+    addLayer(style, belowLayerId?: string): Promise<any>;
 
     removeLayer(id: string): Promise<any>;
 
@@ -961,8 +961,8 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     removeSource(id: string): Promise<any> {
         return this.mapbox.removeSource(id, this.getNativeMapView());
     }
-    addLayer(style): Promise<any> {
-        return this.mapbox.addLayer(style, this.getNativeMapView());
+    addLayer(style, belowLayerId?: string): Promise<any> {
+        return this.mapbox.addLayer(style, belowLayerId, this.getNativeMapView());
     }
     removeLayer(id: string): Promise<any> {
         return this.mapbox.removeLayer(id, this.getNativeMapView());
