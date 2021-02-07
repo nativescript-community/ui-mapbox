@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.2](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.1...v6.2.2) (2021-02-07)
+
+
+### Bug Fixes
+
+* **ios:** icon-allow-overlap fix ([5c3f70d](https://github.com/nativescript-community/ui-mapbox/commit/5c3f70d6307e6a829802ed1bf45dc3e3faa8bcbc))
+* **ios:** prevent crash when ‘click’ mapEvent not set ([8d5a0e2](https://github.com/nativescript-community/ui-mapbox/commit/8d5a0e230a9761b1398b4fb1d62c0d11c0d9d4e6))
+
+
+
+
+
 ## [6.2.1](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.0...v6.2.1) (2021-02-07)
 
 
