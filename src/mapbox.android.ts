@@ -5,7 +5,7 @@
  */
 
 import { request } from '@nativescript-community/perms';
-import { AndroidApplication, Application, Color, File, Trace, Utils, knownFolders, path, ImageSource, Image } from '@nativescript/core';
+import { AndroidApplication, Application, Color, File, Image, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import { getImage } from '@nativescript/core/http';
 import { FilterParser } from './filter/filter-parser.android';
 import { GeoUtils } from './geo.utils';
@@ -99,7 +99,6 @@ export class MapboxView extends MapboxViewBase {
             CLog(CLogTypes.info, 'constructor(): building new MapboxView object.');
         }
     }
-
 
     /**
      * programmatically include settings
@@ -346,7 +345,6 @@ export class MapboxView extends MapboxViewBase {
         com.mapbox.mapboxsdk.Mapbox.getTelemetry().setUserTelemetryRequestState(value);
     }
 }
-
 
 /**
  * A NativeScript shim for the Mapbox API.
@@ -1118,7 +1116,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const builder = new com.mapbox.mapboxsdk.maps.Style.Builder();
                 this._mapboxMapInstance.setStyle(builder.fromUri(mapStyle));
-
             } catch (ex) {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.error, 'Error in mapbox.setMapStyle', style, ex);
@@ -1131,7 +1128,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     async getImage(imageId: string, nativeMap?: any): Promise<ImageSource> {
         return new Promise((resolve, reject) => {
             const theMap = nativeMap || this._mapboxMapInstance;
-            
+
             if (!theMap) {
                 reject('No map has been loaded');
                 return;
@@ -1141,51 +1138,51 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const nativeImage = theMap.getStyle().getImage(imageId);
                 const img = new ImageSource(nativeImage);
 
-                resolve(img); 
+                resolve(img);
             } catch (ex) {
-                reject("Error during getImage: " + ex);
+                reject('Error during getImage: ' + ex);
 
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.getImage: ' + ex);
                 }
                 throw ex;
-            }      
+            }
         });
     }
 
     async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
         return new Promise((resolve, reject) => {
             const theMap = nativeMap || this._mapboxMapInstance;
-            
+
             if (!theMap) {
                 reject('No map has been loaded');
                 return;
             }
 
-            if (!image.startsWith("res://")) {
+            if (!image.startsWith('res://')) {
                 image = path.join(knownFolders.currentApp().path, image.replace('~/', ''));
             }
-            
+
             const img = ImageSource.fromFileOrResourceSync(image);
 
             try {
                 theMap.getStyle().addImage(imageId, img.android);
                 resolve();
             } catch (ex) {
-                reject("Error during addImage: " + ex);
+                reject('Error during addImage: ' + ex);
 
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.addImage: ' + ex);
                 }
                 throw ex;
-            }      
+            }
         });
     }
 
     async removeImage(imageId: string, nativeMap?: any): Promise<void> {
         return new Promise((resolve, reject) => {
             const theMap = nativeMap || this._mapboxMapInstance;
-            
+
             if (!theMap) {
                 reject('No map has been loaded');
                 return;
@@ -1195,13 +1192,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 theMap.getStyle().removeImage(imageId);
                 resolve();
             } catch (ex) {
-                reject("Error during removeImage: " + ex);
+                reject('Error during removeImage: ' + ex);
 
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.removeImage: ' + ex);
                 }
                 throw ex;
-            }      
+            }
         });
     }
 
@@ -1233,7 +1230,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @deprecated
      * @link https://github.com/mapbox/mapbox-plugins-android/tree/master/plugin-annotation
      */
-
     _addMarkers(markers: MapboxMarker[], nativeMap?) {
         if (!markers) {
             if (Trace.isEnabled()) {
@@ -1398,7 +1394,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             this._markers = [];
         }
     }
-
 
     setCenter(options: SetCenterOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -2407,8 +2402,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
 
                         const geoJsonSource = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id, geojsonOptions);
-                        const geoJsonString = JSON.stringify(options.data);
-                        geoJsonSource.setGeoJson(geoJsonString);
+                        if(options.data) {
+                            const geoJsonString = JSON.stringify(options.data);
+                            geoJsonSource.setGeoJson(geoJsonString);
+                        }
+                        
                         source = geoJsonSource;
 
                         break;
@@ -2436,7 +2434,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             tileSet.setBounds(options.bounds.map((val) => new java.lang.Float(val)));
                         }
 
-                        source = new com.mapbox.mapboxsdk.style.sources.RasterSource(id, tileSet, options.tileSize);
+                        source = new com.mapbox.mapboxsdk.style.sources.RasterSource(id, tileSet, options.tileSize || 256);
                         break;
                     default:
                         reject('Invalid source type: ' + options['type']);
@@ -2478,7 +2476,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const isRemoved = theMap.getStyle().removeSource(id);
                 if (!isRemoved) {
-                    reject(`Could not remove source with id: ${id}`)
+                    reject(`Could not remove source with id: ${id}`);
                 }
 
                 resolve();
@@ -2565,17 +2563,17 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         try {
             const sId = !!sourceId ? sourceId : id + '_source';
             const lineSource = this._mapboxMapInstance.getStyle().getSource(sId) as com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
-            
+
             if (!lineSource) {
                 throw new Error(`no source found with id: ${sId}`);
             }
 
             const lineFeatures = lineSource.querySourceFeatures(FilterParser.parseJson(['==', '$type', 'LineString']));
-            
+
             if (lineFeatures.size() === 0) {
-                throw new Error("no line string feature found");
+                throw new Error('no line string feature found');
             }
-            
+
             const feature = lineFeatures.get(0);
 
             const newPoints = new java.util.ArrayList<com.mapbox.geojson.Point>(feature.geometry().coordinates());
@@ -2788,7 +2786,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         return mapboxMapOptions;
-    } 
+    }
 
     /**
      * convert string to camera mode constant.
@@ -3006,7 +3004,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 reject(ex);
             }
         });
-    } 
+    }
 
     /**
      * hide (destroy) the user location marker
@@ -3088,7 +3086,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
         });
     }
-
 
     /**
      * force updating of user location

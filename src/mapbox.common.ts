@@ -1,4 +1,4 @@
-import { Color, ContentView, Property, Trace, booleanConverter, ImageSource } from '@nativescript/core';
+import { Color, ContentView, ImageSource, Property, Trace, booleanConverter } from '@nativescript/core';
 
 export const MapboxTraceCategory = 'NativescriptMapbox';
 export enum CLogTypes {
@@ -9,7 +9,7 @@ export enum CLogTypes {
 }
 
 export const CLog = (type: CLogTypes, ...args) => {
-    Trace.write(args.map(a=>(a && typeof a === 'object'? JSON.stringify(a) :a)).join(' '), MapboxTraceCategory, type);
+    Trace.write(args.map((a) => (a && typeof a === 'object' ? JSON.stringify(a) : a)).join(' '), MapboxTraceCategory, type);
 };
 
 // ------------------------------------------------------------
@@ -830,7 +830,7 @@ export interface MapboxViewApi {
 
     getLayers(nativeMap?: any): Promise<LayerCommon[]>;
 
-    getImage(imageId: string, nativeMap?: any): Promise<ImageSource>
+    getImage(imageId: string, nativeMap?: any): Promise<ImageSource>;
 
     addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
 

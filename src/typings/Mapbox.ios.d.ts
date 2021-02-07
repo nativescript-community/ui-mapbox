@@ -388,6 +388,7 @@ interface MGLCoordinateBounds {
     ne: CLLocationCoordinate2D;
 }
 declare var MGLCoordinateBounds: interop.StructType<MGLCoordinateBounds>;
+declare function MGLCoordinateBoundsMake(arg1, arg2);
 
 declare class MGLCoordinateFormatter extends NSFormatter {
     static alloc(): MGLCoordinateFormatter; // inherited from NSObject

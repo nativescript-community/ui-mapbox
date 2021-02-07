@@ -983,7 +983,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     async getImage(imageId: string, nativeMap?: any): Promise<ImageSource> {
         return new Promise((resolve, reject) => {
             const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
-            
+
             if (!theMap) {
                 reject('No map has been loaded');
                 return;
@@ -992,16 +992,16 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             try {
                 const nativeImage = theMap.style.imageForName(imageId);
                 const img = new ImageSource(nativeImage);
-                
-                resolve(img); 
+
+                resolve(img);
             } catch (ex) {
-                reject("Error during getImage: " + ex);
+                reject('Error during getImage: ' + ex);
 
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.getImage: ' + ex);
                 }
                 throw ex;
-            }      
+            }
         });
     }
 
@@ -1469,7 +1469,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     /**
      * @deprecated
-    */
+     */
     addPolygon(options: AddPolygonOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             const theMap = nativeMap || this._mapboxViewInstance;
@@ -2521,7 +2521,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    getLayers(nativeMap?: any): Promise<Array<LayerCommon>> {
+    getLayers(nativeMap?: any): Promise<LayerCommon[]> {
         return new Promise((resolve, reject) => {
             try {
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
@@ -2594,7 +2594,6 @@ const _downloadMarkerImages = (markers: MapboxMarker[]) => {
 
     return Promise.all(iterations).then(() => result);
 };
-
 
 /**
  * "Delegate" for catching mapview events
@@ -2711,7 +2710,6 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl:mapViewDidFinishRenderingMapFullyRendered(): rendered is:', fullyRendered);
         }
     }
-
 
     /**
      * Callback when the style has been loaded.
