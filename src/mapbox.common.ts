@@ -299,6 +299,7 @@ export type UpdateSourceOptions = VectorSource | GeoJSONSource | RasterSource;
 
 export interface Source {
     type: 'vector' | 'raster' | 'geojson';
+    scheme?: 'xyz' | 'tms';
 }
 
 // -------------------------------------------------------------
@@ -310,14 +311,18 @@ export interface RasterSource extends Source {
     minzoom?: number;
     maxzoom?: number;
     tileSize?: number;
-    scheme?: 'xyz' | 'tms';
 }
 
 // -------------------------------------------------------------
 
 export interface VectorSource extends Source {
     type: 'vector';
-    url: string;
+    url?: string;
+    tiles?: string[];
+    bounds?: number[];
+    minzoom?: number;
+    maxzoom?: number;
+    tileSize?: number;
 }
 
 // -------------------------------------------------------------
@@ -325,6 +330,8 @@ export interface VectorSource extends Source {
 export interface GeoJSONSource extends Source {
     type: 'geojson';
     data?: any;
+    minzoom?: number;
+    maxzoom?: number;
 }
 
 // ------------------------------------------------------------

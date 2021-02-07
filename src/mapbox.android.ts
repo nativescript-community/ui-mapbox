@@ -2364,31 +2364,61 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     reject('Source exists: ' + id);
                     return;
                 }
-
                 switch (options.type) {
-                    case 'vector':
-                        source = new com.mapbox.mapboxsdk.style.sources.VectorSource(id, options.url);
-                        break;
+                    case 'vector': {
+                        if (options.url) {
+                            source = new com.mapbox.mapboxsdk.style.sources.VectorSource(id, options.url);
+                        } else {
+                            const tiles = Array.create(java.lang.String, options.tiles.length);
+                            options.tiles.forEach((val, i) => (tiles[i] = val));
+                            const tileSet = new com.mapbox.mapboxsdk.style.sources.TileSet('2.0.0', tiles);
+                            if (options.minzoom) {
+                                tileSet.setMinZoom(options.minzoom);
+                            }
 
-                    case 'geojson':
+                            if (options.maxzoom) {
+                                tileSet.setMaxZoom(options.maxzoom);
+                            }
+
+                            if (options.scheme) {
+                                tileSet.setScheme(options.scheme);
+                            }
+
+                            if (options.bounds) {
+                                tileSet.setBounds(options.bounds.map((val) => new java.lang.Float(val)));
+                            }
+                            source = new com.mapbox.mapboxsdk.style.sources.VectorSource(id, tileSet);
+                        }
+                        break;
+                    }
+
+                    case 'geojson': {
                         if (Trace.isEnabled()) {
                             CLog(CLogTypes.info, 'Mapbox:addSource(): before addSource with geojson');
                             CLog(CLogTypes.info, 'Mapbox:addSource(): before adding geoJSON to GeoJsonSource');
                         }
+                        const geojsonOptions = new com.mapbox.mapboxsdk.style.sources.GeoJsonOptions();
+                        if (options.minzoom) {
+                            geojsonOptions.withMinZoom(options.minzoom);
+                        }
 
-                        const geoJsonSource = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id);
+                        if (options.maxzoom) {
+                            geojsonOptions.withMaxZoom(options.maxzoom);
+                        }
+
+                        const geoJsonSource = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id, geojsonOptions);
                         const geoJsonString = JSON.stringify(options.data);
                         geoJsonSource.setGeoJson(geoJsonString);
                         source = geoJsonSource;
 
                         break;
+                    }
 
                     case 'raster':
                         // use Array.create because a marshal error throws on TileSet if options.tiles directly passed.
                         const tiles = Array.create(java.lang.String, options.tiles.length);
-                        options.tiles.forEach((val, i) => tiles[i] = val);
-
-                        const tileSet = new com.mapbox.mapboxsdk.style.sources.TileSet('tileset', tiles);
+                        options.tiles.forEach((val, i) => (tiles[i] = val));
+                        const tileSet = new com.mapbox.mapboxsdk.style.sources.TileSet('2.0.0', tiles);
 
                         if (options.minzoom) {
                             tileSet.setMinZoom(options.minzoom);

@@ -2132,30 +2132,73 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 switch (options.type) {
-                    case 'vector':
-                        source = MGLVectorTileSource.alloc().initWithIdentifierConfigurationURL(id, NSURL.URLWithString(options.url));
-                        break;
+                    case 'vector': {
+                        if (options.url) {
+                            source = MGLVectorTileSource.alloc().initWithIdentifierConfigurationURL(id, NSURL.URLWithString(options.url));
+                        } else {
+                            const sourceOptions: any = {};
+                            if (options.minzoom !== undefined) {
+                                sourceOptions[MGLTileSourceOptionMinimumZoomLevel] = options.minzoom;
+                            }
+                            if (options.maxzoom !== undefined) {
+                                sourceOptions[MGLTileSourceOptionMaximumZoomLevel] = options.maxzoom;
+                            }
+                            if (options.scheme) {
+                                switch (options.scheme) {
+                                    case 'xyz':
+                                        sourceOptions[MGLTileSourceOptionTileCoordinateSystem] = MGLTileCoordinateSystem.XYZ;
+                                        break;
+                                    case 'tms':
+                                        sourceOptions[MGLTileSourceOptionTileCoordinateSystem] = MGLTileCoordinateSystem.TMS;
+                                        break;
+                                    default:
+                                        throw new Error('Unknown raster tile scheme.');
+                                }
+                            }
+                            if (options.bounds) {
+                                sourceOptions[MGLTileSourceOptionCoordinateBounds] =  NSValue.valueWithMGLCoordinateBounds({
+                                    sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
+                                    ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
+                                });
 
+                            }
+                            source = MGLVectorTileSource.alloc().initWithIdentifierTileURLTemplatesOptions(id, options.tiles, sourceOptions);
+                        }
+                        break;
+                    }
                     case 'geojson':
                         if (theMap.style.sourceWithIdentifier(id)) {
                             reject("Remove the layer with this id first with 'removeLayer': " + id);
                             return;
                         }
+                        let geoJsonShape: MGLShape;
+                        if (options.data) {
+                            const content: NSString = NSString.stringWithString(JSON.stringify(options.data));
+                            const nsData: NSData = content.dataUsingEncoding(NSUTF8StringEncoding);
+                             geoJsonShape = MGLShape.shapeWithDataEncodingError(nsData, NSUTF8StringEncoding);
+                        }
+                       
+                        const sourceOptions: any = {};
+                        if (options.minzoom !== undefined) {
+                            sourceOptions[MGLShapeSourceOptionMinimumZoomLevel] = options.minzoom;
+                        }
+                        if (options.maxzoom !== undefined) {
+                            sourceOptions[MGLShapeSourceOptionMaximumZoomLevel] = options.maxzoom;
+                        }
 
-                        const content: NSString = NSString.stringWithString(JSON.stringify(options.data));
-                        const nsData: NSData = content.dataUsingEncoding(NSUTF8StringEncoding);
-                        const geoJsonShape = MGLShape.shapeWithDataEncodingError(nsData, NSUTF8StringEncoding);
-
-                        source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, geoJsonShape, null);
+                        source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, geoJsonShape, sourceOptions);
 
                         break;
-                    case 'raster':
+                    case 'raster': {
                         const sourceOptions: any = {
-                            [MGLTileSourceOptionMinimumZoomLevel]: options.minzoom,
-                            [MGLTileSourceOptionMaximumZoomLevel]: options.maxzoom,
-                            [MGLTileSourceOptionTileSize]: options.tileSize,
+                            [MGLTileSourceOptionTileSize]: options.tileSize || 256,
                         };
-
+                        if (options.minzoom !== undefined) {
+                            sourceOptions[MGLTileSourceOptionMinimumZoomLevel] = options.minzoom;
+                        }
+                        if (options.maxzoom !== undefined) {
+                            sourceOptions[MGLTileSourceOptionMaximumZoomLevel] = options.maxzoom;
+                        }
                         if (options.scheme) {
                             switch (options.scheme || 'xyz') {
                                 case 'xyz':
@@ -2170,15 +2213,16 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
 
                         if (options.bounds) {
-                            sourceOptions[MGLTileSourceOptionCoordinateBounds] = {
+                            sourceOptions[MGLTileSourceOptionCoordinateBounds] = NSValue.valueWithMGLCoordinateBounds(({
                                 sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
                                 ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
-                            } as MGLCoordinateBounds;
+                            }));
+                            console.log('test', sourceOptions[MGLTileSourceOptionCoordinateBounds])
                         }
-
                         source = MGLRasterTileSource.alloc().initWithIdentifierTileURLTemplatesOptions(id, options.tiles, sourceOptions);
 
                         break;
+                    }
                     default:
                         reject('Invalid source type: ' + options['type']);
                         return;
