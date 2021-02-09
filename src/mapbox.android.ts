@@ -2353,7 +2353,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
             } catch (ex) {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.addSource: ' + ex);
+                    CLog(CLogTypes.info, 'Error in mapbox.updateSource: ' + ex);
                 }
                 reject(ex);
             }
@@ -2642,7 +2642,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius(new java.lang.Float(16.0)),
                     com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleBlur(new java.lang.Float(0.2)),
                 ]);
-                console.log(com.mapbox.mapboxsdk.style.expressions.Expression.get('cluster'));
                 unclustered.setFilter(com.mapbox.mapboxsdk.style.expressions.Expression.neq(com.mapbox.mapboxsdk.style.expressions.Expression.get('cluster'), true));
                 this._mapboxMapInstance.getStyle().addLayer(unclustered); // , "building");
 

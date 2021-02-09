@@ -353,9 +353,8 @@ export class MapboxView extends MapboxViewBase {
                 });
                 // this.delegate.setStyleLoadedCallback((map, style)=>{
                 //     this.delegate.setStyleLoadedCallback(null);
-                    
-                // });
 
+                // });
 
                 _setMapboxMapOptions(this.nativeMapView, this.settings);
                 _markers = [];
@@ -2248,7 +2247,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
                                 ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
                             });
-                            console.log('test', sourceOptions[MGLTileSourceOptionCoordinateBounds]);
                         }
                         source = MGLRasterTileSource.alloc().initWithIdentifierTileURLTemplatesOptions(id, options.tiles, sourceOptions);
 
@@ -2646,7 +2644,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
     }
 
     private mapLoadedCallback: (mapView: MGLMapView) => void;
-    private styleLoadedCallback: (mapView: MGLMapView, style:MGLStyle) => void;
+    private styleLoadedCallback: (mapView: MGLMapView, style: MGLStyle) => void;
 
     private mapboxApi: any;
 
@@ -2721,7 +2719,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
      *
      * @see Mapbox:setMapStyle()
      */
-    setStyleLoadedCallback(callback: (mapView: MGLMapView, style:MGLStyle) => void) {
+    setStyleLoadedCallback(callback: (mapView: MGLMapView, style: MGLStyle) => void) {
         this.styleLoadedCallback = callback;
     }
 
@@ -2757,7 +2755,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
      *
      * @link https://mapbox.github.io/mapbox-gl-native/macos/0.3.0/Protocols/MGLMapViewDelegate.html#/c:objc(pl)MGLMapViewDelegate(im)mapView:didFinishLoadingStyle:
      */
-    mapViewDidFinishLoadingStyle(mapView: MGLMapView, style:MGLStyle): void {
+    mapViewDidFinishLoadingStyle(mapView: MGLMapView, style: MGLStyle): void {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl:mapViewDidFinishLoadingStyle(): callback called.');
         }
