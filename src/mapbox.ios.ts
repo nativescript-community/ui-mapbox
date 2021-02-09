@@ -123,6 +123,29 @@ function _getLocation(loc: MGLUserLocation) {
     }
 }
 
+export function setLogLevel(level: 'none' | 'info' | 'debug' | 'error' | 'fault' | 'verbose') {
+    let loggingLevel: MGLLoggingLevel;
+    switch (level) {
+        case 'none':
+            loggingLevel = MGLLoggingLevel.None;
+            break;
+        case 'info':
+            loggingLevel = MGLLoggingLevel.Info;
+            break;
+        case 'verbose':
+        case 'debug':
+            loggingLevel = MGLLoggingLevel.Debug;
+            break;
+        case 'error':
+            loggingLevel = MGLLoggingLevel.Error;
+            break;
+        case 'fault':
+            loggingLevel = MGLLoggingLevel.Fault;
+            break;
+    }
+    MGLLoggingConfiguration.sharedConfiguration.loggingLevel = loggingLevel;
+}
+
 /**
  * Map View Class instantiated from XML
  *

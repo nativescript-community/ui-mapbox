@@ -65,6 +65,30 @@ function _getLocation(loc: globalAndroid.location.Location) {
     }
 }
 
+export function setLogLevel(level: 'none' | 'info' | 'debug' | 'error' | 'fault' | 'verbose') {
+    const Logger = com.mapbox.mapboxsdk.log.Logger;
+    let loggingLevel: number;
+    switch (level) {
+        case 'none':
+            loggingLevel = Logger.NONE;
+            break;
+        case 'info':
+            loggingLevel = Logger.INFO;
+            break;
+        case 'debug':
+            loggingLevel = Logger.DEBUG;
+            break;
+        case 'verbose':
+            loggingLevel = Logger.VERBOSE;
+            break;
+        case 'fault':
+        case 'error':
+            loggingLevel = Logger.ERROR;
+            break;
+    }
+    Logger.setVerbosity(loggingLevel);
+}
+
 /**
  * A map view created in XML.
  *
