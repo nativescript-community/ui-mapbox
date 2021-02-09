@@ -684,6 +684,7 @@ export interface MapboxApi {
     addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
 
     removeImage(imageId: string, nativeMap?: any): Promise<void>;
+    project(data: LatLng): { x: number; y: number };
 }
 
 // ------------------------------------------------------------
@@ -1033,6 +1034,9 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     }
     onDestroy(nativeMap?: any): Promise<any> {
         return this.mapbox && this.mapbox.onDestroy(this.getNativeMapView());
+    }
+    project(data: LatLng) {
+        return this.mapbox && this.mapbox.project(data);
     }
 }
 
