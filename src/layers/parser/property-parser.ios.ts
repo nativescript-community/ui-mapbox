@@ -67,10 +67,11 @@ export class PropertyParser {
             Object.keys(propertiesObject).forEach((k) => {
                 const actualKey = keysMap[k] || toCamelCase(k);
                 const value = propertiesObject[k];
+                const rValue = transformValue(k, value);
                 if (Array.isArray(value)) {
-                    nProperties[actualKey] = (NSExpression as any).expressionWithMGLJSONObject(transformValue(k, value));
+                    nProperties[actualKey] = (NSExpression as any).expressionWithMGLJSONObject(rValue);
                 } else {
-                    nProperties[actualKey] = NSExpression.expressionForConstantValue(transformValue(k, value));
+                    nProperties[actualKey] = NSExpression.expressionForConstantValue(rValue);
                 }
             });
         }
