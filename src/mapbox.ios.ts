@@ -2573,6 +2573,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
         });
     }
+
+    project(data: LatLng) {
+        const theMap: MGLMapView = this._mapboxViewInstance;
+        const { x, y } = theMap.convertCoordinateToPointToView({ latitude: data.lat, longitude: data.lng }, theMap);
+        return { x, y };
+    }
 }
 
 const _addObserver = (eventName, callback) => NSNotificationCenter.defaultCenter.addObserverForNameObjectQueueUsingBlock(eventName, null, NSOperationQueue.mainQueue, callback);

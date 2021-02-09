@@ -3267,6 +3267,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
         return Promise.all(iterations).then((output) => result);
     }
+    project(data: LatLng) {
+        const mapboxPoint = new com.mapbox.mapboxsdk.geometry.LatLng(data.lat, data.lng);
+        const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
+        return { x: screenLocation.x, y: screenLocation.y };
+    }
 }
 
 export class Layer implements LayerCommon {
