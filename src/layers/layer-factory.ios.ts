@@ -30,6 +30,9 @@ export class LayerFactory {
         if (style.maxzoom !== undefined) {
             nativeLayer.maximumZoomLevel = style.maxzoom;
         }
+        if (style['source-layer']) {
+            (nativeLayer as any).sourceLayerIdentifier = style['source-layer'];
+        }
         const layerProperties = this.parseProperties(style.type, Object.assign(style.paint || {}, style.layout || {})); // TODO: handle defaults
 
         for (const propKey in layerProperties) {

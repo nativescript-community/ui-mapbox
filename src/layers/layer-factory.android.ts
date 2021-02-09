@@ -12,6 +12,7 @@ export class LayerFactory {
         switch (style.type) {
             case 'line':
                 nativeLayer = new com.mapbox.mapboxsdk.style.layers.LineLayer(style.id, sourceId).withProperties(layerProperties);
+
                 break;
             case 'circle':
                 nativeLayer = new com.mapbox.mapboxsdk.style.layers.CircleLayer(style.id, sourceId).withProperties(layerProperties);
@@ -36,6 +37,9 @@ export class LayerFactory {
         }
         if (style.maxzoom !== undefined) {
             nativeLayer.setMaxZoom(style.maxzoom);
+        }
+        if (style['source-layer'] && (nativeLayer as any).withSourceLayer) {
+            (nativeLayer as any).withSourceLayer(style['source-layer']);
         }
         return layer;
     }
