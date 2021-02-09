@@ -762,13 +762,18 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'Mapbox:checkForClickEvent(): got click event with point:', point);
         }
-        this.eventCallbacks['click'] && this.eventCallbacks['click'].forEach((eventListener) => {
-            this.queryRenderedFeatures({ point, layers: [eventListener.id] }, nativeMap).then((response) => {
-                if (response.length > 0) {
-                    eventListener.callback(response);
-                }
+        this.eventCallbacks['click'] &&
+            this.eventCallbacks['click'].forEach((eventListener) => {
+                this.queryRenderedFeatures({ point, layers: [eventListener.id] }, nativeMap)
+                    .then((response) => {
+                        if (response.length > 0) {
+                            eventListener.callback(response);
+                        }
+                    })
+                    .catch((err) => {
+                        console.error('click error ', eventListener.id, err);
+                    });
             });
-        });
 
         return false;
     }
