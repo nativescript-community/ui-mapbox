@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.3](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.2...v6.2.3) (2021-02-09)
+
+
+### Bug Fixes
+
+* some style property conversion fixes ([26cce82](https://github.com/nativescript-community/ui-mapbox/commit/26cce824ef892de2d48479e14048148d867e5bd3))
+
+
+### Features
+
+* project method to go from latlng to screen coords ([3d6131a](https://github.com/nativescript-community/ui-mapbox/commit/3d6131a8765b47fae32201f4c91254cbbb7d2353))
+* setLogLevel ([659dace](https://github.com/nativescript-community/ui-mapbox/commit/659daceb3e16c09117c6d69905e90725c8a12d85))
+* source-layer support for layers ([6b56ea8](https://github.com/nativescript-community/ui-mapbox/commit/6b56ea8a6cdd0e4fb6c72900690fea74dcdfadec))
+
+
+
+
+
 ## [6.2.2](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.1...v6.2.2) (2021-02-07)
 
 
