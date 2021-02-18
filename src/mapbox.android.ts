@@ -9,6 +9,7 @@ import { AndroidApplication, Application, Color, File, Image, ImageSource, Trace
 import { getImage } from '@nativescript/core/http';
 import { FilterParser } from './filter/filter-parser.android';
 import { GeoUtils } from './geo.utils';
+import { layout } from '@nativescript/core/utils';
 import { LayerFactory } from './layers/layer-factory';
 import {
     AddExtrusionOptions,
@@ -3266,7 +3267,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     project(data: LatLng) {
         const mapboxPoint = new com.mapbox.mapboxsdk.geometry.LatLng(data.lat, data.lng);
         const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
-        return { x: screenLocation.x, y: screenLocation.y };
+        return { x: layout.toDeviceIndependentPixels(screenLocation.x), y: layout.toDeviceIndependentPixels(screenLocation.y )};
     }
 }
 
