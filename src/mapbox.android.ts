@@ -259,7 +259,7 @@ export class MapboxView extends MapboxViewBase {
         }
 
         if (!this.nativeMapView && ((this.config && this.config.accessToken) || (this.settings && this.settings.accessToken))) {
-            this.mapbox = new Mapbox();
+            this.mapbox = new Mapbox(this);
             // the NativeScript contentview class extends from Observable to provide the notify method
             // which is the glue that joins this code with whatever callbacks are set in the Mapbox XML
             // tag describing the map.
@@ -429,8 +429,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     _markerIconDownloadCache = [];
 
-    constructor() {
-        super();
+    constructor(view) {
+        super(view);
 
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'constructor(): building new Mapbox object.');
@@ -447,11 +447,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * not used
      */
     setMapboxViewInstance(mapboxViewInstance: any): void {}
-
-    /**
-     * not used
-     */
-    setMapboxMapInstance(mapboxMapInstance: any): void {}
 
     /**
      * show the map programmatically.
@@ -981,13 +976,15 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             CLog(CLogTypes.info, 'Mapbox:checkForClickEvent(): got click event with point:', JSON.stringify(point));
         }
 
-        this.eventCallbacks['click'].forEach((eventListener) => {
-            this.queryRenderedFeatures({ point, layers: [eventListener.id] }).then((response) => {
-                if (response.length > 0) {
-                    eventListener.callback(response);
-                }
+        this.eventCallbacks['click'] &&
+            this.eventCallbacks['click'].forEach((eventListener) => {
+                this.queryRenderedFeatures({ point, layers: [eventListener.id] }).then((response) => {
+                    if (response.length > 0) {
+                        eventListener.callback(response);
+                    }
+                });
             });
-        });
+        this.view && this.view.notify({ eventName: 'mapClick', object: this.view, point });
 
         return false;
     }

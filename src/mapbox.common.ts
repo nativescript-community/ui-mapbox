@@ -550,8 +550,6 @@ export interface MapboxCommonApi {
 export interface MapboxApi {
     setMapboxViewInstance(mapboxNativeViewInstance: any): void;
 
-    setMapboxMapInstance(mapboxNativeMapInstance: any): void;
-
     initEventHandlerShim(settings: any, mapboxNativeViewInstance: any): void;
 
     onMapEvent(eventName, id, callback, nativeMapView?): void;
@@ -690,6 +688,7 @@ export interface MapboxApi {
 // ------------------------------------------------------------
 
 export abstract class MapboxCommon implements MapboxCommonApi {
+    constructor(public view?: MapboxViewCommonBase) {}
     public static defaults = {
         style: MapStyle.STREETS.toString(),
         mapStyle: MapStyle.STREETS.toString(),

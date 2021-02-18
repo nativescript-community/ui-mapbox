@@ -308,7 +308,7 @@ export class MapboxView extends MapboxViewBase {
         }
 
         if (!this.nativeMapView) {
-            this.mapbox = new Mapbox();
+            this.mapbox = new Mapbox(this);
 
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'initMap(): after new Mapbox()');
@@ -690,21 +690,11 @@ export class CustomUserLocationAnnotationView extends MGLUserLocationAnnotationV
 export class Mapbox extends MapboxCommon implements MapboxApi {
     // reference to the native mapbox API
 
-    private _mapboxMapInstance: any;
     private _mapboxViewInstance: any;
 
     private eventCallbacks: { [key: string]: any[] } = {};
 
     private userLocationRenderMode: string;
-
-    /**
-     * set the mapboxMapInstance
-     *
-     * @see MapboxView::initMap()
-     */
-    setMapboxMapInstance(mapboxMapInstance: any) {
-        this._mapboxMapInstance = mapboxMapInstance;
-    }
 
     /**
      * set the mapboxViewInstance
@@ -773,6 +763,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         console.error('click error ', eventListener.id, err);
                     });
             });
+        this.view && this.view.notify({ eventName: 'mapClick', object: this.view, point });
 
         return false;
     }
