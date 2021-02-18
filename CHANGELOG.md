@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.4](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.3...v6.2.4) (2021-02-18)
+
+
+### Features
+
+* mapClick event available the N way ([1965f4b](https://github.com/nativescript-community/ui-mapbox/commit/1965f4bd884cf901e897329b0a69f8488f826542))
+
+
+
+
+
 ## [6.2.3](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.2...v6.2.3) (2021-02-09)
 
 
