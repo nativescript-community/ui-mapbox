@@ -1634,15 +1634,30 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             try {
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
 
-                const target = options.target;
-                if (target === undefined) {
-                    reject("Please set the 'target' parameter");
-                    return;
+                let cam: MGLMapCamera;
+                if (options.bounds) {
+                    const padding = options.padding || 0;
+                    // support defined padding
+                    const insets: UIEdgeInsets = {
+                        top: padding,
+                        left: padding,
+                        bottom: padding,
+                        right: padding
+                    };
+                    const bounds: MGLCoordinateBounds = {
+                        sw: CLLocationCoordinate2DMake(options.bounds.south, options.bounds.west),
+                        ne: CLLocationCoordinate2DMake(options.bounds.north, options.bounds.east)
+                    };
+                    cam = theMap.cameraThatFitsCoordinateBoundsEdgePadding(bounds, insets);
+                } else {
+                    const target = options.target;
+                    if (target === undefined) {
+                        reject("Please set the 'target' parameter");
+                        return;
+                    }
+                    cam = theMap.camera;
+                    cam.centerCoordinate = CLLocationCoordinate2DMake(target.lat, target.lng);
                 }
-
-                const cam = theMap.camera;
-
-                cam.centerCoordinate = CLLocationCoordinate2DMake(target.lat, target.lng);
 
                 if (options.altitude) {
                     cam.altitude = options.altitude;
@@ -1654,6 +1669,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 if (options.tilt) {
                     cam.pitch = options.tilt;
+                }
+                if (options.zoomLevel && options.target) {
+                    cam.altitude = MGLAltitudeForZoomLevel(options.zoomLevel, cam.pitch, options.target.lat, theMap.frame.size);
                 }
 
                 const durationMs = options.duration ? options.duration : 10000;

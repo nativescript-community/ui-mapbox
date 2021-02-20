@@ -1754,31 +1754,38 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     animateCamera(options: AnimateCameraOptions, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                const target = options.target;
-                if (target === undefined) {
-                    reject("Please set the 'target' parameter");
-                    return;
-                }
-
-                const cameraPositionBuilder = new com.mapbox.mapboxsdk.camera.CameraPosition.Builder(this._mapboxMapInstance.getCameraPosition()).target(
-                    new com.mapbox.mapboxsdk.geometry.LatLng(target.lat, target.lng)
-                );
-
-                if (options.bearing) {
-                    cameraPositionBuilder.bearing(options.bearing);
-                }
-
-                if (options.tilt) {
-                    cameraPositionBuilder.tilt(options.tilt);
-                }
-
-                if (options.zoomLevel) {
-                    cameraPositionBuilder.zoom(options.zoomLevel);
-                }
-
                 const durationMs = options.duration ? options.duration : 10000;
+                if (options.bounds) {
+                    const padding = options.padding || 0;
+                    const bounds = new com.mapbox.mapboxsdk.geometry.LatLngBounds.Builder()
+                        .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.north, options.bounds.east))
+                        .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.south, options.bounds.west))
+                        .build();
+                    this._mapboxMapInstance.animateCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding), durationMs, null);
+                } else {
+                    const target = options.target;
+                    if (target === undefined) {
+                        reject("Please set the 'target' parameter");
+                        return;
+                    }
 
-                this._mapboxMapInstance.animateCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newCameraPosition(cameraPositionBuilder.build()), durationMs, null);
+                    const cameraPositionBuilder = new com.mapbox.mapboxsdk.camera.CameraPosition.Builder(this._mapboxMapInstance.getCameraPosition()).target(
+                        new com.mapbox.mapboxsdk.geometry.LatLng(target.lat, target.lng)
+                    );
+
+                    if (options.bearing) {
+                        cameraPositionBuilder.bearing(options.bearing);
+                    }
+
+                    if (options.tilt) {
+                        cameraPositionBuilder.tilt(options.tilt);
+                    }
+
+                    if (options.zoomLevel) {
+                        cameraPositionBuilder.zoom(options.zoomLevel);
+                    }
+                    this._mapboxMapInstance.animateCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newCameraPosition(cameraPositionBuilder.build()), durationMs, null);
+                }
 
                 setTimeout(() => {
                     resolve();

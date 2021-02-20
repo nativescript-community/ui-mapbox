@@ -511,10 +511,9 @@ export interface ShowResult {
 // ------------------------------------------------------------
 
 export interface AnimateCameraOptions {
-    target: LatLng;
-    /**
-     * For Android, 0.0 - 20.0
-     */
+    target?: LatLng;
+    bounds?: Bounds;
+    padding?: number;
     zoomLevel?: number;
     /**
      * For iOS, in meters from the ground
