@@ -5,7 +5,7 @@ export enum CLogTypes {
     log = Trace.messageType.log,
     info = Trace.messageType.info,
     warning = Trace.messageType.warn,
-    error = Trace.messageType.error,
+    error = Trace.messageType.error
 }
 
 export const CLog = (type: CLogTypes, ...args) => {
@@ -22,7 +22,7 @@ export enum MapStyle {
     SATELLITE_STREETS = 'satellite_streets',
     STREETS = 'streets',
     TRAFFIC_DAY = 'traffic_day',
-    TRAFFIC_NIGHT = 'traffic_night',
+    TRAFFIC_NIGHT = 'traffic_night'
 }
 
 // ------------------------------------------------------------
@@ -695,7 +695,7 @@ export abstract class MapboxCommon implements MapboxCommonApi {
             left: 0,
             right: 0,
             top: 0,
-            bottom: 0,
+            bottom: 0
         },
         zoomLevel: 0, // 0 (a big part of the world) to 20 (street level)
         showUserLocation: false, // true requires adding `NSLocationWhenInUseUsageDescription` or `NSLocationAlwaysUsageDescription` in the .plist
@@ -706,7 +706,7 @@ export abstract class MapboxCommon implements MapboxCommonApi {
         disableScroll: false,
         disableZoom: false,
         disableTilt: false,
-        delay: 0,
+        delay: 0
     };
 
     public static merge(obj1: {}, obj2: {}): any {
@@ -1067,63 +1067,63 @@ longitudeProperty.register(MapboxViewCommonBase);
 export const showUserLocationProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'showUserLocation',
     defaultValue: MapboxCommon.defaults.showUserLocation,
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 showUserLocationProperty.register(MapboxViewCommonBase);
 
 export const hideLogoProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'hideLogo',
     defaultValue: MapboxCommon.defaults.hideLogo,
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 hideLogoProperty.register(MapboxViewCommonBase);
 
 export const hideAttributionProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'hideAttribution',
     defaultValue: MapboxCommon.defaults.hideAttribution,
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 hideAttributionProperty.register(MapboxViewCommonBase);
 
 export const telemetryProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'telemetry',
     defaultValue: false,
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 telemetryProperty.register(MapboxViewCommonBase);
 
 export const hideCompassProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'hideCompass',
     defaultValue: MapboxCommon.defaults.hideCompass,
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 hideCompassProperty.register(MapboxViewCommonBase);
 
 export const disableZoomProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'disableZoom',
     defaultValue: MapboxCommon.defaults.disableZoom,
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 disableZoomProperty.register(MapboxViewCommonBase);
 
 export const disableRotationProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'disableRotation',
     defaultValue: MapboxCommon.defaults.disableRotation,
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 disableRotationProperty.register(MapboxViewCommonBase);
 
 export const disableScrollProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'disableScroll',
     defaultValue: MapboxCommon.defaults.disableScroll,
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 disableScrollProperty.register(MapboxViewCommonBase);
 
 export const disableTiltProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'disableTilt',
     defaultValue: MapboxCommon.defaults.disableTilt,
-    valueConverter: booleanConverter,
+    valueConverter: booleanConverter
 });
 disableTiltProperty.register(MapboxViewCommonBase);
 

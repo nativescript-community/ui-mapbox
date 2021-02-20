@@ -34,7 +34,7 @@ import {
     UserLocation,
     UserLocationCameraMode,
     Viewport,
-    telemetryProperty,
+    telemetryProperty
 } from './mapbox.common';
 
 import { iOSNativeHelper } from '@nativescript/core/utils';
@@ -116,9 +116,9 @@ function _getLocation(loc: MGLUserLocation) {
         return {
             location: {
                 lat: loc.coordinate.latitude,
-                lng: loc.coordinate.longitude,
+                lng: loc.coordinate.longitude
             },
-            speed: loc.location ? loc.location.speed : 0,
+            speed: loc.location ? loc.location.speed : 0
         } as UserLocation;
     }
 }
@@ -339,7 +339,7 @@ export class MapboxView extends MapboxViewBase {
                         eventName: MapboxViewBase.mapReadyEvent,
                         object: this,
                         map: this,
-                        ios: this.nativeMapView,
+                        ios: this.nativeMapView
                     });
 
                     // no permission required, but to align with Android we fire the event anyway
@@ -348,7 +348,7 @@ export class MapboxView extends MapboxViewBase {
                         eventName: MapboxViewBase.locationPermissionGrantedEvent,
                         object: this,
                         map: this,
-                        ios: this.nativeMapView,
+                        ios: this.nativeMapView
                     });
                 });
                 // this.delegate.setStyleLoadedCallback((map, style)=>{
@@ -373,7 +373,7 @@ export class MapboxView extends MapboxViewBase {
                         eventName: MapboxViewBase.moveBeginEvent,
                         object: this,
                         map: this,
-                        ios: this.nativeMapView,
+                        ios: this.nativeMapView
                     });
                 }, this.nativeMapView);
             };
@@ -732,7 +732,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
         this.eventCallbacks[eventName].push({
             id,
-            callback,
+            callback
         });
     }
 
@@ -877,7 +877,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 this._mapboxViewInstance.delegate = MGLMapViewDelegateImpl.new().initWithCallback((mapView: MGLMapView) => {
                     resolve({
-                        ios: mapView,
+                        ios: mapView
                     });
                 });
 
@@ -1150,7 +1150,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const coordinate = theMap.centerCoordinate;
                 resolve({
                     lat: coordinate.latitude,
-                    lng: coordinate.longitude,
+                    lng: coordinate.longitude
                 });
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -1881,11 +1881,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     north: visibleBounds.ne.latitude,
                     east: visibleBounds.ne.longitude,
                     south: visibleBounds.sw.latitude,
-                    west: visibleBounds.sw.longitude,
+                    west: visibleBounds.sw.longitude
                 };
                 resolve({
                     bounds,
-                    zoomLevel: theMap.zoomLevel,
+                    zoomLevel: theMap.zoomLevel
                 });
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -1908,7 +1908,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const bounds: MGLCoordinateBounds = {
                     sw: CLLocationCoordinate2DMake(options.bounds.south, options.bounds.west),
-                    ne: CLLocationCoordinate2DMake(options.bounds.north, options.bounds.east),
+                    ne: CLLocationCoordinate2DMake(options.bounds.north, options.bounds.east)
                 };
 
                 const animated = options.animated === undefined || options.animated;
@@ -1918,7 +1918,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     top: 25,
                     left: 25,
                     bottom: 25,
-                    right: 25,
+                    right: 25
                 });
 
                 theMap.setVisibleCoordinateBoundsEdgePaddingAnimated(bounds, padding, animated);
@@ -1941,7 +1941,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const bounds: MGLCoordinateBounds = {
                     sw: swCoordinate,
-                    ne: neCoordinate,
+                    ne: neCoordinate
                 };
 
                 const region = MGLTilePyramidOfflineRegion.alloc().initWithStyleURLBoundsFromZoomLevelToZoomLevel(styleURL, bounds, options.minZoom, options.maxZoom);
@@ -1963,7 +1963,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             completed: offlinePackProgress.countOfResourcesCompleted,
                             expected: offlinePackProgress.countOfResourcesExpected,
                             percentage: Math.round((offlinePackProgress.countOfResourcesCompleted / offlinePackProgress.countOfResourcesExpected) * 10000) / 100,
-                            complete,
+                            complete
                         });
 
                         if (complete) {
@@ -1978,7 +1978,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     const error = notification.userInfo[MGLOfflinePackUserInfoKeyError];
                     reject({
                         name: userInfo.objectForKey('name'),
-                        error: 'Download error. ' + error,
+                        error: 'Download error. ' + error
                     });
                 });
 
@@ -2035,8 +2035,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             north: region.bounds.ne.latitude,
                             east: region.bounds.ne.longitude,
                             south: region.bounds.sw.latitude,
-                            west: region.bounds.sw.longitude,
-                        },
+                            west: region.bounds.sw.longitude
+                        }
                     });
                 }
                 resolve(regions);
@@ -2198,7 +2198,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             if (options.bounds) {
                                 sourceOptions[MGLTileSourceOptionCoordinateBounds] = (NSValue as any).valueWithMGLCoordinateBounds({
                                     sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
-                                    ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
+                                    ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2])
                                 });
                             }
                             source = MGLVectorTileSource.alloc().initWithIdentifierTileURLTemplatesOptions(id, options.tiles, sourceOptions);
@@ -2230,7 +2230,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         break;
                     case 'raster': {
                         const sourceOptions: any = {
-                            [MGLTileSourceOptionTileSize]: options.tileSize || 256,
+                            [MGLTileSourceOptionTileSize]: options.tileSize || 256
                         };
                         if (options.minzoom !== undefined) {
                             sourceOptions[MGLTileSourceOptionMinimumZoomLevel] = options.minzoom;
@@ -2254,7 +2254,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         if (options.bounds) {
                             sourceOptions[MGLTileSourceOptionCoordinateBounds] = (NSValue as any).valueWithMGLCoordinateBounds({
                                 sw: CLLocationCoordinate2DMake(options.bounds[1], options.bounds[0]),
-                                ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2]),
+                                ne: CLLocationCoordinate2DMake(options.bounds[3], options.bounds[2])
                             });
                         }
                         source = MGLRasterTileSource.alloc().initWithIdentifierTileURLTemplatesOptions(id, options.tiles, sourceOptions);
@@ -2980,12 +2980,12 @@ class MapTapHandlerImpl extends NSObject {
         const tapCoordinate = this._mapView.convertPointToCoordinateFromView(tapPoint, this._mapView);
         this._listener({
             lat: tapCoordinate.latitude,
-            lng: tapCoordinate.longitude,
+            lng: tapCoordinate.longitude
         });
     }
 
     public static ObjCExposedMethods = {
-        tap: { returns: interop.types.void, params: [interop.types.id] },
+        tap: { returns: interop.types.void, params: [interop.types.id] }
     };
 }
 
@@ -3008,12 +3008,12 @@ class MapLongPressHandlerImpl extends NSObject {
         const longPressCoordinate = this._mapView.convertPointToCoordinateFromView(longPressPoint, this._mapView);
         this._listener({
             lat: longPressCoordinate.latitude,
-            lng: longPressCoordinate.longitude,
+            lng: longPressCoordinate.longitude
         });
     }
 
     public static ObjCExposedMethods = {
-        longPress: { returns: interop.types.void, params: [interop.types.id] },
+        longPress: { returns: interop.types.void, params: [interop.types.id] }
     };
 }
 
@@ -3064,7 +3064,7 @@ class MapPanHandlerImpl extends NSObject {
 
                 this._listener({
                     lat: panCoordinate.latitude,
-                    lng: panCoordinate.longitude,
+                    lng: panCoordinate.longitude
                 });
             }
 
@@ -3073,12 +3073,12 @@ class MapPanHandlerImpl extends NSObject {
 
         this._listener({
             lat: panCoordinate.latitude,
-            lng: panCoordinate.longitude,
+            lng: panCoordinate.longitude
         });
     }
 
     public static ObjCExposedMethods = {
-        pan: { returns: interop.types.void, params: [interop.types.id] },
+        pan: { returns: interop.types.void, params: [interop.types.id] }
     };
 }
 
@@ -3106,12 +3106,12 @@ class MapSwipeHandlerImpl extends NSObject {
         const swipeCoordinate = this._mapView.convertPointToCoordinateFromView(swipePoint, this._mapView);
         this._listener({
             lat: swipeCoordinate.latitude,
-            lng: swipeCoordinate.longitude,
+            lng: swipeCoordinate.longitude
         });
     }
 
     public static ObjCExposedMethods = {
-        swipe: { returns: interop.types.void, params: [interop.types.id] },
+        swipe: { returns: interop.types.void, params: [interop.types.id] }
     };
 }
 

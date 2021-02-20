@@ -39,7 +39,7 @@ const keysMap = {
     'raster-hue-rotate': 'rasterHueRotation',
     'raster-resampling': 'rasterResamplingMode',
     'raster-brightness-min': 'maximumRasterBrightness',
-    'raster-brightness-max': 'minimumRasterBrightness',
+    'raster-brightness-max': 'minimumRasterBrightness'
 };
 function transformValue(key, value) {
     if (key.indexOf('-color') !== -1 && !Array.isArray(value)) {

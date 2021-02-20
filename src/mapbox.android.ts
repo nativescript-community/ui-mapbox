@@ -45,7 +45,7 @@ import {
     UserLocation,
     UserLocationCameraMode,
     Viewport,
-    telemetryProperty,
+    telemetryProperty
 } from './mapbox.common';
 
 // Export the enums for devs not using TS
@@ -59,9 +59,9 @@ function _getLocation(loc: globalAndroid.location.Location) {
         return {
             location: {
                 lat: loc.getLatitude(),
-                lng: loc.getLongitude(),
+                lng: loc.getLongitude()
             },
-            speed: loc.getSpeed(),
+            speed: loc.getSpeed()
         } as UserLocation;
     }
 }
@@ -135,7 +135,7 @@ export class MapboxView extends MapboxViewBase {
             // Eiffel tower, Paris
             settings.center = {
                 lat: 48.858093,
-                lng: 2.294694,
+                lng: 2.294694
             };
         }
 
@@ -273,7 +273,7 @@ export class MapboxView extends MapboxViewBase {
                         eventName: MapboxViewBase.locationPermissionGrantedEvent,
                         object: this,
                         map: this,
-                        android: this.nativeMapView,
+                        android: this.nativeMapView
                     });
                 },
                 onLocationPermissionDenied: (event) => {
@@ -281,7 +281,7 @@ export class MapboxView extends MapboxViewBase {
                         eventName: MapboxViewBase.locationPermissionDeniedEvent,
                         object: this,
                         map: this,
-                        android: this.nativeMapView,
+                        android: this.nativeMapView
                     });
                 },
                 onMapReady: (map) => {
@@ -311,7 +311,7 @@ export class MapboxView extends MapboxViewBase {
                         eventName: MapboxViewBase.mapReadyEvent,
                         object: this,
                         map: this,
-                        android: this.nativeMapView,
+                        android: this.nativeMapView
                     });
                 },
                 onScrollEvent: (event) => {
@@ -324,7 +324,7 @@ export class MapboxView extends MapboxViewBase {
                         object: this,
                         event,
                         map: this,
-                        android: this.nativeMapView,
+                        android: this.nativeMapView
                     });
                 },
                 onMoveBeginEvent: (event) => {
@@ -337,9 +337,9 @@ export class MapboxView extends MapboxViewBase {
                         object: this,
                         event,
                         map: this,
-                        android: this.nativeMapView,
+                        android: this.nativeMapView
                     });
-                },
+                }
             };
 
             if (Trace.isEnabled()) {
@@ -536,14 +536,14 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                     if (Trace.isEnabled()) {
                         this.onDidFailLoadingMapListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFailLoadingMapListener({
-                            onDidFailLoadingMap: (error) => CLog(CLogTypes.error, 'Mapbox::show(): failed to load map:', error),
+                            onDidFailLoadingMap: (error) => CLog(CLogTypes.error, 'Mapbox::show(): failed to load map:', error)
                         });
                         this._mapboxViewInstance.addOnDidFailLoadingMapListener(this.onDidFailLoadingMapListener);
                     }
 
                     if (Trace.isEnabled()) {
                         this.onDidFinishLoadingMapListener = new com.mapbox.mapboxsdk.maps.MapView.OnDidFinishLoadingMapListener({
-                            onDidFinishLoadingMap: () => CLog(CLogTypes.info, 'show(): finished loading map'),
+                            onDidFinishLoadingMap: () => CLog(CLogTypes.info, 'show(): finished loading map')
                         });
                         this._mapboxViewInstance.addOnDidFinishLoadingMapListener(this.onDidFinishLoadingMapListener);
                     }
@@ -596,10 +596,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 }
 
                                 resolve({
-                                    android: this._mapboxViewInstance,
+                                    android: this._mapboxViewInstance
                                 });
                             });
-                        },
+                        }
                     });
 
                     this._mapboxViewInstance.getMapAsync(this.onMapReadyCallback);
@@ -951,7 +951,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
         this.eventCallbacks[eventName].push({
             id,
-            callback,
+            callback
         });
     }
 
@@ -1112,13 +1112,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 this.handleLineClickEvent(line);
 
                                 return true;
-                            },
+                            }
                         });
 
                         this.lineManager.addClickListener(this.onAnnotationClickListener);
 
                         resolve();
-                    },
+                    }
                 });
 
                 this._mapboxViewInstance.addOnDidFinishLoadingStyleListener(this.onDidFinishLoadingStyleListener);
@@ -1131,7 +1131,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             CLog(CLogTypes.error, 'Mapbox:setMapStyle(): style failed', mapStyle, error);
                         }
                         reject(error);
-                    },
+                    }
                 });
 
                 this._mapboxViewInstance.addOnDidFailLoadingMapListener(this.onDidFailLoadingMapListener);
@@ -1278,7 +1278,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         cachedMarker.onTap(cachedMarker);
                     }
                     return false;
-                },
+                }
             });
             this._mapboxMapInstance.setOnMarkerClickListener(this.onMarkerClickListener);
         }
@@ -1290,7 +1290,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         cachedMarker.onCalloutTap(cachedMarker);
                     }
                     return true;
-                },
+                }
             });
             this._mapboxMapInstance.setOnInfoWindowClickListener(this.onInfoWindowClickListener);
         }
@@ -1447,7 +1447,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 resolve({
                     lat: coordinate.getLatitude(),
-                    lng: coordinate.getLongitude(),
+                    lng: coordinate.getLongitude()
                 });
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -1666,7 +1666,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
                 this._polygons.push({
                     id: options.id || new Date().getTime(),
-                    android: this._mapboxMapInstance.addPolygon(polygonOptions),
+                    android: this._mapboxMapInstance.addPolygon(polygonOptions)
                 });
                 resolve();
             } catch (ex) {
@@ -1701,7 +1701,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
                 this._polylines.push({
                     id: options.id || new Date().getTime(),
-                    android: this._mapboxMapInstance.addPolyline(polylineOptions),
+                    android: this._mapboxMapInstance.addPolyline(polylineOptions)
                 });
                 resolve();
             } catch (ex) {
@@ -1823,9 +1823,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                         return listener({
                             lat: point.getLatitude(),
-                            lng: point.getLongitude(),
+                            lng: point.getLongitude()
                         });
-                    },
+                    }
                 });
 
                 this._mapboxMapInstance.addOnMapClickListener(this.onMapClickListener);
@@ -1852,8 +1852,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     onMapLongClick: (point) =>
                         listener({
                             lat: point.getLatitude(),
-                            lng: point.getLongitude(),
-                        }),
+                            lng: point.getLongitude()
+                        })
                 });
 
                 this._mapboxMapInstance.addOnMapLongClickListener(this.onMapLongClickListener);
@@ -1885,11 +1885,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         const coordinate = this._mapboxMapInstance.getCameraPosition().target;
                         return listener({
                             lat: coordinate.getLatitude(),
-                            lng: coordinate.getLongitude(),
+                            lng: coordinate.getLongitude()
                         });
                     },
                     onMove: (detector: any /* MoveGestureDetector */) => {},
-                    onMoveEnd: (detector: any /* MoveGestureDetector */) => {},
+                    onMoveEnd: (detector: any /* MoveGestureDetector */) => {}
                 });
 
                 this._mapboxMapInstance.addOnMoveListener(this.onMoveListener);
@@ -1924,10 +1924,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         const coordinate = this._mapboxMapInstance.getCameraPosition().target;
                         return listener({
                             lat: coordinate.getLatitude(),
-                            lng: coordinate.getLongitude(),
+                            lng: coordinate.getLongitude()
                         });
                     },
-                    onMoveEnd: (detector: any /* MoveGestureDetector */) => {},
+                    onMoveEnd: (detector: any /* MoveGestureDetector */) => {}
                 });
 
                 this._mapboxMapInstance.addOnMoveListener(this.onScrollListener);
@@ -1951,7 +1951,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 this.onFlingListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnFlingListener({
-                    onFling: () => listener(),
+                    onFling: () => listener()
                 });
 
                 this._mapboxMapInstance.addOnFlingListener(this.onFlingListener);
@@ -1975,7 +1975,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 this.onCameraMoveListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnCameraMoveListener({
-                    onCameraMove: () => listener(),
+                    onCameraMove: () => listener()
                 });
 
                 this._mapboxMapInstance.addOnCameraMoveListener(this.onCameraMoveListener);
@@ -1999,7 +1999,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 this.onCameraMoveCancelListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnCameraMoveCanceledListener({
-                    onCameraMoveCanceled: () => listener(),
+                    onCameraMoveCanceled: () => listener()
                 });
 
                 this._mapboxMapInstance.addOnCameraMoveCancelListener(this.onCameraMoveCancelListener);
@@ -2023,7 +2023,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 this.onCameraIdleListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnCameraIdleListener({
-                    onCameraIdle: () => listener(),
+                    onCameraIdle: () => listener()
                 });
 
                 this._mapboxMapInstance.addOnCameraIdleListener(this.onCameraIdleListener);
@@ -2053,9 +2053,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         north: bounds.getLatNorth(),
                         east: bounds.getLonEast(),
                         south: bounds.getLatSouth(),
-                        west: bounds.getLonWest(),
+                        west: bounds.getLonWest()
                     },
-                    zoomLevel: this._mapboxMapInstance.getCameraPosition().zoom,
+                    zoomLevel: this._mapboxMapInstance.getCameraPosition().zoom
                 });
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -2158,7 +2158,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                                 expected: status.getRequiredResourceCount(),
                                                 percentage: Math.round(percentage * 100) / 100,
                                                 // downloading: status.getDownloadState() == com.mapbox.mapboxsdk.offline.OfflineRegion.STATE_ACTIVE,
-                                                complete: status.isComplete(),
+                                                complete: status.isComplete()
                                             });
                                         }
 
@@ -2174,10 +2174,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                                     mapboxTileCountLimitExceeded: (limit) => {
                                         console.log(`dl mapboxTileCountLimitExceeded: ${limit}`);
-                                    },
+                                    }
                                 })
                             );
-                        },
+                        }
                     })
                 );
             } catch (ex) {
@@ -2224,13 +2224,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                             north: bounds.getLatNorth(),
                                             east: bounds.getLonEast(),
                                             south: bounds.getLatSouth(),
-                                            west: bounds.getLonWest(),
-                                        },
+                                            west: bounds.getLonWest()
+                                        }
                                     });
                                 }
                             }
                             resolve(regions);
-                        },
+                        }
                     })
                 );
             } catch (ex) {
@@ -2272,7 +2272,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                                 onDelete: () => {
                                                     resolve();
                                                     // don't return, see note below
-                                                },
+                                                }
                                             })
                                         );
                                         // don't break the loop as there may be multiple packs with the same name
@@ -2282,7 +2282,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             if (!found) {
                                 reject('Region not found');
                             }
-                        },
+                        }
                     })
                 );
             } catch (ex) {
@@ -2645,7 +2645,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 unclustered.setProperties([
                     com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor(new Color('red').android),
                     com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius(new java.lang.Float(16.0)),
-                    com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleBlur(new java.lang.Float(0.2)),
+                    com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleBlur(new java.lang.Float(0.2))
                 ]);
                 unclustered.setFilter(com.mapbox.mapboxsdk.style.expressions.Expression.neq(com.mapbox.mapboxsdk.style.expressions.Expression.get('cluster'), true));
                 this._mapboxMapInstance.getStyle().addLayer(unclustered); // , "building");
@@ -2657,7 +2657,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         // com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage("icon")
                         com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleColor(layers[i][1]),
                         com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleRadius(new java.lang.Float(22.0)),
-                        com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleBlur(new java.lang.Float(0.2)),
+                        com.mapbox.mapboxsdk.style.layers.PropertyFactory.circleBlur(new java.lang.Float(0.2))
                     ]);
 
                     const pointCount = com.mapbox.mapboxsdk.style.expressions.Expression.toNumber(com.mapbox.mapboxsdk.style.expressions.Expression.get('point_count'));
@@ -2669,10 +2669,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         circles.setFilter(
                             com.mapbox.mapboxsdk.style.expressions.Expression.all([
                                 com.mapbox.mapboxsdk.style.expressions.Expression.gte(pointCount, com.mapbox.mapboxsdk.style.expressions.Expression.literal(java.lang.Integer.valueOf(layers[i][0]))),
-                                com.mapbox.mapboxsdk.style.expressions.Expression.lt(
-                                    pointCount,
-                                    com.mapbox.mapboxsdk.style.expressions.Expression.literal(java.lang.Integer.valueOf(layers[i - 1][0]))
-                                ),
+                                com.mapbox.mapboxsdk.style.expressions.Expression.lt(pointCount, com.mapbox.mapboxsdk.style.expressions.Expression.literal(java.lang.Integer.valueOf(layers[i - 1][0])))
                             ])
                         );
                     }
@@ -2685,7 +2682,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 count.setProperties([
                     com.mapbox.mapboxsdk.style.layers.PropertyFactory.textField(com.mapbox.mapboxsdk.style.expressions.Expression.get('point_count')),
                     com.mapbox.mapboxsdk.style.layers.PropertyFactory.textSize(new java.lang.Float(12.0)),
-                    com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor(new Color('white').android),
+                    com.mapbox.mapboxsdk.style.layers.PropertyFactory.textColor(new Color('white').android)
                 ]);
                 this._mapboxMapInstance.getStyle().addLayer(count);
 
@@ -2717,7 +2714,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 this.requestFineLocationPermission()
                     .then(() => {
                         this.showUserLocationMarker({
-                            useDefaultLocationEngine: true,
+                            useDefaultLocationEngine: true
                         });
                     })
                     .catch((err) => {
@@ -2802,7 +2799,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             // Eiffel tower, Paris
             settings.center = {
                 lat: 48.858093,
-                lng: 2.294694,
+                lng: 2.294694
             };
         }
 
@@ -3014,7 +3011,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     this.onLocationClickListener = new com.mapbox.mapboxsdk.location.OnLocationClickListener({
                         onLocationComponentClick: () => {
                             options.clickListener();
-                        },
+                        }
                     });
 
                     this._locationComponent.addOnLocationClickListener(this.onLocationClickListener);
@@ -3168,7 +3165,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     onStyleLoaded: (style) => {
                         const layer = style.getLayer(name);
                         resolve(layer ? new Layer(layer) : null);
-                    },
+                    }
                 });
 
                 theMap.getStyle(styleLoadedCallback);
@@ -3201,7 +3198,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
 
                         resolve(result);
-                    },
+                    }
                 });
 
                 theMap.getStyle(styleLoadedCallback);
@@ -3274,7 +3271,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     project(data: LatLng) {
         const mapboxPoint = new com.mapbox.mapboxsdk.geometry.LatLng(data.lat, data.lng);
         const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
-        return { x: layout.toDeviceIndependentPixels(screenLocation.x), y: layout.toDeviceIndependentPixels(screenLocation.y )};
+        return { x: layout.toDeviceIndependentPixels(screenLocation.x), y: layout.toDeviceIndependentPixels(screenLocation.y) };
     }
 }
 
