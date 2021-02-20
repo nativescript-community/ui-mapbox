@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.6](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.5...v6.2.6) (2021-02-20)
+
+
+### Features
+
+* animateCamera supports bounds and zoomLevel on both platforms ([11f883a](https://github.com/nativescript-community/ui-mapbox/commit/11f883adc2d24f86e533cedc62503fb15526cb26))
+
+
+
+
+
 ## [6.2.5](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.4...v6.2.5) (2021-02-18)
 
 
