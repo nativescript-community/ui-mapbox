@@ -7,7 +7,6 @@ module.exports = {
         sourceType: 'module',
         parser: '@typescript-eslint/parser',
         project: 'tsconfig.eslint.json',
-        extraFileExtensions: ['.vue'],
         warnOnUnsupportedTypeScriptVersion: false,
         tsconfigRootDir: __dirname
     },
