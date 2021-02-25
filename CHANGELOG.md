@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.7](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.6...v6.2.7) (2021-02-25)
+
+
+### Bug Fixes
+
+* **ios:** missing camera events ([bc7af99](https://github.com/nativescript-community/ui-mapbox/commit/bc7af99a9579967d606d5d618de99203970de4d5))
+
+
+
+
+
 ## [6.2.6](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.5...v6.2.6) (2021-02-20)
 
 
