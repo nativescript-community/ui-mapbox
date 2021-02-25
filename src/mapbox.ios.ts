@@ -1844,7 +1844,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return Promise.reject("'setOnFlingListener' is not supported on iOS");
     }
 
-    async setOnCameraMoveListener(listener: () => void, nativeMap?: any): Promise<void> {
+    async setOnCameraMoveListener(listener: (reason, animated?) => void, nativeMap?: any): Promise<void> {
         const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
         if (theMap) {
             (theMap.delegate as MGLMapViewDelegateImpl).setCameraChangedListener(listener);
@@ -2659,7 +2659,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
 
     private userLocationClickListener: (annotation: MGLAnnotation) => void;
     private userLocationChangedListener: (location: UserLocation) => void;
-    private cameraChangedListener: () => void;
+    private cameraChangedListener: (reason,animated?:boolean) => void;
     private cameraIdledListener: () => void;
     private userLocationRenderMode: any;
     private userLocationAnnotationView: CustomUserLocationAnnotationView;
@@ -2933,17 +2933,20 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
         return null;
     }
 
-    mapViewRegionIsChanging() {
+    mapViewRegionIsChangingWithReason(mapView: MGLMapView, reason: MGLCameraChangeReason) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::mapViewRegionIsChanging()');
         }
         if (this.cameraChangedListener) {
-            this.cameraChangedListener();
+            this.cameraChangedListener(reason);
         }
     }
-    mapViewRegionDidChangeAnimated(animated) {
+    mapViewRegionDidChangeWithReasonAnimated?(mapView: MGLMapView, reason: MGLCameraChangeReason, animated: boolean) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MGLMapViewDelegateImpl::mapViewRegionDidChangeAnimated()');
+        }
+        if (this.cameraChangedListener) {
+            this.cameraChangedListener(reason, animated);
         }
         if (this.cameraIdledListener) {
             this.cameraIdledListener();

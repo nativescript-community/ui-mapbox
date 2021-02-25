@@ -1966,7 +1966,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    setOnCameraMoveListener(listener: () => void, nativeMap?): Promise<void> {
+    setOnCameraMoveListener(listener: (reason, animated?) => void, nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
                 if (!this._mapboxMapInstance) {
@@ -1975,7 +1975,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 this.onCameraMoveListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnCameraMoveListener({
-                    onCameraMove: () => listener()
+                    onCameraMove: () => listener(0, false)
                 });
 
                 this._mapboxMapInstance.addOnCameraMoveListener(this.onCameraMoveListener);
