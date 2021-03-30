@@ -2429,6 +2429,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         if (options.maxzoom) {
                             geojsonOptions.withMaxZoom(options.maxzoom);
                         }
+                        if (options.cluster) {
+                            geojsonOptions
+                                .withCluster(true)
+                                .withClusterMaxZoom(options.cluster.maxZoom || 13)
+                                .withClusterRadius(options.cluster.radius || 40);
+                        }
 
                         const geoJsonSource = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id, geojsonOptions);
                         if (options.data) {

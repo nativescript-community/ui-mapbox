@@ -332,6 +332,10 @@ export interface GeoJSONSource extends Source {
     data?: any;
     minzoom?: number;
     maxzoom?: number;
+    cluster?: {
+        radius;
+        maxZoom;
+    };
 }
 
 // ------------------------------------------------------------
@@ -650,7 +654,7 @@ export interface MapboxApi {
 
     setOnFlingListener(listener: () => void, nativeMap?: any): Promise<any>;
 
-    setOnCameraMoveListener(listener: (reason, animated?:boolean) => void, nativeMap?: any): Promise<any>;
+    setOnCameraMoveListener(listener: (reason, animated?: boolean) => void, nativeMap?: any): Promise<any>;
 
     setOnCameraMoveCancelListener(listener: () => void, nativeMap?: any): Promise<any>;
 
@@ -769,7 +773,7 @@ export interface MapboxViewApi {
 
     setOnFlingListener(listener: () => void): Promise<any>;
 
-    setOnCameraMoveListener(listener: (reason, animated?:boolean) => void): Promise<any>;
+    setOnCameraMoveListener(listener: (reason, animated?: boolean) => void): Promise<any>;
 
     setOnCameraMoveCancelListener(listener: () => void): Promise<any>;
 
@@ -904,7 +908,7 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     setOnFlingListener(listener: () => void, nativeMap?: any): Promise<any> {
         return this.mapbox.setOnFlingListener(listener, this.getNativeMapView());
     }
-    setOnCameraMoveListener(listener: (reason, animated?:boolean) => void, nativeMap?: any): Promise<any> {
+    setOnCameraMoveListener(listener: (reason, animated?: boolean) => void, nativeMap?: any): Promise<any> {
         return this.mapbox.setOnCameraMoveListener(listener, this.getNativeMapView());
     }
     setOnCameraMoveCancelListener(listener: () => void, nativeMap?: any): Promise<any> {

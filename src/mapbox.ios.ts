@@ -2225,6 +2225,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             sourceOptions[MGLShapeSourceOptionMaximumZoomLevel] = options.maxzoom;
                         }
 
+                        if (options.cluster) {
+                            sourceOptions[MGLShapeSourceOptionClustered] = true;
+                            sourceOptions[MGLShapeSourceOptionClusterRadius] = options.cluster.radius || 40;
+                            sourceOptions[MGLShapeSourceOptionMaximumZoomLevelForClustering] = options.cluster.maxZoom || 13;
+                        }
+
                         source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, geoJsonShape, sourceOptions);
 
                         break;
@@ -2659,7 +2665,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
 
     private userLocationClickListener: (annotation: MGLAnnotation) => void;
     private userLocationChangedListener: (location: UserLocation) => void;
-    private cameraChangedListener: (reason,animated?:boolean) => void;
+    private cameraChangedListener: (reason, animated?: boolean) => void;
     private cameraIdledListener: () => void;
     private userLocationRenderMode: any;
     private userLocationAnnotationView: CustomUserLocationAnnotationView;
