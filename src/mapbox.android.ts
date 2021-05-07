@@ -2079,7 +2079,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.south, options.bounds.west))
                     .build();
 
-                const padding = 25,
+                const padding = options.padding !== undefined ? options.padding : 25,
                     animated = options.animated === undefined || options.animated,
                     durationMs = animated ? 1000 : 0;
 

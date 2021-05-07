@@ -1914,12 +1914,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const animated = options.animated === undefined || options.animated;
 
                 // support defined padding
-                const padding: UIEdgeInsets = Mapbox.merge(options.padding === undefined ? {} : options.padding, {
-                    top: 25,
-                    left: 25,
-                    bottom: 25,
-                    right: 25
-                });
+                const padding: UIEdgeInsets =
+                    options.padding !== undefined ? { top: options.padding, left: options.padding, bottom: options.padding, right: options.padding } : { top: 25, left: 25, bottom: 25, right: 25 };
 
                 theMap.setVisibleCoordinateBoundsEdgePaddingAnimated(bounds, padding, animated);
                 resolve();
