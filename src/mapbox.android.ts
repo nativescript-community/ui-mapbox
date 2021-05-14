@@ -446,7 +446,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     /**
      * not used
      */
-    setMapboxViewInstance(mapboxViewInstance: any): void { }
+    setMapboxViewInstance(mapboxViewInstance: any): void {}
 
     /**
      * show the map programmatically.
@@ -1880,8 +1880,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             lng: coordinate.getLongitude(),
                         });
                     },
-                    onMove: (detector: any /* MoveGestureDetector */) => { },
-                    onMoveEnd: (detector: any /* MoveGestureDetector */) => { },
+                    onMove: (detector: any /* MoveGestureDetector */) => {},
+                    onMoveEnd: (detector: any /* MoveGestureDetector */) => {},
                 });
 
                 this._mapboxMapInstance.addOnMoveListener(this.onMoveListener);
@@ -1911,7 +1911,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 // the 'onMove' event seems like the one closest to the iOS implementation
 
                 this.onScrollListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnMoveListener({
-                    onMoveBegin: (detector: any /* MoveGestureDetector */) => { },
+                    onMoveBegin: (detector: any /* MoveGestureDetector */) => {},
                     onMove: (detector: any /* MoveGestureDetector */) => {
                         const coordinate = this._mapboxMapInstance.getCameraPosition().target;
                         return listener({
@@ -1919,7 +1919,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             lng: coordinate.getLongitude(),
                         });
                     },
-                    onMoveEnd: (detector: any /* MoveGestureDetector */) => { },
+                    onMoveEnd: (detector: any /* MoveGestureDetector */) => {},
                 });
 
                 this._mapboxMapInstance.addOnMoveListener(this.onScrollListener);
