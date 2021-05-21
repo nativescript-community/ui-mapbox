@@ -149,6 +149,12 @@
             <Button row="10" col="2" text="+ raster" tap="{{ doAddRasterLayer }}" class="button" />
             <Button row="10" col="3" text="- raster" tap="{{ doRemoveRasterLayer }}" class="button" />
 
+
+            <Button row="11" col="0" text="set lang en" tap="{{ doSetLang }}" class="button" lang="en" />
+            <Button row="11" col="1" text="set lang de" tap="{{ doSetLang }}" class="button" lang="de" />
+            <Button row="11" col="2" text="set lang ru" tap="{{ doSetLang }}" class="button" lang="ru" />
+            <Button row="11" col="3" text="set lang ja" tap="{{ doSetLang }}" class="button" lang="ja" />
+
             <StackLayout row="13" col="0" colSpan="4">
               <ContentView with="100%" height="100%" id="mapContainer" />
             </StackLayout>

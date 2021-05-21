@@ -1,5 +1,5 @@
-import { Button, Color, Observable, Page, ContentView } from '@nativescript/core';
-import { setInterval, clearInterval } from '@nativescript/core/timer';
+import { Button, ContentView, Observable, Page } from '@nativescript/core';
+import { clearInterval, setInterval } from '@nativescript/core/timer';
 import * as platform from '@nativescript/core/platform';
 
 import { AlertOptions, alert } from '@nativescript/core/ui/dialogs';
@@ -50,11 +50,11 @@ export class HelloWorldModel extends Observable {
                 left: 18,
                 right: 18,
                 top: isIOS ? 390 : 454,
-                bottom: isIOS ? 50 : 8,
+                bottom: isIOS ? 50 : 8
             },
             center: {
                 lat: 52.370216,
-                lng: 4.895168,
+                lng: 4.895168
             },
             zoomLevel: 9, // 0 (most of the world) to 20, default 0
             showUserLocation: false, // default false
@@ -74,9 +74,9 @@ export class HelloWorldModel extends Observable {
                     subtitle: 'Really really nice location',
                     iconPath: '~/assets/markers/green_pin_marker.png',
                     onTap: () => console.log("'Nice location' marker tapped"),
-                    onCalloutTap: () => console.log("'Nice location' marker callout tapped"),
-                },
-            ],
+                    onCalloutTap: () => console.log("'Nice location' marker callout tapped")
+                }
+            ]
         };
 
         console.log('main-view-model:: doShow(): creating new MapboxView.');
@@ -185,7 +185,7 @@ export class HelloWorldModel extends Observable {
             icon: isIOS ? 'res://icon-40' : 'res://icon',
             selected: false,
             onTap,
-            onCalloutTap,
+            onCalloutTap
         } as MapboxMarker;
 
         setTimeout(() => {
@@ -196,7 +196,7 @@ export class HelloWorldModel extends Observable {
                 subtitle: 'Updated subtitle',
                 selected: true,
                 onTap: (marker: MapboxMarker) => console.log(`UPDATED Marker tapped with title: ${marker.title}`),
-                onCalloutTap: (marker: MapboxMarker) => alert(`UPDATED Marker callout tapped with title: ${marker.title}`),
+                onCalloutTap: (marker: MapboxMarker) => alert(`UPDATED Marker callout tapped with title: ${marker.title}`)
             });
         }, 8000);
 
@@ -212,7 +212,7 @@ export class HelloWorldModel extends Observable {
                     icon: isIOS ? 'res://icon-40' : 'res://icon',
                     selected: false,
                     onTap,
-                    onCalloutTap,
+                    onCalloutTap
                 },
                 {
                     // this is a marker without a popup (because no title/subtitle are set)
@@ -220,7 +220,7 @@ export class HelloWorldModel extends Observable {
                     lat: 52.360216,
                     lng: 5,
                     onTap: () => console.log('Titleless marker tapped!'),
-                    icon: 'https://www.emojimeaning.com/img/img-google-64/1f35e.png',
+                    icon: 'https://www.emojimeaning.com/img/img-google-64/1f35e.png'
                 },
                 {
                     id: 4,
@@ -231,7 +231,7 @@ export class HelloWorldModel extends Observable {
                     iconPath: '~/assets/markers/home_marker.png',
                     selected: true,
                     onTap,
-                    onCalloutTap,
+                    onCalloutTap
                 },
                 {
                     id: 5,
@@ -241,8 +241,8 @@ export class HelloWorldModel extends Observable {
                     subtitle: 'Same for this subtitle. Same for this subtitle. Same for this subtitle. Same for this subtitle. Same for this subtitle.',
                     icon: 'https://www.emojimeaning.com/img/img-google-64/1f420.png',
                     onTap: () => console.log('Marker tapped'),
-                    onCalloutTap: () => console.log('Marker callout tapped'),
-                },
+                    onCalloutTap: () => console.log('Marker callout tapped')
+                }
             ])
             .then(
                 () => console.log('Mapbox addMarkers done'),
@@ -256,7 +256,7 @@ export class HelloWorldModel extends Observable {
                 const alertOptions: AlertOptions = {
                     title: 'Viewport determined',
                     message: JSON.stringify(result),
-                    okButtonText: 'OK',
+                    okButtonText: 'OK'
                 };
                 alert(alertOptions);
             },
@@ -271,9 +271,9 @@ export class HelloWorldModel extends Observable {
                     north: 52.482,
                     east: 5.1087,
                     south: 52.2581,
-                    west: 4.6816,
+                    west: 4.6816
                 },
-                animated: true, // default true
+                animated: true // default true
             })
             .then(
                 () => console.log('Viewport set'),
@@ -296,18 +296,18 @@ export class HelloWorldModel extends Observable {
                     north: 52.482,
                     east: 5.1087,
                     south: 52.2581,
-                    west: 4.6816,
+                    west: 4.6816
                 },
                 onProgress: (progress: DownloadProgress) => {
                     console.log(`Download progress: ${JSON.stringify(progress)}`);
-                },
+                }
             })
             .then(
                 () => {
                     const alertOptions: AlertOptions = {
                         title: 'Offline region downloaded',
                         message: 'Done! Zoom levels 9-11 have been downloaded. The download progress was reported via console.log',
-                        okButtonText: 'OK',
+                        okButtonText: 'OK'
                     };
                     alert(alertOptions);
                 },
@@ -317,7 +317,7 @@ export class HelloWorldModel extends Observable {
         const alertOptions: AlertOptions = {
             title: 'Be patient',
             message: 'This takes a while, progress is logged via console.log',
-            okButtonText: 'Understood',
+            okButtonText: 'Understood'
         };
 
         alert(alertOptions);
@@ -333,14 +333,14 @@ export class HelloWorldModel extends Observable {
                         minZoom: viewport.zoomLevel,
                         maxZoom: viewport.zoomLevel + 2,
                         bounds: viewport.bounds,
-                        onProgress: (progress: DownloadProgress) => console.log(`Download progress: ${JSON.stringify(progress)}`),
+                        onProgress: (progress: DownloadProgress) => console.log(`Download progress: ${JSON.stringify(progress)}`)
                     })
                     .then(
                         () => {
                             const alertOptions: AlertOptions = {
                                 title: 'Viewport downloaded',
                                 message: `Downloaded viewport with bounds ${JSON.stringify(viewport.bounds)} at zoom levels ${viewport.zoomLevel} - ${viewport.zoomLevel + 2}`,
-                                okButtonText: 'OK :)',
+                                okButtonText: 'OK :)'
                             };
                             alert(alertOptions);
                         },
@@ -351,7 +351,7 @@ export class HelloWorldModel extends Observable {
                 const alertOptions: AlertOptions = {
                     title: 'Download error',
                     message: error,
-                    okButtonText: 'Got it',
+                    okButtonText: 'Got it'
                 };
                 alert(alertOptions);
             }
@@ -364,7 +364,7 @@ export class HelloWorldModel extends Observable {
                 name: 'earthquakes',
                 data: 'https://www.mapbox.com/mapbox-gl-js/assets/earthquakes.geojson',
                 clusterMaxZoom: 15,
-                clusterRadius: 20,
+                clusterRadius: 20
                 // clusters: [
                 //   {}
                 // ]
@@ -374,7 +374,7 @@ export class HelloWorldModel extends Observable {
                     const alertOptions: AlertOptions = {
                         title: 'GeoJSON added',
                         message: "Moving to the USA as that's where the GeoJson data is drawn",
-                        okButtonText: 'OK',
+                        okButtonText: 'OK'
                     };
                     alert(alertOptions).then(() => {
                         this.mapbox.setViewport({
@@ -383,8 +383,8 @@ export class HelloWorldModel extends Observable {
                                 north: 52.9,
                                 east: -62.2,
                                 south: 22.1,
-                                west: -128.2,
-                            },
+                                west: -128.2
+                            }
                         });
                     });
                 },
@@ -409,26 +409,26 @@ export class HelloWorldModel extends Observable {
                                     id: '1',
                                     type: 'Feature',
                                     properties: {
-                                        querySample: '1',
+                                        querySample: '1'
                                     },
                                     geometry: {
                                         type: 'Point',
-                                        coordinates: [4.823684692382513, 52.3701494345567],
-                                    },
+                                        coordinates: [4.823684692382513, 52.3701494345567]
+                                    }
                                 },
                                 {
                                     id: '2',
                                     type: 'Feature',
                                     properties: {
-                                        querySample: '2',
+                                        querySample: '2'
                                     },
                                     geometry: {
                                         type: 'Point',
-                                        coordinates: [4.823684692382513, 52.3701494345567],
-                                    },
-                                },
-                            ],
-                        },
+                                        coordinates: [4.823684692382513, 52.3701494345567]
+                                    }
+                                }
+                            ]
+                        }
                     },
                     paint: {
                         'circle-blur': 0.2,
@@ -437,8 +437,8 @@ export class HelloWorldModel extends Observable {
                         'circle-color': '#ed6498',
                         'circle-stroke-width': 4,
                         'circle-stroke-color': '#3b0619',
-                        'circle-stroke-opacity': 0.75,
-                    },
+                        'circle-stroke-opacity': 0.75
+                    }
                 })
                 .then(() => {
                     console.log('circle-with-source-object added');
@@ -451,10 +451,10 @@ export class HelloWorldModel extends Observable {
                             .queryRenderedFeatures({
                                 point: {
                                     lat: 52.3701494345567,
-                                    lng: 4.823684692382513,
+                                    lng: 4.823684692382513
                                 },
                                 layers: ['circle-with-source-object'],
-                                filter: ['all', ['==', '$id', '2']],
+                                filter: ['all', ['==', '$id', '2']]
                             })
                             .then((result) => console.log('query rendered features', JSON.stringify(result)));
 
@@ -494,7 +494,7 @@ export class HelloWorldModel extends Observable {
                 [4.7824859619140625, 52.36176390234046],
                 [4.814414978027344, 52.36910132990146],
                 [4.8175048828125, 52.373083994540266],
-                [4.820594787597656, 52.380629111184575],
+                [4.820594787597656, 52.380629111184575]
             ];
             this.mapbox
                 .addLayer({
@@ -509,22 +509,22 @@ export class HelloWorldModel extends Observable {
                                 type: 'LineString',
                                 coordinates: [
                                     [4.8209381103515625, 52.28769256200232],
-                                    [4.8085784912109375, 52.27572040360819],
-                                ],
-                            },
-                        },
+                                    [4.8085784912109375, 52.27572040360819]
+                                ]
+                            }
+                        }
                     },
                     layout: {
                         'line-cap': 'round',
                         'line-join': 'round',
-                        'line-blur': 0.2,
+                        'line-blur': 0.2
                     },
                     paint: {
                         'line-color': '#ab111b',
                         'line-width': 5,
                         'line-opacity': 0.7,
-                        'line-dash-array': [1, 1, 1, 1],
-                    },
+                        'line-dash-array': [1, 1, 1, 1]
+                    }
                 })
                 .then(() => {
                     console.log('line-with-source-object added');
@@ -566,11 +566,11 @@ export class HelloWorldModel extends Observable {
                                         [4.923677444458008, 52.346980527061895],
                                         [4.923677444458008, 52.36742431104005],
                                         [4.864797592163086, 52.36742431104005],
-                                        [4.864797592163086, 52.346980527061895],
-                                    ],
-                                ],
-                            },
-                        },
+                                        [4.864797592163086, 52.346980527061895]
+                                    ]
+                                ]
+                            }
+                        }
                     },
                     paint: {
                         'fill-antialias': 'true',
@@ -578,8 +578,8 @@ export class HelloWorldModel extends Observable {
                         'fill-opacity': 0.65,
                         'fill-outline-color': '#23474f',
                         'fill-translate': [0, 0],
-                        'fill-translate-anchor': 'map',
-                    },
+                        'fill-translate-anchor': 'map'
+                    }
                 })
                 .then(() => {
                     console.log('fill-with-source-object added');
@@ -597,16 +597,16 @@ export class HelloWorldModel extends Observable {
                     type: 'symbol',
                     source: {
                         type: 'geojson',
-                        data: AmsterdamHoneyBees,
+                        data: AmsterdamHoneyBees
                     },
                     layout: {
                         'text-field': 'Honey',
                         'icon-size': 0.2,
-                        'icon-image': 'bee',
+                        'icon-image': 'bee'
                     },
                     paint: {
-                        'text-color': '#d6c80d',
-                    },
+                        'text-color': '#d6c80d'
+                    }
                 })
                 .then(() => {
                     console.log('symbol-with-source-object added');
@@ -626,19 +626,19 @@ export class HelloWorldModel extends Observable {
                             properties: {},
                             geometry: {
                                 type: 'Point',
-                                coordinates: [4.8916793, 52.3690958],
-                            },
-                        },
+                                coordinates: [4.8916793, 52.3690958]
+                            }
+                        }
                     },
                     layout: {
                         'text-field': 'New York Pizza',
                         'icon-size': 0.99,
                         'icon-image': 'pizza',
-                        'icon-rotate': 180,
+                        'icon-rotate': 180
                     },
                     paint: {
-                        'text-color': '#d6c80d',
-                    },
+                        'text-color': '#d6c80d'
+                    }
                 })
                 .then(() => console.log('symbol-with-source-object2 added'));
         } catch (error) {
@@ -652,30 +652,30 @@ export class HelloWorldModel extends Observable {
             this.mapbox.removeLayer('line-with-source-object').then(() => this.mapbox.offMapEvent('click', 'line-with-source-object')),
             this.mapbox.removeLayer('fill-with-source-object').then(() => this.mapbox.offMapEvent('click', 'fill-with-source-object')),
             this.mapbox.removeLayer('symbol-with-source-object').then(() => this.mapbox.offMapEvent('click', 'symbol-with-source-object')),
-            this.mapbox.removeLayer('symbol-with-source-object2'),
-        ]).then(() => {
-            return Promise.all([
+            this.mapbox.removeLayer('symbol-with-source-object2')
+        ]).then(() =>
+            Promise.all([
                 this.mapbox.removeSource('custom-collection-1'),
                 this.mapbox.removeSource('line-with-source-object_source'),
                 this.mapbox.removeSource('circle-with-source-object_source'),
                 this.mapbox.removeSource('fill-with-source-object_source'),
                 this.mapbox.removeSource('symbol-with-source-object_source'),
-                this.mapbox.removeSource('symbol-with-source-object2_source'),
-            ]);
-        });
+                this.mapbox.removeSource('symbol-with-source-object2_source')
+            ])
+        );
     }
 
     public doListOfflineRegions(): void {
         this.mapbox
             .listOfflineRegions({
-                accessToken: ACCESS_TOKEN,
+                accessToken: ACCESS_TOKEN
             })
             .then(
                 (regions: OfflineRegion[]) => {
                     const alertOptions: AlertOptions = {
                         title: 'Offline regions',
                         message: JSON.stringify(regions),
-                        okButtonText: 'Thanks',
+                        okButtonText: 'Thanks'
                     };
                     alert(alertOptions);
                 },
@@ -683,7 +683,7 @@ export class HelloWorldModel extends Observable {
                     const alertOptions: AlertOptions = {
                         title: 'Offline regions list error',
                         message: error,
-                        okButtonText: 'Hmm',
+                        okButtonText: 'Hmm'
                     };
                     alert(alertOptions);
                 }
@@ -693,13 +693,13 @@ export class HelloWorldModel extends Observable {
     public doDeleteOfflineRegion(): void {
         this.mapbox
             .deleteOfflineRegion({
-                name: 'Amsterdam',
+                name: 'Amsterdam'
             })
             .then(
                 () => {
                     const alertOptions: AlertOptions = {
                         title: 'Offline region deleted',
-                        okButtonText: 'Cool',
+                        okButtonText: 'Cool'
                     };
                     alert(alertOptions);
                 },
@@ -707,7 +707,7 @@ export class HelloWorldModel extends Observable {
                     const alertOptions: AlertOptions = {
                         title: 'Error deleting offline region',
                         message: error,
-                        okButtonText: 'Hmmz',
+                        okButtonText: 'Hmmz'
                     };
                     alert(alertOptions);
                 }
@@ -720,7 +720,7 @@ export class HelloWorldModel extends Observable {
                 const alertOptions: AlertOptions = {
                     title: 'Tilt / pitch',
                     message: '' + result,
-                    okButtonText: 'OK',
+                    okButtonText: 'OK'
                 };
                 alert(alertOptions);
             },
@@ -734,7 +734,7 @@ export class HelloWorldModel extends Observable {
         this.mapbox
             .showUserLocationMarker({
                 foregroundTintColor: '#089e00',
-                foregroundStaleTintColor: '#fac878', 
+                foregroundStaleTintColor: '#fac878',
                 backgroundTintColor: '#eb81d5',
                 bearingTintColor: '#02db3c'
             })
@@ -743,7 +743,7 @@ export class HelloWorldModel extends Observable {
                     const alertOptions: AlertOptions = {
                         title: 'User location',
                         message: JSON.stringify(loc),
-                        okButtonText: 'Thanks!',
+                        okButtonText: 'Thanks!'
                     };
                     alert(alertOptions);
                 });
@@ -757,7 +757,7 @@ export class HelloWorldModel extends Observable {
         this.mapbox
             .trackUser({
                 mode: 'TRACKING_GPS',
-                animated: true,
+                animated: true
             })
             .then(() => console.log('Following User'));
     }
@@ -766,7 +766,7 @@ export class HelloWorldModel extends Observable {
         this.mapbox
             .setTilt({
                 tilt: 35,
-                duration: 4000,
+                duration: 4000
             })
             .then(
                 () => {
@@ -783,13 +783,13 @@ export class HelloWorldModel extends Observable {
             .animateCamera({
                 target: {
                     lat: 52.373216,
-                    lng: 4.894168,
+                    lng: 4.894168
                 },
                 zoomLevel: 17, // Android
                 altitude: 500, // iOS
                 bearing: 270,
                 tilt: 50,
-                duration: 7000,
+                duration: 7000
             })
             .then(
                 (result) => {
@@ -806,7 +806,7 @@ export class HelloWorldModel extends Observable {
             .setCenter({
                 lat: 52.360216,
                 lng: 4.889168,
-                animated: true,
+                animated: true
             })
             .then(
                 (result) => {
@@ -824,7 +824,7 @@ export class HelloWorldModel extends Observable {
                 const alertOptions: AlertOptions = {
                     title: 'Center',
                     message: `Lat: ${result.lat}, Lng: ${result.lng}`,
-                    okButtonText: 'OK',
+                    okButtonText: 'OK'
                 };
                 alert(alertOptions);
             },
@@ -840,7 +840,7 @@ export class HelloWorldModel extends Observable {
                 const alertOptions: AlertOptions = {
                     title: 'Zoom Level',
                     message: '' + result,
-                    okButtonText: 'OK',
+                    okButtonText: 'OK'
                 };
                 alert(alertOptions);
             },
@@ -854,7 +854,7 @@ export class HelloWorldModel extends Observable {
         this.mapbox
             .setZoomLevel({
                 level: 2, // shows most of the world
-                animated: true,
+                animated: true
             })
             .then(
                 (result) => {
@@ -871,13 +871,13 @@ export class HelloWorldModel extends Observable {
             const alertOptions: AlertOptions = {
                 title: 'Permission granted?',
                 message: granted ? 'YES' : 'NO',
-                okButtonText: 'OK',
+                okButtonText: 'OK'
             };
             alert(alertOptions);
         });
     }
 
-     public doRequestFineLocationPermission(): void {
+    public doRequestFineLocationPermission(): void {
         this.mapbox.requestFineLocationPermission().then(() => {
             console.log('Fine Location permission requested');
         });
@@ -890,7 +890,7 @@ export class HelloWorldModel extends Observable {
             const alertOptions: AlertOptions = {
                 title: 'All map style layers',
                 message: JSON.stringify(layers.map((l) => l.id)),
-                okButtonText: 'OK',
+                okButtonText: 'OK'
             };
             alert(alertOptions);
         });
@@ -906,7 +906,11 @@ export class HelloWorldModel extends Observable {
         this.mapbox.getLayers().then((layers) => {
             const everySecondElement = layers.filter((e, i) => i % 2 === 2 - 1);
             everySecondElement.map((layer) => {
-                layer.visibility() ? layer.hide() : layer.show();
+                if (layer.visibility()) {
+                    layer.hide();
+                } else {
+                    layer.show();
+                }
             });
         });
     }
@@ -919,8 +923,8 @@ export class HelloWorldModel extends Observable {
                 source: {
                     type: 'raster',
                     tiles: ['https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg'],
-                    tileSize: 256,
-                },
+                    tileSize: 256
+                }
             })
             .then(() => {
                 console.log('raster layer added');
@@ -932,5 +936,15 @@ export class HelloWorldModel extends Observable {
             this.mapbox.removeSource('raster-layer_source');
             console.log('layer removed');
         });
+    }
+
+    public async doSetLang(args): Promise<void> {
+        const lang = args.object.lang;
+        const mapLayers = await this.mapbox.getLayers();
+        mapLayers
+            .filter((layer) => !!layer.getProperty('text-field'))
+            .forEach((layer) => {
+                layer.setProperty('text-field', ['get', `name_${lang}`]);
+            });
     }
 }
