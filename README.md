@@ -524,7 +524,7 @@ Here the promise callback makes sense, so adding it to the example:
   })
 ```
 
-### setTilt (Android only)
+### setTilt
 ```js
   mapbox.setTilt(
       {
@@ -534,7 +534,7 @@ Here the promise callback makes sense, so adding it to the example:
   )
 ```
 
-### getTilt (Android only)
+### getTilt
 ```js
   mapbox.getTilt().then(
       function(tilt) {
