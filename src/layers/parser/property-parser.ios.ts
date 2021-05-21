@@ -78,4 +78,27 @@ export class PropertyParser {
 
         return nProperties;
     }
+
+    static propertyValueFromLayer(layer, key: string): any {
+        const actualKey = keysMap[key] || toCamelCase(key);
+        const nValue: NSExpression = layer[actualKey];
+
+        if (!nValue) {
+            return null;
+        }
+
+        if (nValue.expressionType === NSExpressionType.ConstantValueExpressionType) {
+            if (nValue.constantValue instanceof UIColor) {
+                return Color.fromIosColor(nValue.constantValue);
+            } else {
+                return nValue.constantValue;
+            }
+        } else {
+            const expressionObj = (nValue as any).mgl_jsonExpressionObject;
+            const data = NSJSONSerialization.dataWithJSONObjectOptionsError(expressionObj, 0);
+            const expression: any = NSString.alloc().initWithDataEncoding(data, NSUTF8StringEncoding);
+
+            return JSON.parse(expression);
+        }
+    }
 }

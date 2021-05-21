@@ -539,6 +539,7 @@ export interface LayerCommon {
     setFilter(filter: any[]): void;
     getFilter(): any[];
     setProperty(name: string, value: any): void;
+    getProperty(name: string): any;
 }
 
 // ------------------------------------------------------------

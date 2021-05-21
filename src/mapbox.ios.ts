@@ -3169,4 +3169,8 @@ export class Layer implements LayerCommon {
             }
         }
     }
+
+    getProperty(name: string): any {
+        return PropertyParser.propertyValueFromLayer(this.instance, name);
+    }
 }

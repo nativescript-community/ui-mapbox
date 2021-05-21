@@ -3318,4 +3318,8 @@ export class Layer implements LayerCommon {
         const properties = PropertyParser.parsePropertiesForLayer({ [name]: value });
         this.instance.setProperties(properties);
     }
+
+    public getProperty(name: string): any {
+        return PropertyParser.propertyValueFromLayer(this.instance, name);
+    }
 }
