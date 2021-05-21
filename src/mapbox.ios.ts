@@ -41,6 +41,7 @@ import { iOSNativeHelper } from '@nativescript/core/utils';
 import { getImage } from '@nativescript/core/http';
 import { LayerFactory } from './layers/layer-factory';
 import { FilterParser } from './filter/filter-parser.ios';
+import { PropertyParser } from './layers/parser/property-parser.ios';
 
 // Export the enums for devs not using TS
 
@@ -3158,5 +3159,14 @@ export class Layer implements LayerCommon {
 
     getFilter(): any[] {
         return FilterParser.toJson(this.instance.predicate);
+    }
+
+    setProperty(name: string, value: any) {
+        const properties = PropertyParser.parsePropertiesForLayer({ [name]: value });
+        for (const propKey in properties) {
+            if (Object.prototype.hasOwnProperty.call(properties, propKey)) {
+                this.instance[propKey] = properties[propKey];
+            }
+        }
     }
 }

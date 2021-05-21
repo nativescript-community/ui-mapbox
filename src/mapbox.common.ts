@@ -538,6 +538,7 @@ export interface LayerCommon {
     getNativeInstance(): any;
     setFilter(filter: any[]): void;
     getFilter(): any[];
+    setProperty(name: string, value: any): void;
 }
 
 // ------------------------------------------------------------

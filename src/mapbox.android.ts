@@ -5,12 +5,12 @@
  */
 
 import { request } from '@nativescript-community/perms';
-import { AndroidApplication, Application, Color, File, Image, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
+import { AndroidApplication, Application, Color, File, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import { getImage } from '@nativescript/core/http';
 import { FilterParser } from './filter/filter-parser.android';
-import { GeoUtils } from './geo.utils';
 import { layout } from '@nativescript/core/utils';
 import { LayerFactory } from './layers/layer-factory';
+import { PropertyParser } from './layers/parser/property-parser.android';
 import {
     AddExtrusionOptions,
     AddGeoJsonClusteredOptions,
@@ -3312,5 +3312,10 @@ export class Layer implements LayerCommon {
 
     public getFilter(): any[] {
         return FilterParser.toJson(this.instance.getFilter());
+    }
+
+    public setProperty(name: string, value: any) {
+        const properties = PropertyParser.parsePropertiesForLayer({ [name]: value });
+        this.instance.setProperties(properties);
     }
 }
