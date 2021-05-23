@@ -30,7 +30,8 @@
         "prepublishOnly": "npm run build",
         "generate.typings.ios": "cd ./demo && TNS_DEBUG_METADATA_PATH=\"$(pwd)/metadata\" ns build ios && TNS_TYPESCRIPT_DECLARATIONS_PATH=\"$(pwd)/typings\" ns build ios && echo 'Now look for your library typings in demo/typings!'",
         "demo-angular.reset": "cd ./demo-angular && ns clean",
-        "demo.reset": "cd ./demo && ns clean"
+        "demo.reset": "cd ./demo && ns clean",
+        "doc": "typedoc"
     },
     "repository": {
         "type": "git",
