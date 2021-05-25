@@ -340,12 +340,13 @@ export interface GeoJSONSource extends Source {
 
 // ------------------------------------------------------------
 
-export type UserLocationCameraMode = 'NONE' | 'NONE_COMPASS' | 'NONE_GPS' | 'TRACKING' | 'TRACK_COMPASS' | 'TRACKING_GPS' | 'TRACK_GPS_NORTH';
+export type UserLocationCameraMode = 'NONE' | 'NONE_COMPASS' | 'NONE_GPS' | 'TRACKING' | 'TRACKING_COMPASS' | 'TRACKING_GPS' | 'TRACKING_GPS_NORTH';
 
 // ------------------------------------------------------------
 
 export interface TrackUserOptions {
-    mode: UserLocationCameraMode;
+    cameraMode: UserLocationCameraMode;
+    renderMode?: string;
     /**
      * iOS only, as Android is always animated. Default true (because of Android).
      */

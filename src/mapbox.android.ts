@@ -2719,9 +2719,16 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 this.requestFineLocationPermission()
                     .then(() => {
-                        this.showUserLocationMarker({
-                            useDefaultLocationEngine: true
-                        });
+                        if (this._locationComponent) {
+                            this.changeUserLocationMarkerMode(
+                              options.renderMode || 'COMPASS',
+                              options.cameraMode || 'TRACKING',
+                            );
+                        } else {
+                            this.showUserLocationMarker({
+                                useDefaultLocationEngine: true
+                            });
+                        }
                     })
                     .catch((err) => {
                         console.error('Location permission denied. error:', err);
@@ -2840,13 +2847,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             case 'TRACKING':
                 return modeRef.TRACKING;
 
-            case 'TRACK_COMPASS':
+            case 'TRACKING_COMPASS':
                 return modeRef.TRACKING_COMPASS;
 
             case 'TRACKING_GPS':
                 return modeRef.TRACKING_GPS;
 
-            case 'TRACK_GPS_NORTH':
+            case 'TRACKING_GPS_NORTH':
                 return modeRef.TRACKING_GPS_NORTH;
         }
     }
@@ -3092,26 +3099,37 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'changeUserLocationMarkerMode(): current render mode is:', this._locationComponent.getRenderMode());
+                if (cameraModeString) {
+                    const cameraMode = this._stringToCameraMode(cameraModeString);
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, `Mapbox::changeUserLocationMarkerMode(): current camera mode is: ${this._locationComponent.getCameraMode()}`);
+                        CLog(CLogTypes.info, `Mapbox::changeUserLocationMarkerMode(): changing camera mode to: ${cameraMode}`);
+                    }
+
+                    this._locationComponent.setCameraMode(cameraMode);
+
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, `Mapbox::changeUserLocationMarkerMode(): new camera mode is: ${this._locationComponent.getCameraMode()}`);
+                    }
                 }
 
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, "Mapbox::changeUserLocationMarkerMode(): changing renderMode to '" + renderModeString + "' cameraMode '" + cameraModeString + "'");
+                if (renderModeString) {
+                    const renderMode = this._stringToRenderMode(renderModeString);
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, `Mapbox::changeUserLocationMarkerMode(): current render mode is: ${this._locationComponent.getRenderMode()}`);
+                        CLog(CLogTypes.info, `Mapbox::changeUserLocationMarkerMode(): changing render mode to: '${renderMode}'`);
+                    }
+
+                    this._locationComponent.setRenderMode(renderMode);
+
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, 'changeUserLocationMarkerMode(): new render mode is:', this._locationComponent.getRenderMode());
+                    }
                 }
 
-                const cameraMode = this._stringToCameraMode(cameraModeString);
-                const renderMode = this._stringToRenderMode(renderModeString);
-
-                this._locationComponent.setCameraMode(cameraMode);
-                this._locationComponent.setRenderMode(renderMode);
-
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'changeUserLocationMarkerMode(): new render mode is:', this._locationComponent.getRenderMode());
-                }
             } catch (ex) {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.showUserLocationMarker: ' + ex);
+                    CLog(CLogTypes.info, 'Error in mapbox.changeUserLocationMarkerMode: ' + ex);
                 }
                 reject(ex);
             }

@@ -1281,14 +1281,14 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             case 'TRACKING':
                 return MGLUserTrackingMode.Follow;
 
-            case 'TRACK_COMPASS':
+            case 'TRACKING_COMPASS':
                 return MGLUserTrackingMode.FollowWithHeading;
 
             case 'TRACKING_GPS':
                 // a reasonable approximation.
                 return MGLUserTrackingMode.Follow;
 
-            case 'TRACK_GPS_NORTH':
+            case 'TRACKING_GPS_NORTH':
                 return MGLUserTrackingMode.FollowWithCourse;
         }
     }
@@ -2527,7 +2527,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                theMap.setUserTrackingModeAnimated(_getTrackingMode(options.mode), options.animated !== false);
+                theMap.setUserTrackingModeAnimated(_getTrackingMode(options.cameraMode), options.animated !== false);
 
                 resolve();
             } catch (ex) {
