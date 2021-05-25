@@ -574,7 +574,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 if (settings.showUserLocation) {
                                     this.requestFineLocationPermission()
                                         .then(() => {
-                                            this.showUserLocationMarker({});
+                                            this.showUserLocationMarker(settings.locationComponentOptions);
 
                                             // if we have a callback defined, call it.
 

@@ -703,6 +703,7 @@ export abstract class MapboxCommon implements MapboxCommonApi {
         },
         zoomLevel: 0, // 0 (a big part of the world) to 20 (street level)
         showUserLocation: false, // true requires adding `NSLocationWhenInUseUsageDescription` or `NSLocationAlwaysUsageDescription` in the .plist
+        locationComponentOptions: {},
         hideLogo: false, // required for the 'starter' plan
         hideAttribution: true,
         hideCompass: false,
@@ -1075,6 +1076,12 @@ export const showUserLocationProperty = new Property<MapboxViewCommonBase, boole
 });
 showUserLocationProperty.register(MapboxViewCommonBase);
 
+export const locationComponentOptionsProperty = new Property<MapboxViewCommonBase, object>({
+    name: "locationComponentOptions",
+    defaultValue: MapboxCommon.defaults.locationComponentOptions,
+  });
+locationComponentOptionsProperty.register(MapboxViewCommonBase);
+
 export const hideLogoProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'hideLogo',
     defaultValue: MapboxCommon.defaults.hideLogo,
@@ -1189,6 +1196,10 @@ export abstract class MapboxViewBase extends MapboxViewCommonBase {
 
     [showUserLocationProperty.setNative](value: boolean) {
         this.config.showUserLocation = value;
+    }
+
+    [locationComponentOptionsProperty.setNative](value: boolean) {
+        this.config.locationComponentOptions = value || {};
     }
 
     [hideLogoProperty.setNative](value: boolean) {
