@@ -2048,7 +2048,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     deleteOfflineRegion(options: DeleteOfflineRegionOptions): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                if (!options || !options.id || !options.name) {
+                if (!options || (!options.id || !options.name)) {
                     reject("Pass in the 'id' or 'name' param");
                     return;
                 }
