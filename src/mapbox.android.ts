@@ -2119,7 +2119,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     name: options.name,
                     ...options.metadata
                 };
-                const infoStr = new java.lang.String(info);
+                const infoStr = new java.lang.String(JSON.stringify(info));
                 const encodedMetadata = infoStr.getBytes();
 
                 if (!this._accessToken && !options.accessToken) {
