@@ -2220,7 +2220,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     const metadata = this._getRegionMetadata(offlineRegion);
 
                                     regions.push({
-                                        name,
+                                        id: offlineRegion.getID(),
+                                        name: name,
                                         style: offlineRegionDefinition.getStyleURL(),
                                         minZoom: offlineRegionDefinition.getMinZoom(),
                                         maxZoom: offlineRegionDefinition.getMaxZoom(),
