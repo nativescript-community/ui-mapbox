@@ -2048,8 +2048,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     deleteOfflineRegion(options: DeleteOfflineRegionOptions): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                if (!options || !options.name) {
-                    reject("Pass in the 'name' param");
+                if (!options || !options.id || !options.name) {
+                    reject("Pass in the 'id' or 'name' param");
                     return;
                 }
 
@@ -2058,8 +2058,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 for (let i = 0; i < packs.count; i++) {
                     const pack = packs.objectAtIndex(i);
                     const userInfo = NSKeyedUnarchiver.unarchiveObjectWithData(pack.context);
-                    const name = userInfo.objectForKey('name');
-                    if (name === options.name) {
+                    const regionId = options.id ? userInfo.objectForKey('id') : userInfo.objectForKey('name');
+                    if (regionId === (options.id || options.name)) {
                         found = true;
                         MGLOfflineStorage.sharedOfflineStorage.removePackWithCompletionHandler(pack, (error: NSError) => {
                             if (error) {

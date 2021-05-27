@@ -2249,8 +2249,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     deleteOfflineRegion(options: DeleteOfflineRegionOptions): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                if (!options || !options.name) {
-                    reject("Pass in the 'name' param");
+                if (!options || !options.id || !options.name) {
+                    reject("Pass in the 'id' or 'name' param");
                     return;
                 }
 
@@ -2265,8 +2265,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             if (offlineRegions !== null) {
                                 for (let i = 0; i < offlineRegions.length; i++) {
                                     const offlineRegion = offlineRegions[i];
-                                    const name = this._getRegionName(offlineRegion);
-                                    if (name === options.name) {
+                                    let regionId = options.id ? offlineRegion.getID() : this._getRegionName(offlineRegion)
+                                    if (regionId === (options.id || options.name)) {
                                         found = true;
                                         offlineRegion.delete(
                                             new com.mapbox.mapboxsdk.offline.OfflineRegion.OfflineRegionDeleteCallback({
@@ -2291,7 +2291,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 );
             } catch (ex) {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.listOfflineRegions: ' + ex);
+                    CLog(CLogTypes.info, 'Error in mapbox.deleteOfflineRegion: ' + ex);
                 }
                 reject(ex);
             }
