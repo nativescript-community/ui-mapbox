@@ -2214,6 +2214,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     const name = this._getRegionName(offlineRegion);
                                     const offlineRegionDefinition = offlineRegion.getDefinition();
                                     const bounds = offlineRegionDefinition.getBounds();
+                                    const metadata = this._getRegionMetadata(offlineRegion);
 
                                     regions.push({
                                         name,
@@ -2225,7 +2226,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                             east: bounds.getLonEast(),
                                             south: bounds.getLatSouth(),
                                             west: bounds.getLonWest()
-                                        }
+                                        },
+                                        metadata: metadata,
+                                        pixelRatio: offlineRegionDefinition.getPixelRatio(),
+                                        type: offlineRegionDefinition.getType(),
                                     });
                                 }
                             }
@@ -2889,6 +2893,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         const jsonStr = new java.lang.String(metadata, 'UTF-8');
         const jsonObj = new org.json.JSONObject((jsonStr as any) as string);
         return jsonObj.getString('name');
+    }
+
+    _getRegionMetadata(offlineRegion: com.mapbox.mapboxsdk.offline.OfflineRegion) {
+        const metadata = offlineRegion.getMetadata();
+        const jsonStr = new java.lang.String(metadata, "UTF-8");
+        const jsonObj = new org.json.JSONObject((jsonStr as any) as string);
+        return JSON.parse(jsonObj.toString());
     }
 
     /**

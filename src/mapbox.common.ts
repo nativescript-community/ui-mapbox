@@ -364,6 +364,9 @@ export interface OfflineRegion {
     minZoom: number;
     maxZoom: number;
     style: MapStyle;
+    metadata?: any;
+    pixelRatio?: any;
+    type?: any;
 }
 
 // ------------------------------------------------------------
