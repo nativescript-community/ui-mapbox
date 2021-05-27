@@ -2896,7 +2896,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         const metadata = offlineRegion.getMetadata();
         const jsonStr = new java.lang.String(metadata, 'UTF-8');
         const jsonObj = new org.json.JSONObject((jsonStr as any) as string);
-        return jsonObj.getString('name');
+        try {
+            return jsonObj.getString('name');
+        } catch (error) {
+            return '';
+        }
     }
 
     _getRegionMetadata(offlineRegion: com.mapbox.mapboxsdk.offline.OfflineRegion) {
