@@ -2115,7 +2115,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const offlineRegionDefinition = new com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition(styleURL, bounds, options.minZoom, options.maxZoom, retinaFactor);
 
-                const info = '{name:"' + options.name + '"}';
+                const info = {
+                    name: options.name,
+                    ...options.metadata
+                };
                 const infoStr = new java.lang.String(info);
                 const encodedMetadata = infoStr.getBytes();
 
