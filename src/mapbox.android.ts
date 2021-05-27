@@ -2101,7 +2101,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    downloadOfflineRegion(options: DownloadOfflineRegionOptions): Promise<void> {
+    downloadOfflineRegion(options: DownloadOfflineRegionOptions): Promise<any> {
         return new Promise((resolve, reject) => {
             try {
                 const styleURL = this._getMapStyle(options.style);
@@ -2163,7 +2163,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                         }
 
                                         if (status.isComplete()) {
-                                            resolve();
+                                            resolve(status);
                                         } else if (status.isRequiredResourceCountPrecise()) {
                                         }
                                     },
