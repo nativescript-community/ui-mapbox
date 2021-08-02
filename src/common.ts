@@ -1,5 +1,10 @@
 import { Color, ContentView, ImageSource, Property, Trace, booleanConverter } from '@nativescript/core';
 
+export * from './geo.utils';
+export * from './filter/filter-parser';
+export * from './layers/layer-factory';
+export * from './layers/parser/property-parser';
+
 export const MapboxTraceCategory = 'NativescriptMapbox';
 export enum CLogTypes {
     log = Trace.messageType.log,

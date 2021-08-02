@@ -4,8 +4,7 @@
         "module": "esnext",
         "moduleResolution": "node",
         "removeComments": true,
-        "noLib": false,
-        "emitDecoratorMetadata": false,
+        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "jsx": "react",
         "lib": ["es6", "dom"],
@@ -23,11 +22,8 @@
         "baseUrl": ".",
         "outDir": "./plugin",
         "paths": {
-            "tns-core-modules": ["./node_modules/@nativescript/core"],
-            "tns-core-modules/*": ["./node_modules/@nativescript/core/*"],
             "@nativescript-community/ui-mapbox": ["src/mapbox"],
-            "@nativescript-community/ui-mapbox/*": ["src/*"],
-            "*": ["node_modules/*"]
+            "@nativescript-community/ui-mapbox/*": ["src/*"]
         },
         "plugins": [{ "transform": "./node_modules/@nativescript/webpack/transformers/ns-transform-native-classes", "type": "raw" }]
     },
