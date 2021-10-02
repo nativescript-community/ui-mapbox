@@ -1,0 +1,10 @@
+{
+    "extends": "./tsconfig",
+    "compilerOptions": {
+        "sourceRoot": null,
+        "sourceMap": false,
+        "plugins": []
+    },
+    "include": ["src/mapbox.common.ts"],
+    "exclude": ["node_modules", "plugin"]
+}

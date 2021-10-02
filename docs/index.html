@@ -1,0 +1,1294 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>NativeScript Mapbox plugin</title>
+	<meta name="description" content="Documentation for NativeScript Mapbox plugin">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">NativeScript Mapbox plugin</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>NativeScript Mapbox plugin</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="https://www.mapbox.com">
+					<img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/mapbox_logo.png" width="400"/>
+				</a>
+				<a href="#nativescript-mapbox-plugin" id="nativescript-mapbox-plugin" style="color: inherit; text-decoration: none;">
+					<h1>NativeScript Mapbox plugin</h1>
+				</a>
+				<p>Awesome native OpenGL-powered maps - by Mapbox</p>
+				<img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/ios-demoapp-slice.png" width="375px" height="196px" />
+				<a href="#warning" id="warning" style="color: inherit; text-decoration: none;">
+					<h1>WARNING</h1>
+				</a>
+				<p>As we switched to a community managed plugin we upgraded the version of the Mapbox SDKs. Though starting from iOS SDK 6.0 and android SDK 9.0 they need special handling for downloading the SDK:
+				<a href="https://docs.mapbox.com/ios/maps/overview/#configure-credentials">iOS</a></p>
+				<p><a href="https://docs.mapbox.com/android/maps/overview/#configure-credentials">Android</a></p>
+				<p>On android the plugin default to 8.x. You can change it by creating a <code>before-plugins.gradle</code> in <code>App_Resources/Android</code> with (showing current versions):</p>
+				<pre><code><span style="color: #001080">ext</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">okHttpVersion</span><span style="color: #000000"> = </span><span style="color: #A31515">&quot;3.12.10&quot;</span>
+<span style="color: #000000">    </span><span style="color: #001080">def</span><span style="color: #000000"> </span><span style="color: #001080">mapboxVersion</span><span style="color: #000000"> =  </span><span style="color: #A31515">&quot;8.6.6&quot;</span>
+<span style="color: #000000">    </span><span style="color: #001080">def</span><span style="color: #000000"> </span><span style="color: #001080">mapboxTelemetryVersion</span><span style="color: #000000"> =  </span><span style="color: #A31515">&quot;6.1.0&quot;</span>
+<span style="color: #000000">    </span><span style="color: #001080">def</span><span style="color: #000000"> </span><span style="color: #001080">mapboxPluginsVersion</span><span style="color: #000000"> =  </span><span style="color: #A31515">&quot;v9&quot;</span>
+<span style="color: #000000">    </span><span style="color: #001080">def</span><span style="color: #000000"> </span><span style="color: #001080">mapboxAnnotationPluginVersion</span><span style="color: #000000"> =  </span><span style="color: #A31515">&quot;0.9.0&quot;</span>
+<span style="color: #000000">    </span><span style="color: #001080">def</span><span style="color: #000000"> </span><span style="color: #001080">mapboxGesturesVersion</span><span style="color: #000000"> =  </span><span style="color: #A31515">&quot;0.7.0&quot;</span>
+<span style="color: #000000">}</span>
+
+</code></pre>
+				<p>On iOS we dont force anything so it will get the latest one. If you want to change it create a <code>Podfile</code> in <code>App_Resources/iOS</code> with (see demo app):</p>
+				<pre><code><span style="color: #001080">pod</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Mapbox-iOS-SDK&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;~&gt; 5.1.1&#039;</span>
+</code></pre>
+				<a href="#before-you-begin---prerequisites" id="before-you-begin---prerequisites" style="color: inherit; text-decoration: none;">
+					<h2>Before you begin - Prerequisites</h2>
+				</a>
+				<p>You either need your own tile server such as the one provided by <a href="https://openmaptiles.org">openmaptiles.org</a> or a Mapbox API access token (they have a 🆓 Starter plan!), so <a href="https://www.mapbox.com/signup/">sign up with Mapbox</a>.
+				Once you&#39;ve registered go to your Account &gt; Apps &gt; New token. The &#39;Default Secret Token&#39; is what you&#39;ll need.</p>
+				<p>You will also need to set up your development environment. Please refer to the <a href="https://docs.nativescript.org/start/quick-setup">NativeScript documentation</a>.</p>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h1>Installation</h1>
+				</a>
+				<pre><code><span style="color: #001080">$</span><span style="color: #000000"> </span><span style="color: #001080">ns</span><span style="color: #000000"> </span><span style="color: #001080">plugin</span><span style="color: #000000"> </span><span style="color: #001080">install</span><span style="color: #000000"> @</span><span style="color: #001080">nativescript</span><span style="color: #000000">-</span><span style="color: #001080">community</span><span style="color: #000000">/</span><span style="color: #001080">ui</span><span style="color: #000000">-</span><span style="color: #001080">mapbox</span>
+</code></pre>
+				<a href="#demos" id="demos" style="color: inherit; text-decoration: none;">
+					<h1>DEMOS</h1>
+				</a>
+				<p>Two demo applications are available in the repository. </p>
+				<p>To run them, you&#39;ll need to clone the github repository and build the plugin. See below.</p>
+				<p>You will also need an access token. Your access_token can then be set in the top level mapbox_config.ts file.</p>
+				<p>The style can be set to one of the Mapbox style names or it can be the URL of your own hosted tile server.</p>
+				<blockquote>
+					<p>NOTE: As of this writing, the NativeScript demo only works with a mapbox token. The demo-angular will work with either a self hosted tile server or a mapbox token.</p>
+				</blockquote>
+				<a href="#demo-prerequisites" id="demo-prerequisites" style="color: inherit; text-decoration: none;">
+					<h2>Demo prerequisites</h2>
+				</a>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">i</span>
+<span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">setup</span>
+</code></pre>
+				<a href="#to-run-the-angular-demo" id="to-run-the-angular-demo" style="color: inherit; text-decoration: none;">
+					<h2>To run the Angular demo</h2>
+				</a>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">build</span>
+<span style="color: #001080">cd</span><span style="color: #000000"> ./</span><span style="color: #001080">demo</span><span style="color: #000000">-</span><span style="color: #001080">angular</span>
+<span style="color: #001080">ns</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> &lt;</span><span style="color: #001080">platform</span><span style="color: #000000">&gt;</span>
+</code></pre>
+				<a href="#to-run-the-plain-nativescript-demo" id="to-run-the-plain-nativescript-demo" style="color: inherit; text-decoration: none;">
+					<h2>To run the plain Nativescript demo</h2>
+				</a>
+				<pre><code><span style="color: #001080">npm</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> </span><span style="color: #001080">build</span>
+<span style="color: #001080">cd</span><span style="color: #000000"> ./</span><span style="color: #001080">demo</span>
+<span style="color: #001080">ns</span><span style="color: #000000"> </span><span style="color: #001080">run</span><span style="color: #000000"> &lt;</span><span style="color: #001080">platform</span><span style="color: #000000">&gt;</span>
+</code></pre>
+				<a href="#roadmap" id="roadmap" style="color: inherit; text-decoration: none;">
+					<h2>Roadmap</h2>
+				</a>
+				<p><a href="https://github.com/orgs/nativescript-community/projects/4">https://github.com/orgs/nativescript-community/projects/4</a></p>
+				<a href="#issues" id="issues" style="color: inherit; text-decoration: none;">
+					<h2>Issues</h2>
+				</a>
+				<p>If you get an error during iOS build related to Podspec versions, probably the easiest fix is:
+				<code>ns platform remove ios</code> and <code>ns platform add ios</code>.</p>
+				<p>On Android the plugin adds this to the <code>&lt;application&gt;</code> node of <code>app/App_Resources/Android/AndroidManifest.xml</code> (the plugin already attempts to do so):</p>
+				<pre><code class="language-xml"><span style="color: #000000">  </span><span style="color: #800000">&lt;service</span><span style="color: #000000"> </span><span style="color: #FF0000">android:name</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;com.mapbox.services.android.telemetry.service.TelemetryService&quot;</span><span style="color: #000000"> </span><span style="color: #800000">/&gt;</span>
+</code></pre>
+				<p>If you get an error related to <code>TelemetryService</code> then please check it&#39;s there.</p>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<a href="#demo-app-xml--typescript" id="demo-app-xml--typescript" style="color: inherit; text-decoration: none;">
+					<h3>Demo app (XML + TypeScript)</h3>
+				</a>
+				<p>If you want a quickstart, see the demo in this repository.
+				It shows you how to draw a map in XML and JS with almost all possible options.</p>
+				<a href="#demo-app-angular" id="demo-app-angular" style="color: inherit; text-decoration: none;">
+					<h3>Demo app (Angular)</h3>
+				</a>
+				<p>There is also the beginnings of an Angular demo in demo-angular in this repository.</p>
+				<a href="#declaring-a-map-in-the-view" id="declaring-a-map-in-the-view" style="color: inherit; text-decoration: none;">
+					<h2>Declaring a map in the view</h2>
+				</a>
+				<a href="#xml" id="xml" style="color: inherit; text-decoration: none;">
+					<h3>XML</h3>
+				</a>
+				<p>You can instantiate a map from JS or TS. As the map is yet another view component it will play nice with any NativeScript layout you throw it in. You can also easily add multiple maps to the same page or to different pages in any layout you like.</p>
+				<p>A simple layout could look like this:</p>
+				<img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/ios-xml-declared.png" width="373px" height="361px" />
+				<p>Could be rendered by a definition like this:</p>
+				<pre><code class="language-xml"><span style="color: #800000">&lt;Page</span><span style="color: #000000"> </span><span style="color: #FF0000">xmlns</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;http://schemas.nativescript.org/tns.xsd&quot;</span><span style="color: #000000"> </span><span style="color: #FF0000">xmlns:map</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;@nativescript-community/ui-mapbox&quot;</span><span style="color: #000000"> </span><span style="color: #FF0000">navigatingTo</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;navigatingTo&quot;</span><span style="color: #800000">&gt;</span>
+<span style="color: #000000">  </span><span style="color: #800000">&lt;StackLayout&gt;</span>
+<span style="color: #000000">    </span><span style="color: #800000">&lt;Label</span><span style="color: #000000"> </span><span style="color: #FF0000">text</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;Nice map, huh!&quot;</span><span style="color: #000000"> </span><span style="color: #FF0000">class</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;title&quot;</span><span style="color: #800000">/&gt;</span>
+<span style="color: #000000">    </span><span style="color: #800000">&lt;ContentView</span><span style="color: #000000"> </span><span style="color: #FF0000">height</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;240&quot;</span><span style="color: #000000"> </span><span style="color: #FF0000">width</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;240&quot;</span><span style="color: #800000">&gt;</span>
+<span style="color: #000000">      </span><span style="color: #800000">&lt;map:MapboxView</span>
+<span style="color: #000000">          </span><span style="color: #FF0000">accessToken</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;your_token&quot;</span>
+<span style="color: #000000">          </span><span style="color: #FF0000">mapStyle</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;traffic_night&quot;</span>
+<span style="color: #000000">          </span><span style="color: #FF0000">latitude</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;52.3702160&quot;</span>
+<span style="color: #000000">          </span><span style="color: #FF0000">longitude</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;4.8951680&quot;</span>
+<span style="color: #000000">          </span><span style="color: #FF0000">zoomLevel</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;3&quot;</span>
+<span style="color: #000000">          </span><span style="color: #FF0000">showUserLocation</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;true&quot;</span>
+<span style="color: #000000">          </span><span style="color: #FF0000">mapReady</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;onMapReady&quot;</span><span style="color: #800000">&gt;</span>
+<span style="color: #000000">      </span><span style="color: #800000">&lt;/map:MapboxView&gt;</span>
+<span style="color: #000000">    </span><span style="color: #800000">&lt;/ContentView&gt;</span>
+<span style="color: #000000">  </span><span style="color: #800000">&lt;/StackLayout&gt;</span>
+<span style="color: #800000">&lt;/Page&gt;</span>
+</code></pre>
+				<a href="#angular" id="angular" style="color: inherit; text-decoration: none;">
+					<h3>Angular</h3>
+				</a>
+				<p>Component:</p>
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">registerElement</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;nativescript-angular/element-registry&quot;</span><span style="color: #000000">;</span>
+<span style="color: #795E26">registerElement</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Mapbox&quot;</span><span style="color: #000000">, () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;@nativescript-community/ui-mapbox&quot;</span><span style="color: #000000">).</span><span style="color: #001080">MapboxView</span><span style="color: #000000">);</span>
+</code></pre>
+				<p>View:</p>
+				<pre><code class="language-html"><span style="color: #000000">  </span><span style="color: #800000">&lt;</span><span style="color: #CD3131">ContentView</span><span style="color: #000000"> </span><span style="color: #FF0000">height</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;100%&quot;</span><span style="color: #000000"> </span><span style="color: #FF0000">width</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;100%&quot;</span><span style="color: #800000">&gt;</span>
+<span style="color: #000000">    </span><span style="color: #800000">&lt;</span><span style="color: #CD3131">Mapbox</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">accessToken</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;your_token&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">mapStyle</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;traffic_day&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">latitude</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;50.467735&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">longitude</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;13.427718&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">hideCompass</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;true&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">zoomLevel</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;18&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">showUserLocation</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;false&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">disableZoom</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;false&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">disableRotation</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;false&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">disableScroll</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;false&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">disableTilt</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;false&quot;</span>
+<span style="color: #000000">        </span><span style="color: #FF0000">(mapReady)</span><span style="color: #000000">=</span><span style="color: #0000FF">&quot;onMapReady($event)&quot;</span><span style="color: #800000">&gt;</span>
+<span style="color: #000000">    </span><span style="color: #800000">&lt;/</span><span style="color: #CD3131">Mapbox</span><span style="color: #800000">&gt;</span>
+<span style="color: #000000">  </span><span style="color: #800000">&lt;/</span><span style="color: #CD3131">ContentView</span><span style="color: #800000">&gt;</span>
+</code></pre>
+				<a href="#available-xmlangular-options" id="available-xmlangular-options" style="color: inherit; text-decoration: none;">
+					<h3>Available XML/Angular options</h3>
+				</a>
+				<p>All currently supported options for your XML based map are (<strong>don&#39;t</strong> use other properties - if you need styling wrap the map in a <code>ContentView</code> and apply things like <code>width</code> to that container!):</p>
+				<table>
+					<thead>
+						<tr>
+							<th>option</th>
+							<th>default</th>
+							<th>description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>accesstoken</code></td>
+							<td>-</td>
+							<td>see &#39;Prerequisites&#39; above</td>
+						</tr>
+						<tr>
+							<td><code>delay</code></td>
+							<td>0</td>
+							<td>A delay in milliseconds - you can set this to have better control over when Mapbox is invoked so it won&#39;t clash with other computations your app may need to perform.</td>
+						</tr>
+						<tr>
+							<td><code>mapStyle</code></td>
+							<td>streets</td>
+							<td>streets, light, dark, satellite_streets, satellite, traffic_day, traffic_night, an URL starting with mapbox:// or pointing to a custom JSON definition (http://, https://, or local relative to nativescript app path ~/)</td>
+						</tr>
+						<tr>
+							<td><code>latitude </code></td>
+							<td>-</td>
+							<td>Set the center of the map by passing this in</td>
+						</tr>
+						<tr>
+							<td><code>longitude</code></td>
+							<td>-</td>
+							<td>.. and this as well</td>
+						</tr>
+						<tr>
+							<td><code>zoomLevel</code></td>
+							<td>0</td>
+							<td>0-20</td>
+						</tr>
+						<tr>
+							<td><code>showUserLocation </code></td>
+							<td>false</td>
+							<td>Requires location permissions on Android which you can remove from <code>AndroidManifest.xml</code> if you don&#39;t need them</td>
+						</tr>
+						<tr>
+							<td><code>hideCompass </code></td>
+							<td>false</td>
+							<td>Don&#39;t show the compass in the top right corner during rotation of the map</td>
+						</tr>
+						<tr>
+							<td><code>hideLogo</code></td>
+							<td>false</td>
+							<td>Mapbox requires <code>false</code> if you&#39;re on a free plan</td>
+						</tr>
+						<tr>
+							<td><code>hideAttribution </code></td>
+							<td>true</td>
+							<td>Mapbox requires <code>false</code> if you&#39;re on a free plan</td>
+						</tr>
+						<tr>
+							<td><code>disableZoom</code></td>
+							<td>false</td>
+							<td>Don&#39;t allow the user to zoom in or out (pinch and double-tap)</td>
+						</tr>
+						<tr>
+							<td><code>disableRotation</code></td>
+							<td>false</td>
+							<td>Don&#39;t allow the user to rotate the map (two finger gesture)</td>
+						</tr>
+						<tr>
+							<td><code>disableScroll</code></td>
+							<td>false</td>
+							<td>Don&#39;t allow the user to move the center of the map (one finger drag)</td>
+						</tr>
+						<tr>
+							<td><code>disableTilt</code></td>
+							<td>false</td>
+							<td>Don&#39;t allow the user to tilt the map (two finger drag up or down)</td>
+						</tr>
+						<tr>
+							<td><code>mapReady</code></td>
+							<td>-</td>
+							<td>The name of a callback function you can declare to interact with the map after it has been drawn</td>
+						</tr>
+						<tr>
+							<td><code>moveBeginEvent</code></td>
+							<td>-</td>
+							<td>The name of a function to be called when the map is moved.</td>
+						</tr>
+						<tr>
+							<td><code>locationPermissionGranted</code></td>
+							<td>-</td>
+							<td>The name of a callback function you can declare to get notified when the user granted location permissions</td>
+						</tr>
+						<tr>
+							<td><code>locationPermissionDenied</code></td>
+							<td>-</td>
+							<td>The name of a callback function you can declare to get notified when the user denied location permissions (will never fire on iOS because there&#39;s nothing to deny)</td>
+						</tr>
+				</tbody></table>
+				<a href="#want-to-add-markers" id="want-to-add-markers" style="color: inherit; text-decoration: none;">
+					<h3>Want to add markers?</h3>
+				</a>
+				<p>This is where that last option in the table above comes in - <code>mapReady</code>.
+				It allows you to interact with the map after it has been drawn to the page.</p>
+				<p>Open <code>main-page.[js|ts]</code> and add this (see <a href="#addmarkers"><code>addMarkers</code></a> further below for the full marker API):</p>
+				<pre><code class="language-js"><span style="color: #0000FF">var</span><span style="color: #000000"> </span><span style="color: #001080">mapbox</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;@nativescript-community/ui-mapbox&quot;</span><span style="color: #000000">);</span>
+
+<span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">onMapReady</span><span style="color: #000000">(</span><span style="color: #001080">args</span><span style="color: #000000">) {</span>
+<span style="color: #000000">  </span><span style="color: #008000">// you can tap into the native MapView objects (MGLMapView for iOS and com.mapbox.mapboxsdk.maps.MapView for Android)</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">var</span><span style="color: #000000"> </span><span style="color: #001080">nativeMapView</span><span style="color: #000000"> = </span><span style="color: #001080">args</span><span style="color: #000000">.</span><span style="color: #001080">ios</span><span style="color: #000000"> ? </span><span style="color: #001080">args</span><span style="color: #000000">.</span><span style="color: #001080">ios</span><span style="color: #000000"> : </span><span style="color: #001080">args</span><span style="color: #000000">.</span><span style="color: #001080">android</span><span style="color: #000000">;</span>
+<span style="color: #000000">  </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Mapbox onMapReady for &quot;</span><span style="color: #000000"> + (</span><span style="color: #001080">args</span><span style="color: #000000">.</span><span style="color: #001080">ios</span><span style="color: #000000"> ? </span><span style="color: #A31515">&quot;iOS&quot;</span><span style="color: #000000"> : </span><span style="color: #A31515">&quot;Android&quot;</span><span style="color: #000000">) + </span><span style="color: #A31515">&quot;, native object received: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">nativeMapView</span><span style="color: #000000">);</span>
+
+<span style="color: #000000">  </span><span style="color: #008000">// .. or use the convenience methods exposed on args.map, for instance:</span>
+<span style="color: #000000">  </span><span style="color: #001080">args</span><span style="color: #000000">.</span><span style="color: #001080">map</span><span style="color: #000000">.</span><span style="color: #795E26">addMarkers</span><span style="color: #000000">([</span>
+<span style="color: #000000">    {</span>
+<span style="color: #000000">      </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3602160</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.8891680</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">title:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;One-line title here&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">subtitle:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Really really nice location&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">selected:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">, </span><span style="color: #008000">// makes the callout show immediately when the marker is added (note: only 1 marker can be selected at a time)</span>
+<span style="color: #000000">      </span><span style="color: #795E26">onCalloutTap</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #0000FF">function</span><span style="color: #000000">(){</span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;&#039;Nice location&#039; marker callout tapped&quot;</span><span style="color: #000000">);}</span>
+<span style="color: #000000">    }]</span>
+<span style="color: #000000">  );</span>
+<span style="color: #000000">}</span>
+
+<span style="color: #267F99">exports</span><span style="color: #000000">.</span><span style="color: #001080">onMapReady</span><span style="color: #000000"> = </span><span style="color: #001080">onMapReady</span><span style="color: #000000">;</span>
+</code></pre>
+				<a href="#-or-want-to-set-the-viewport-bounds" id="-or-want-to-set-the-viewport-bounds" style="color: inherit; text-decoration: none;">
+					<h3>.. or want to set the viewport bounds?</h3>
+				</a>
+				<pre><code class="language-js"><span style="color: #0000FF">var</span><span style="color: #000000"> </span><span style="color: #001080">mapbox</span><span style="color: #000000"> = </span><span style="color: #795E26">require</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;@nativescript-community/ui-mapbox&quot;</span><span style="color: #000000">);</span>
+
+<span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">onMapReady</span><span style="color: #000000">(</span><span style="color: #001080">args</span><span style="color: #000000">) {</span>
+<span style="color: #000000">  </span><span style="color: #001080">args</span><span style="color: #000000">.</span><span style="color: #001080">map</span><span style="color: #000000">.</span><span style="color: #795E26">setViewport</span><span style="color: #000000">(</span>
+<span style="color: #000000">      {</span>
+<span style="color: #000000">        </span><span style="color: #001080">bounds:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">          </span><span style="color: #001080">north:</span><span style="color: #000000"> </span><span style="color: #098658">52.4820</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">east:</span><span style="color: #000000"> </span><span style="color: #098658">5.1087</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">south:</span><span style="color: #000000"> </span><span style="color: #098658">52.2581</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">west:</span><span style="color: #000000"> </span><span style="color: #098658">4.6816</span>
+<span style="color: #000000">        },</span>
+<span style="color: #000000">        </span><span style="color: #001080">animated:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  );</span>
+<span style="color: #000000">}</span>
+
+<span style="color: #267F99">exports</span><span style="color: #000000">.</span><span style="color: #001080">onMapReady</span><span style="color: #000000"> = </span><span style="color: #001080">onMapReady</span><span style="color: #000000">;</span>
+</code></pre>
+				<p>The methods you can invoke like this from an XML-declared map are:
+				<code>addMarkers</code>, <code>setViewport</code>, <code>removeMarkers</code>, <code>getCenter</code>, <code>setCenter</code>, <code>getZoomLevel</code>, <code>setZoomLevel</code>, <code>getViewport</code>, <code>getTilt</code>, <code>setTilt</code>, <code>setMapStyle</code>, <code>animateCamera</code>, <code>addPolygon</code>, <code>removePolygons</code>, <code>addPolyline</code>, <code>removePolylines</code>, <code>getUserLocation</code>, <code>trackUser</code>, <code>setOnMapClickListener</code>, <code>setOnMapLongClickListener</code> and <code>destroy</code>.</p>
+				<p>Check out the usage details on the functions below.</p>
+				<a href="#declaring-a-map-programmatically" id="declaring-a-map-programmatically" style="color: inherit; text-decoration: none;">
+					<h2>Declaring a map programmatically</h2>
+				</a>
+				<p>Add a container to your view XML where you want to programmatically add the map. Give it an id. </p>
+				<pre><code><span style="color: #000000">&lt;</span><span style="color: #001080">ContentView</span><span style="color: #000000"> </span><span style="color: #001080">id</span><span style="color: #000000">=</span><span style="color: #A31515">&quot;mapContainer&quot;</span><span style="color: #000000"> /&gt;</span>
+</code></pre>
+				<a href="#show" id="show" style="color: inherit; text-decoration: none;">
+					<h3>show</h3>
+				</a>
+				<pre><code class="language-ts">
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">contentView</span><span style="color: #000000"> : </span><span style="color: #267F99">ContentView</span><span style="color: #000000"> = &lt;</span><span style="color: #267F99">ContentView</span><span style="color: #000000">&gt;</span><span style="color: #001080">page</span><span style="color: #000000">.</span><span style="color: #795E26">getViewById</span><span style="color: #000000">( </span><span style="color: #A31515">&#039;mapContainer&#039;</span><span style="color: #000000"> );</span>
+
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">settings</span><span style="color: #000000"> = {</span>
+
+<span style="color: #000000">      </span><span style="color: #008000">// NOTE: passing in the container here.</span>
+
+<span style="color: #000000">      </span><span style="color: #001080">container:</span><span style="color: #000000"> </span><span style="color: #001080">contentView</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">accessToken:</span><span style="color: #000000"> </span><span style="color: #0070C1">ACCESS_TOKEN</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">style:</span><span style="color: #000000"> </span><span style="color: #001080">MapStyle</span><span style="color: #000000">.</span><span style="color: #0070C1">LIGHT</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">margins:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">left:</span><span style="color: #000000"> </span><span style="color: #098658">18</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">right:</span><span style="color: #000000"> </span><span style="color: #098658">18</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">top:</span><span style="color: #000000"> </span><span style="color: #001080">isIOS</span><span style="color: #000000"> ? </span><span style="color: #098658">390</span><span style="color: #000000"> : </span><span style="color: #098658">454</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">bottom:</span><span style="color: #000000"> </span><span style="color: #001080">isIOS</span><span style="color: #000000"> ? </span><span style="color: #098658">50</span><span style="color: #000000"> : </span><span style="color: #098658">8</span>
+<span style="color: #000000">      },</span>
+<span style="color: #000000">      </span><span style="color: #001080">center:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3702160</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.8951680</span>
+<span style="color: #000000">      },</span>
+<span style="color: #000000">      </span><span style="color: #001080">zoomLevel:</span><span style="color: #000000"> </span><span style="color: #098658">9</span><span style="color: #000000">, </span><span style="color: #008000">// 0 (most of the world) to 20, default 0</span>
+<span style="color: #000000">      </span><span style="color: #001080">showUserLocation:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">, </span><span style="color: #008000">// default false</span>
+<span style="color: #000000">      </span><span style="color: #001080">hideAttribution:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">, </span><span style="color: #008000">// default false</span>
+<span style="color: #000000">      </span><span style="color: #001080">hideLogo:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">, </span><span style="color: #008000">// default false</span>
+<span style="color: #000000">      </span><span style="color: #001080">hideCompass:</span><span style="color: #000000"> </span><span style="color: #0000FF">false</span><span style="color: #000000">, </span><span style="color: #008000">// default false</span>
+<span style="color: #000000">      </span><span style="color: #001080">disableRotation:</span><span style="color: #000000"> </span><span style="color: #0000FF">false</span><span style="color: #000000">, </span><span style="color: #008000">// default false</span>
+<span style="color: #000000">      </span><span style="color: #001080">disableScroll:</span><span style="color: #000000"> </span><span style="color: #0000FF">false</span><span style="color: #000000">, </span><span style="color: #008000">// default false</span>
+<span style="color: #000000">      </span><span style="color: #001080">disableZoom:</span><span style="color: #000000"> </span><span style="color: #0000FF">false</span><span style="color: #000000">, </span><span style="color: #008000">// default false</span>
+<span style="color: #000000">      </span><span style="color: #001080">disableTilt:</span><span style="color: #000000"> </span><span style="color: #0000FF">false</span><span style="color: #000000">, </span><span style="color: #008000">// default false</span>
+<span style="color: #000000">      </span><span style="color: #001080">markers:</span><span style="color: #000000"> [</span>
+<span style="color: #000000">        {</span>
+<span style="color: #000000">          </span><span style="color: #001080">id:</span><span style="color: #000000"> </span><span style="color: #098658">1</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3732160</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.8941680</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">title:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Nice location&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">subtitle:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Really really nice location&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">iconPath:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;res/markers/green_pin_marker.png&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #795E26">onTap</span><span style="color: #001080">:</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;&#039;Nice location&#039; marker tapped&quot;</span><span style="color: #000000">),</span>
+<span style="color: #000000">          </span><span style="color: #795E26">onCalloutTap</span><span style="color: #001080">:</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;&#039;Nice location&#039; marker callout tapped&quot;</span><span style="color: #000000">)</span>
+<span style="color: #000000">        }</span>
+<span style="color: #000000">      ]</span>
+<span style="color: #000000">    };</span>
+
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">( </span><span style="color: #A31515">&quot;main-view-model:: doShow(): creating new MapboxView.&quot;</span><span style="color: #000000"> );</span>
+
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">mapView</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">MapboxView</span><span style="color: #000000">();</span>
+
+<span style="color: #000000">    </span><span style="color: #008000">// Bind some event handlers onto our newly created map view. </span>
+
+<span style="color: #000000">    </span><span style="color: #001080">mapView</span><span style="color: #000000">.</span><span style="color: #795E26">on</span><span style="color: #000000">( </span><span style="color: #A31515">&#039;mapReady&#039;</span><span style="color: #000000">, ( </span><span style="color: #001080">args</span><span style="color: #000000"> : </span><span style="color: #267F99">any</span><span style="color: #000000"> ) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">( </span><span style="color: #A31515">&quot;main-view-model: onMapReady fired.&quot;</span><span style="color: #000000"> );</span>
+
+<span style="color: #000000">      </span><span style="color: #008000">// this is an instance of class MapboxView</span>
+
+<span style="color: #000000">      </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">mapboxView</span><span style="color: #000000"> = </span><span style="color: #001080">args</span><span style="color: #000000">.</span><span style="color: #001080">map</span><span style="color: #000000">;</span>
+
+<span style="color: #000000">      </span><span style="color: #008000">// get a reference to the Mapbox API shim object so we can directly call its methods.</span>
+
+<span style="color: #000000">      </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">mapbox</span><span style="color: #000000"> = </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">mapboxView</span><span style="color: #000000">.</span><span style="color: #795E26">getMapboxApi</span><span style="color: #000000">();</span>
+
+<span style="color: #000000">      </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setOnMapClickListener</span><span style="color: #000000">( </span><span style="color: #001080">point</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">`&gt;&gt; Map clicked: </span><span style="color: #0000FF">${</span><span style="color: #267F99">JSON</span><span style="color: #000000FF">.</span><span style="color: #795E26">stringify</span><span style="color: #000000FF">(</span><span style="color: #001080">point</span><span style="color: #000000FF">)</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">);</span>
+<span style="color: #000000">        </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">;</span>
+<span style="color: #000000">      });</span>
+
+<span style="color: #000000">      </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setOnMapLongClickListener</span><span style="color: #000000">( </span><span style="color: #001080">point</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">`&gt;&gt; Map longpressed: </span><span style="color: #0000FF">${</span><span style="color: #267F99">JSON</span><span style="color: #000000FF">.</span><span style="color: #795E26">stringify</span><span style="color: #000000FF">(</span><span style="color: #001080">point</span><span style="color: #000000FF">)</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">);</span>
+<span style="color: #000000">        </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">;</span>
+<span style="color: #000000">      });</span>
+
+<span style="color: #000000">      </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setOnScrollListener</span><span style="color: #000000">((</span><span style="color: #001080">point</span><span style="color: #000000">: </span><span style="color: #267F99">LatLng</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #008000">// console.log(`&gt;&gt; Map scrolled`);</span>
+<span style="color: #000000">      });</span>
+
+<span style="color: #000000">      </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setOnFlingListener</span><span style="color: #000000">(() </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">`&gt;&gt; Map flinged&quot;`</span><span style="color: #000000">);</span>
+<span style="color: #000000">      }).</span><span style="color: #795E26">catch</span><span style="color: #000000">( </span><span style="color: #001080">err</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">err</span><span style="color: #000000">) );</span>
+
+<span style="color: #000000">    });</span>
+
+<span style="color: #000000">    </span><span style="color: #001080">mapView</span><span style="color: #000000">.</span><span style="color: #795E26">setConfig</span><span style="color: #000000">( </span><span style="color: #001080">settings</span><span style="color: #000000"> );</span>
+<span style="color: #000000">    </span><span style="color: #001080">contentView</span><span style="color: #000000">.</span><span style="color: #001080">content</span><span style="color: #000000"> = </span><span style="color: #001080">mapView</span><span style="color: #000000">;</span>
+<span style="color: #000000">  </span>
+</code></pre>
+				<a href="#hide" id="hide" style="color: inherit; text-decoration: none;">
+					<h3>hide</h3>
+				</a>
+				<p>All further examples assume <code>mapbox</code> has been required.
+				Also, all functions support promises, but we&#39;re leaving out the <code>.then()</code> stuff for brevity where it doesn&#39;t add value.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">hide</span><span style="color: #000000">();</span>
+</code></pre>
+				<a href="#unhide" id="unhide" style="color: inherit; text-decoration: none;">
+					<h3>unhide</h3>
+				</a>
+				<p>If you previously called <code>hide()</code> you can quickly unhide the map,
+				instead of redrawing it (which is a lot slower and you loose the viewport position, etc).</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">unhide</span><span style="color: #000000">();</span>
+</code></pre>
+				<a href="#destroy-💥" id="destroy-💥" style="color: inherit; text-decoration: none;">
+					<h3>destroy 💥</h3>
+				</a>
+				<p>To clean up the map entirely you can destroy instead of hide it:</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">destroy</span><span style="color: #000000">();</span>
+</code></pre>
+				<a href="#setmapstyle" id="setmapstyle" style="color: inherit; text-decoration: none;">
+					<h3>setMapStyle</h3>
+				</a>
+				<p>You can update the map style after you&#39;ve loaded it.</p>
+				<blockquote>
+					<p>With Mapbox Android SDK 6.1.x (used in plugin version 4.1.0) I&#39;ve seen Android crash a few seconds after this has been used, so test this well and perhaps don&#39;t use it when in doubt.</p>
+				</blockquote>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setMapStyle</span><span style="color: #000000">(</span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #001080">MapStyle</span><span style="color: #000000">.</span><span style="color: #0070C1">DARK</span><span style="color: #000000">);</span>
+</code></pre>
+				<a href="#addmarkers" id="addmarkers" style="color: inherit; text-decoration: none;">
+					<h3>addMarkers</h3>
+				</a>
+				<pre><code class="language-typescript"><span style="color: #000000">  </span><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">MapboxMarker</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;@nativescript-community/ui-mapbox&quot;</span><span style="color: #000000">;</span>
+
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">firstMarker</span><span style="color: #000000"> = &lt;</span><span style="color: #267F99">MapboxMarker</span><span style="color: #000000">&gt;{ </span><span style="color: #008000">//cast as a MapboxMarker to pick up helper functions such as update()</span>
+<span style="color: #000000">    </span><span style="color: #001080">id:</span><span style="color: #000000"> </span><span style="color: #098658">2</span><span style="color: #000000">, </span><span style="color: #008000">// can be user in &#039;removeMarkers()&#039;</span>
+<span style="color: #000000">    </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3602160</span><span style="color: #000000">, </span><span style="color: #008000">// mandatory</span>
+<span style="color: #000000">    </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.8891680</span><span style="color: #000000">, </span><span style="color: #008000">// mandatory</span>
+<span style="color: #000000">    </span><span style="color: #001080">title:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;One-line title here&#039;</span><span style="color: #000000">, </span><span style="color: #008000">// no popup unless set</span>
+<span style="color: #000000">    </span><span style="color: #001080">subtitle:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Infamous subtitle!&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #008000">// icon: &#039;res://cool_marker&#039;, // preferred way, otherwise use:</span>
+<span style="color: #000000">    </span><span style="color: #001080">icon:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;http(s)://website/coolimage.png&#039;</span><span style="color: #000000">, </span><span style="color: #008000">// from the internet (see the note at the bottom of this readme), or:</span>
+<span style="color: #000000">    </span><span style="color: #001080">iconPath:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;~/assets/markers/home_marker.png&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">selected:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">, </span><span style="color: #008000">// makes the callout show immediately when the marker is added (note: only 1 marker can be selected at a time)</span>
+<span style="color: #000000">    </span><span style="color: #795E26">onTap</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #001080">marker</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Marker tapped with title: &#039;&quot;</span><span style="color: #000000"> + </span><span style="color: #001080">marker</span><span style="color: #000000">.</span><span style="color: #001080">title</span><span style="color: #000000"> + </span><span style="color: #A31515">&quot;&#039;&quot;</span><span style="color: #000000">),</span>
+<span style="color: #000000">    </span><span style="color: #795E26">onCalloutTap</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #001080">marker</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">alert</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Marker callout tapped with title: &#039;&quot;</span><span style="color: #000000"> + </span><span style="color: #001080">marker</span><span style="color: #000000">.</span><span style="color: #001080">title</span><span style="color: #000000"> + </span><span style="color: #A31515">&quot;&#039;&quot;</span><span style="color: #000000">)</span>
+<span style="color: #000000">  };</span>
+
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">addMarkers</span><span style="color: #000000">([</span>
+<span style="color: #000000">    </span><span style="color: #001080">firstMarker</span><span style="color: #000000">,</span>
+<span style="color: #000000">    {</span>
+<span style="color: #000000">      </span><span style="color: #008000">// more markers..</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  ])</span>
+</code></pre>
+				<a href="#updating-markers" id="updating-markers" style="color: inherit; text-decoration: none;">
+					<h4>Updating markers</h4>
+				</a>
+				<p>Plugin version 4.2.0 added the option to update makers. Just call <code>update</code> on the <code>MapboxMarker</code> reference you created above.
+				You can update the following properties (all but the icon really):</p>
+				<pre><code class="language-typescript"><span style="color: #000000">  </span><span style="color: #001080">firstMarker</span><span style="color: #000000">.</span><span style="color: #795E26">update</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3622160</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.8911680</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">title:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;One-line title here (UPDATE)&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">subtitle:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Updated subtitle&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">selected:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">, </span><span style="color: #008000">// this will trigger the callout upon update</span>
+<span style="color: #000000">    </span><span style="color: #795E26">onTap</span><span style="color: #001080">:</span><span style="color: #000000"> (</span><span style="color: #001080">marker</span><span style="color: #000000">: </span><span style="color: #267F99">MapboxMarker</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">`UPDATED Marker tapped with title: </span><span style="color: #0000FF">${</span><span style="color: #001080">marker</span><span style="color: #000000FF">.</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">),</span>
+<span style="color: #000000">    </span><span style="color: #795E26">onCalloutTap</span><span style="color: #001080">:</span><span style="color: #000000"> (</span><span style="color: #001080">marker</span><span style="color: #000000">: </span><span style="color: #267F99">MapboxMarker</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">alert</span><span style="color: #000000">(</span><span style="color: #A31515">`UPDATED Marker callout tapped with title: </span><span style="color: #0000FF">${</span><span style="color: #001080">marker</span><span style="color: #000000FF">.</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">)</span>
+<span style="color: #000000">  })</span>
+</code></pre>
+				<a href="#removemarkers" id="removemarkers" style="color: inherit; text-decoration: none;">
+					<h3>removeMarkers</h3>
+				</a>
+				<p>You can either remove all markers by not passing in an argument,
+				or remove specific marker id&#39;s (which you specified previously).</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #008000">// remove all markers</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">removeMarkers</span><span style="color: #000000">();</span>
+
+<span style="color: #000000">  </span><span style="color: #008000">// remove specific markers by id</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">removeMarkers</span><span style="color: #000000">([</span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">]);</span>
+</code></pre>
+				<a href="#setviewport" id="setviewport" style="color: inherit; text-decoration: none;">
+					<h3>setViewport</h3>
+				</a>
+				<p>If you want to for instance make the viewport contain all markers you
+				can set the bounds to the lat/lng of the outermost markers using this function.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setViewport</span><span style="color: #000000">(</span>
+<span style="color: #000000">      {</span>
+<span style="color: #000000">        </span><span style="color: #001080">bounds:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">          </span><span style="color: #001080">north:</span><span style="color: #000000"> </span><span style="color: #098658">52.4820</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">east:</span><span style="color: #000000"> </span><span style="color: #098658">5.1087</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">south:</span><span style="color: #000000"> </span><span style="color: #098658">52.2581</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #001080">west:</span><span style="color: #000000"> </span><span style="color: #098658">4.6816</span>
+<span style="color: #000000">        },</span>
+<span style="color: #000000">        </span><span style="color: #001080">animated:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000"> </span><span style="color: #008000">// default true</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  )</span>
+</code></pre>
+				<a href="#getviewport" id="getviewport" style="color: inherit; text-decoration: none;">
+					<h3>getViewport</h3>
+				</a>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">getViewport</span><span style="color: #000000">().</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Mapbox getViewport done, result: &quot;</span><span style="color: #000000"> + </span><span style="color: #267F99">JSON</span><span style="color: #000000">.</span><span style="color: #795E26">stringify</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000">));</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  )</span>
+</code></pre>
+				<a href="#setcenter" id="setcenter" style="color: inherit; text-decoration: none;">
+					<h3>setCenter</h3>
+				</a>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setCenter</span><span style="color: #000000">(</span>
+<span style="color: #000000">      {</span>
+<span style="color: #000000">        </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3602160</span><span style="color: #000000">, </span><span style="color: #008000">// mandatory</span>
+<span style="color: #000000">        </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.8891680</span><span style="color: #000000">, </span><span style="color: #008000">// mandatory</span>
+<span style="color: #000000">        </span><span style="color: #001080">animated:</span><span style="color: #000000"> </span><span style="color: #0000FF">false</span><span style="color: #000000"> </span><span style="color: #008000">// default true</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  )</span>
+</code></pre>
+				<a href="#getcenter" id="getcenter" style="color: inherit; text-decoration: none;">
+					<h3>getCenter</h3>
+				</a>
+				<p>Here the promise callback makes sense, so adding it to the example:</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">getCenter</span><span style="color: #000000">().</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Mapbox getCenter done, result: &quot;</span><span style="color: #000000"> + </span><span style="color: #267F99">JSON</span><span style="color: #000000">.</span><span style="color: #795E26">stringify</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000">));</span>
+<span style="color: #000000">      },</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">error</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;mapbox getCenter error: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">error</span><span style="color: #000000">);</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  )</span>
+</code></pre>
+				<a href="#setzoomlevel" id="setzoomlevel" style="color: inherit; text-decoration: none;">
+					<h3>setZoomLevel</h3>
+				</a>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setZoomLevel</span><span style="color: #000000">(</span>
+<span style="color: #000000">      {</span>
+<span style="color: #000000">        </span><span style="color: #001080">level:</span><span style="color: #000000"> </span><span style="color: #098658">6.5</span><span style="color: #000000">, </span><span style="color: #008000">// mandatory, 0-20</span>
+<span style="color: #000000">        </span><span style="color: #001080">animated:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000"> </span><span style="color: #008000">// default true</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  )</span>
+</code></pre>
+				<a href="#getzoomlevel" id="getzoomlevel" style="color: inherit; text-decoration: none;">
+					<h3>getZoomLevel</h3>
+				</a>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">getZoomLevel</span><span style="color: #000000">().</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Mapbox getZoomLevel done, result: &quot;</span><span style="color: #000000"> + </span><span style="color: #267F99">JSON</span><span style="color: #000000">.</span><span style="color: #795E26">stringify</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000">));</span>
+<span style="color: #000000">      },</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">error</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;mapbox getZoomLevel error: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">error</span><span style="color: #000000">);</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  )</span>
+</code></pre>
+				<a href="#animatecamera" id="animatecamera" style="color: inherit; text-decoration: none;">
+					<h3>animateCamera</h3>
+				</a>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #008000">// this is a boring triangle drawn near Amsterdam Central Station</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">animateCamera</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #008000">// this is where we animate to</span>
+<span style="color: #000000">    </span><span style="color: #001080">target:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3732160</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.8941680</span>
+<span style="color: #000000">    },</span>
+<span style="color: #000000">    </span><span style="color: #001080">zoomLevel:</span><span style="color: #000000"> </span><span style="color: #098658">17</span><span style="color: #000000">, </span><span style="color: #008000">// Android</span>
+<span style="color: #000000">    </span><span style="color: #001080">altitude:</span><span style="color: #000000"> </span><span style="color: #098658">2000</span><span style="color: #000000">, </span><span style="color: #008000">// iOS (meters from the ground)</span>
+<span style="color: #000000">    </span><span style="color: #001080">bearing:</span><span style="color: #000000"> </span><span style="color: #098658">270</span><span style="color: #000000">, </span><span style="color: #008000">// Where the camera is pointing, 0-360 (degrees)</span>
+<span style="color: #000000">    </span><span style="color: #001080">tilt:</span><span style="color: #000000"> </span><span style="color: #098658">50</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">duration:</span><span style="color: #000000"> </span><span style="color: #098658">5000</span><span style="color: #000000"> </span><span style="color: #008000">// default 10000 (milliseconds)</span>
+<span style="color: #000000">  })</span>
+</code></pre>
+				<a href="#settilt-android-only" id="settilt-android-only" style="color: inherit; text-decoration: none;">
+					<h3>setTilt (Android only)</h3>
+				</a>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setTilt</span><span style="color: #000000">(</span>
+<span style="color: #000000">      {</span>
+<span style="color: #000000">        </span><span style="color: #001080">tilt:</span><span style="color: #000000"> </span><span style="color: #098658">40</span><span style="color: #000000">, </span><span style="color: #008000">// default 30 (degrees angle)</span>
+<span style="color: #000000">        </span><span style="color: #001080">duration:</span><span style="color: #000000"> </span><span style="color: #098658">4000</span><span style="color: #000000"> </span><span style="color: #008000">// default 5000 (milliseconds)</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  )</span>
+</code></pre>
+				<a href="#gettilt-android-only" id="gettilt-android-only" style="color: inherit; text-decoration: none;">
+					<h3>getTilt (Android only)</h3>
+				</a>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">getTilt</span><span style="color: #000000">().</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">tilt</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Current map tilt: &quot;</span><span style="color: #000000"> +  </span><span style="color: #001080">tilt</span><span style="color: #000000">);</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  )</span>
+</code></pre>
+				<a href="#getuserlocation" id="getuserlocation" style="color: inherit; text-decoration: none;">
+					<h3>getUserLocation</h3>
+				</a>
+				<p>If the user&#39;s location is shown on the map you can get their coordinates and speed:</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">getUserLocation</span><span style="color: #000000">().</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">userLocation</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Current user location: &quot;</span><span style="color: #000000"> +  </span><span style="color: #001080">userLocation</span><span style="color: #000000">.</span><span style="color: #001080">location</span><span style="color: #000000">.</span><span style="color: #001080">lat</span><span style="color: #000000"> + </span><span style="color: #A31515">&quot;, &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">userLocation</span><span style="color: #000000">.</span><span style="color: #001080">location</span><span style="color: #000000">.</span><span style="color: #001080">lng</span><span style="color: #000000">);</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Current user speed: &quot;</span><span style="color: #000000"> +  </span><span style="color: #001080">userLocation</span><span style="color: #000000">.</span><span style="color: #001080">speed</span><span style="color: #000000">);</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  )</span>
+</code></pre>
+				<a href="#trackuser" id="trackuser" style="color: inherit; text-decoration: none;">
+					<h3>trackUser</h3>
+				</a>
+				<p>In case you&#39;re showing the user&#39;s location, you can have the map track the position.
+				The map will continuously move along with the last known location.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">trackUser</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">mode:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;FOLLOW_WITH_HEADING&quot;</span><span style="color: #000000">, </span><span style="color: #008000">// &quot;NONE&quot; | &quot;FOLLOW&quot; | &quot;FOLLOW_WITH_HEADING&quot; | &quot;FOLLOW_WITH_COURSE&quot;</span>
+<span style="color: #000000">    </span><span style="color: #001080">animated:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span>
+<span style="color: #000000">  });</span>
+</code></pre>
+				<a href="#addsource" id="addsource" style="color: inherit; text-decoration: none;">
+					<h3>addSource</h3>
+				</a>
+				<p><a href="https://docs.mapbox.com/mapbox-gl-js/api/#map#addsource">https://docs.mapbox.com/mapbox-gl-js/api/#map#addsource</a> </p>
+				<p>Supported source types:</p>
+				<ul>
+					<li>Vector</li>
+					<li>GeoJson </li>
+					<li>Raster</li>
+				</ul>
+				<p>Adds a vector to GeoJSON source to the map.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">addSource</span><span style="color: #000000">( </span><span style="color: #001080">id</span><span style="color: #000000">, {</span>
+<span style="color: #000000">    </span><span style="color: #001080">type:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;vector&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">url:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;url to source&#039;</span>
+<span style="color: #000000">  } );</span>
+</code></pre>
+				<p>-or-</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">addSource</span><span style="color: #000000">( </span><span style="color: #001080">id</span><span style="color: #000000">, {</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;type&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;geojson&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;data&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Feature&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&quot;geometry&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;LineString&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #A31515">&quot;coordinates&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [ [ </span><span style="color: #001080">lng</span><span style="color: #000000">, </span><span style="color: #001080">lat</span><span style="color: #000000"> ], [ </span><span style="color: #001080">lng</span><span style="color: #000000">, </span><span style="color: #001080">lat</span><span style="color: #000000"> ], ..... ]</span>
+<span style="color: #000000">        }</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  );</span>
+</code></pre>
+				<a href="#removesource" id="removesource" style="color: inherit; text-decoration: none;">
+					<h3>removeSource</h3>
+				</a>
+				<p>Remove a source by id</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">removeSource</span><span style="color: #000000">( </span><span style="color: #001080">id</span><span style="color: #000000"> );</span>
+</code></pre>
+				<a href="#addlayer" id="addlayer" style="color: inherit; text-decoration: none;">
+					<h3>addLayer</h3>
+				</a>
+				<p><a href="https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers">https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers</a></p>
+				<p>Supported layer types:</p>
+				<ul>
+					<li>Line</li>
+					<li>Circle </li>
+					<li>Fill</li>
+					<li>Symbol</li>
+					<li>Raster</li>
+				</ul>
+				<p>To add a line:</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">addLayer</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;id&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #001080">someid</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;type&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;line&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;source&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;type&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;geojson&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;data&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Feature&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #A31515">&quot;geometry&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">          </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;LineString&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #A31515">&quot;coordinates&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [ [ </span><span style="color: #001080">lng</span><span style="color: #000000">, </span><span style="color: #001080">lat</span><span style="color: #000000"> ], [ </span><span style="color: #001080">lng</span><span style="color: #000000">, </span><span style="color: #001080">lat</span><span style="color: #000000"> ], ..... ]</span>
+<span style="color: #000000">          }</span>
+<span style="color: #000000">        }</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">    },</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;layout&#039;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;line-cap&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;round&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;line-join&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;round&#039;</span>
+<span style="color: #000000">    },    </span>
+<span style="color: #000000">    </span><span style="color: #A31515">&#039;paint&#039;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;line-color&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;#ed6498&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;line-width&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">5</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;line-opacity&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">.8</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;line-dash-array&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> [ </span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">1</span><span style="color: #000000">, ..]</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  });</span>
+</code></pre>
+				<p>To add a circle:</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">addLayer</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;id&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #001080">someid</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;circle&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;source&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;geojson&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&quot;data&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Feature&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&quot;geometry&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">          </span><span style="color: #A31515">&quot;type&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Point&quot;</span><span style="color: #000000">,</span>
+<span style="color: #000000">          </span><span style="color: #A31515">&quot;coordinates&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [ </span><span style="color: #001080">lng</span><span style="color: #000000">, </span><span style="color: #001080">lat</span><span style="color: #000000"> ]</span>
+<span style="color: #000000">        }</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">    }, </span>
+<span style="color: #000000">    </span><span style="color: #A31515">&quot;paint&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&quot;circle-radius&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&quot;stops&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> [</span>
+<span style="color: #000000">          [</span><span style="color: #098658">0</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">],</span>
+<span style="color: #000000">          [</span><span style="color: #098658">20</span><span style="color: #000000">, </span><span style="color: #098658">8000</span><span style="color: #000000"> ]</span>
+<span style="color: #000000">        ],</span>
+<span style="color: #000000">        </span><span style="color: #A31515">&quot;base&quot;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">2</span>
+<span style="color: #000000">      },</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;circle-opacity&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">0.05</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;circle-color&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;#ed6498&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;circle-stroke-width&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">2</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #A31515">&#039;circle-stroke-color&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;#ed6498&#039;</span>
+<span style="color: #000000">    } </span>
+<span style="color: #000000">  });</span>
+</code></pre>
+				<p>Source may be a geojson or vector source description or may be
+				the id of a source added using addSource()</p>
+				<a href="#removelayer" id="removelayer" style="color: inherit; text-decoration: none;">
+					<h3>removeLayer</h3>
+				</a>
+				<p>Remove a layer added with addLayer() by id.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">removeLayer</span><span style="color: #000000">( </span><span style="color: #001080">id</span><span style="color: #000000"> );</span>
+</code></pre>
+				<a href="#queryrenderedfeatures" id="queryrenderedfeatures" style="color: inherit; text-decoration: none;">
+					<h3>queryRenderedFeatures</h3>
+				</a>
+				<p><a href="https://docs.mapbox.com/mapbox-gl-js/api/map/#map#queryrenderedfeatures">https://docs.mapbox.com/mapbox-gl-js/api/map/#map#queryrenderedfeatures</a>
+				Returns an array of GeoJSON Feature objects representing visible features that satisfy the query parameters.</p>
+				<pre><code class="language-js"><span style="color: #001080">mapbox</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">queryRenderedFeatures</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">point:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3701494345567</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.823684692382513</span><span style="color: #000000">,</span>
+<span style="color: #000000">      },</span>
+<span style="color: #000000">    </span><span style="color: #001080">layers:</span><span style="color: #000000"> [</span><span style="color: #A31515">&#039;circle-with-source-object&#039;</span><span style="color: #000000">],</span>
+<span style="color: #000000">    </span><span style="color: #001080">filter:</span><span style="color: #000000"> [</span><span style="color: #A31515">&#039;==&#039;</span><span style="color: #000000">, [</span><span style="color: #A31515">&#039;get&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;querySample&#039;</span><span style="color: #000000">], </span><span style="color: #A31515">&#039;2&#039;</span><span style="color: #000000">],</span>
+<span style="color: #000000">  })</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">then</span><span style="color: #000000">((</span><span style="color: #001080">result</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;query rendered features&#039;</span><span style="color: #000000">, </span><span style="color: #001080">result</span><span style="color: #000000">))</span>
+</code></pre>
+				<a href="#querysourcefeatures" id="querysourcefeatures" style="color: inherit; text-decoration: none;">
+					<h3>querySourceFeatures</h3>
+				</a>
+				<p><a href="https://docs.mapbox.com/mapbox-gl-js/api/map/#map#querysourcefeatures">https://docs.mapbox.com/mapbox-gl-js/api/map/#map#querysourcefeatures</a>
+				Returns an array of GeoJSON Feature objects representing features within the specified vector tile or GeoJSON source that satisfy the query parameters.</p>
+				<pre><code class="language-js"><span style="color: #001080">mapbox</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">querySourceFeatures</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;source_id&#039;</span><span style="color: #000000">, { </span><span style="color: #001080">filter:</span><span style="color: #000000"> [</span><span style="color: #A31515">&#039;==&#039;</span><span style="color: #000000">, [</span><span style="color: #A31515">&#039;get&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;querySample&#039;</span><span style="color: #000000">], </span><span style="color: #A31515">&#039;2&#039;</span><span style="color: #000000">] })</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">then</span><span style="color: #000000">((</span><span style="color: #001080">result</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;query source features&#039;</span><span style="color: #000000">, </span><span style="color: #001080">result</span><span style="color: #000000">));</span>
+</code></pre>
+				<a href="#addlinepoint" id="addlinepoint" style="color: inherit; text-decoration: none;">
+					<h3>addLinePoint</h3>
+				</a>
+				<p>Dynamically add a point to a line.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">addLinePoint</span><span style="color: #000000">( </span><span style="color: #800000">&lt;id</span><span style="color: #000000"> </span><span style="color: #FF0000">of</span><span style="color: #000000"> </span><span style="color: #FF0000">line</span><span style="color: #000000"> </span><span style="color: #FF0000">layer</span><span style="color: #800000">&gt;</span><span style="color: #000000">, lnglat )</span>
+</code></pre>
+				<p>where lnglat is an array of two points, a longitude and a latitude.</p>
+				<a href="#addpolygon-deprecated-use-addlayer-instead" id="addpolygon-deprecated-use-addlayer-instead" style="color: inherit; text-decoration: none;">
+					<h3>addPolygon (<strong>deprecated</strong>, use addLayer() instead)</h3>
+				</a>
+				<p>Draw a shape. Just connect the dots like we did as a toddler.</p>
+				<p>The first person to tweet a snowman drawn with this function gets a T-shirt (from @eddyverbruggen ;-)).</p>
+				<pre><code class="language-typescript"><span style="color: #000000">  </span><span style="color: #008000">// after adding this, scroll to Amsterdam to see a semi-transparent red square</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">addPolygon</span><span style="color: #000000">(</span>
+<span style="color: #000000">      {</span>
+<span style="color: #000000">        </span><span style="color: #001080">id:</span><span style="color: #000000"> </span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #008000">// optional, can be used in &#039;removePolygons&#039;</span>
+<span style="color: #000000">        </span><span style="color: #001080">fillColor:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Color</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;red&quot;</span><span style="color: #000000">),</span>
+<span style="color: #000000">        </span><span style="color: #001080">fillOpacity:</span><span style="color: #000000"> </span><span style="color: #098658">0.7</span><span style="color: #000000">,</span>
+
+<span style="color: #000000">        </span><span style="color: #008000">// stroke-related properties are only effective on iOS</span>
+<span style="color: #000000">        </span><span style="color: #001080">strokeColor:</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Color</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;green&quot;</span><span style="color: #000000">),</span>
+<span style="color: #000000">        </span><span style="color: #001080">strokeWidth:</span><span style="color: #000000"> </span><span style="color: #098658">8</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">strokeOpacity:</span><span style="color: #000000"> </span><span style="color: #098658">0.5</span><span style="color: #000000">,</span>
+
+<span style="color: #000000">        </span><span style="color: #001080">points:</span><span style="color: #000000"> [</span>
+<span style="color: #000000">          {</span>
+<span style="color: #000000">            </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3923633970718</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.902648925781249</span>
+<span style="color: #000000">          },</span>
+<span style="color: #000000">          {</span>
+<span style="color: #000000">            </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.35421556258807</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.9308013916015625</span>
+<span style="color: #000000">          },</span>
+<span style="color: #000000">          {</span>
+<span style="color: #000000">            </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.353796172573944</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.8799896240234375</span>
+<span style="color: #000000">          },</span>
+<span style="color: #000000">          {</span>
+<span style="color: #000000">            </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3864966440161</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.8621368408203125</span>
+<span style="color: #000000">          },</span>
+<span style="color: #000000">          {</span>
+<span style="color: #000000">            </span><span style="color: #001080">lat:</span><span style="color: #000000"> </span><span style="color: #098658">52.3923633970718</span><span style="color: #000000">,</span>
+<span style="color: #000000">            </span><span style="color: #001080">lng:</span><span style="color: #000000"> </span><span style="color: #098658">4.902648925781249</span>
+<span style="color: #000000">          }</span>
+<span style="color: #000000">        ]</span>
+<span style="color: #000000">      })</span>
+<span style="color: #000000">      .</span><span style="color: #795E26">then</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Mapbox addPolygon done&quot;</span><span style="color: #000000">))</span>
+<span style="color: #000000">      .</span><span style="color: #795E26">catch</span><span style="color: #000000">((</span><span style="color: #001080">error</span><span style="color: #000000">: </span><span style="color: #267F99">string</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;mapbox addPolygon error: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">error</span><span style="color: #000000">));</span>
+</code></pre>
+				<a href="#removepolygons" id="removepolygons" style="color: inherit; text-decoration: none;">
+					<h3>removePolygons</h3>
+				</a>
+				<p>You can either remove all polygons by not passing in an argument,
+				or remove specific polygon id&#39;s (which you specified previously).</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #008000">// remove all polygons</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">removePolygons</span><span style="color: #000000">();</span>
+
+<span style="color: #000000">  </span><span style="color: #008000">// remove specific polygons by id</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">removePolygons</span><span style="color: #000000">([</span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">]);</span>
+</code></pre>
+				<a href="#addpolyline" id="addpolyline" style="color: inherit; text-decoration: none;">
+					<h3>addPolyline</h3>
+				</a>
+				<p>Deprecated. Use addLayer() instead.</p>
+				<p>Draw a polyline. Connect the points given as parameters.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #008000">// Draw a two segment line near Amsterdam Central Station</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">addPolyline</span><span style="color: #000000">({</span>
+<span style="color: #000000">      </span><span style="color: #001080">id:</span><span style="color: #000000"> </span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #008000">// optional, can be used in &#039;removePolylines&#039;</span>
+<span style="color: #000000">      </span><span style="color: #001080">color:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;#336699&#039;</span><span style="color: #000000">, </span><span style="color: #008000">// Set the color of the line (default black)</span>
+<span style="color: #000000">      </span><span style="color: #001080">width:</span><span style="color: #000000"> </span><span style="color: #098658">7</span><span style="color: #000000">, </span><span style="color: #008000">// Set the width of the line (default 5)</span>
+<span style="color: #000000">      </span><span style="color: #001080">opacity:</span><span style="color: #000000"> </span><span style="color: #098658">0.6</span><span style="color: #000000">, </span><span style="color: #008000">//Transparency / alpha, ranging 0-1. Default fully opaque (1).</span>
+<span style="color: #000000">      </span><span style="color: #001080">points:</span><span style="color: #000000"> [</span>
+<span style="color: #000000">          {</span>
+<span style="color: #000000">              </span><span style="color: #A31515">&#039;lat&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">52.3833160</span><span style="color: #000000">, </span><span style="color: #008000">// mandatory</span>
+<span style="color: #000000">              </span><span style="color: #A31515">&#039;lng&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">4.8991780</span><span style="color: #000000"> </span><span style="color: #008000">// mandatory</span>
+<span style="color: #000000">          },</span>
+<span style="color: #000000">          {</span>
+<span style="color: #000000">              </span><span style="color: #A31515">&#039;lat&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">52.3834160</span><span style="color: #000000">,</span>
+<span style="color: #000000">              </span><span style="color: #A31515">&#039;lng&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">4.8991880</span>
+<span style="color: #000000">          },</span>
+<span style="color: #000000">          {</span>
+<span style="color: #000000">              </span><span style="color: #A31515">&#039;lat&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">52.3835160</span><span style="color: #000000">,</span>
+<span style="color: #000000">              </span><span style="color: #A31515">&#039;lng&#039;</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #098658">4.8991980</span>
+<span style="color: #000000">          }</span>
+<span style="color: #000000">      ]</span>
+<span style="color: #000000">  });</span>
+</code></pre>
+				<a href="#removepolylines" id="removepolylines" style="color: inherit; text-decoration: none;">
+					<h3>removePolylines</h3>
+				</a>
+				<p>Deprecated. Use removeLayer() instead.</p>
+				<p>You can either remove all polylines by not passing in an argument,
+				or remove specific polyline id&#39;s (which you specified previously).</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #008000">// remove all polylines</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">removePolylines</span><span style="color: #000000">();</span>
+
+<span style="color: #000000">  </span><span style="color: #008000">// remove specific polylines by id</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">removePolylines</span><span style="color: #000000">([</span><span style="color: #098658">1</span><span style="color: #000000">, </span><span style="color: #098658">2</span><span style="color: #000000">]);</span>
+</code></pre>
+				<a href="#setonmapclicklistener" id="setonmapclicklistener" style="color: inherit; text-decoration: none;">
+					<h3>setOnMapClickListener</h3>
+				</a>
+				<p>Add a listener to retrieve lat and lng of where the user taps the map (not a marker).</p>
+				<pre><code class="language-typescript"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setOnMapClickListener</span><span style="color: #000000">((</span><span style="color: #001080">point</span><span style="color: #000000">: </span><span style="color: #267F99">LatLng</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Map clicked at latitude: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">point</span><span style="color: #000000">.</span><span style="color: #001080">lat</span><span style="color: #000000"> + </span><span style="color: #A31515">&quot;, longitude: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">point</span><span style="color: #000000">.</span><span style="color: #001080">lng</span><span style="color: #000000">);</span>
+<span style="color: #000000">  });</span>
+</code></pre>
+				<a href="#setonmaplongclicklistener" id="setonmaplongclicklistener" style="color: inherit; text-decoration: none;">
+					<h3>setOnMapLongClickListener</h3>
+				</a>
+				<p>Add a listener to retrieve lat and lng of where the user longpresses the map (not a marker).</p>
+				<pre><code class="language-typescript"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setOnMapLongClickListener</span><span style="color: #000000">((</span><span style="color: #001080">point</span><span style="color: #000000">: </span><span style="color: #267F99">LatLng</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Map longpressed at latitude: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">point</span><span style="color: #000000">.</span><span style="color: #001080">lat</span><span style="color: #000000"> + </span><span style="color: #A31515">&quot;, longitude: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">point</span><span style="color: #000000">.</span><span style="color: #001080">lng</span><span style="color: #000000">);</span>
+<span style="color: #000000">  });</span>
+</code></pre>
+				<a href="#setonscrolllistener" id="setonscrolllistener" style="color: inherit; text-decoration: none;">
+					<h3>setOnScrollListener</h3>
+				</a>
+				<p>Add a listener to retrieve lat and lng of where the user scrolls to on the map.</p>
+				<pre><code class="language-typescript"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">setOnScrollListener</span><span style="color: #000000">((</span><span style="color: #001080">point</span><span style="color: #000000">?: </span><span style="color: #267F99">LatLng</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Map scrolled to latitude: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">point</span><span style="color: #000000">.</span><span style="color: #001080">lat</span><span style="color: #000000"> + </span><span style="color: #A31515">&quot;, longitude: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">point</span><span style="color: #000000">.</span><span style="color: #001080">lng</span><span style="color: #000000">);</span>
+<span style="color: #000000">  });</span>
+</code></pre>
+				<a href="#offline-maps" id="offline-maps" style="color: inherit; text-decoration: none;">
+					<h2>Offline maps</h2>
+				</a>
+				<p>For situations where you want the user to pre-load certain regions you can use these methods to create and remove offline regions.</p>
+				<p><strong>Important read:</strong> <a href="https://www.mapbox.com/help/mobile-offline/">the offline maps documentation by Mapbox</a>.</p>
+				<a href="#downloadofflineregion" id="downloadofflineregion" style="color: inherit; text-decoration: none;">
+					<h3>downloadOfflineRegion</h3>
+				</a>
+				<p>This example downloads the region &#39;Amsterdam&#39; on zoom levels 9, 10 and 11 for map style &#39;outdoors&#39;.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">downloadOfflineRegion</span><span style="color: #000000">(</span>
+<span style="color: #000000">    {</span>
+<span style="color: #000000">      </span><span style="color: #001080">accessToken:</span><span style="color: #000000"> </span><span style="color: #001080">accessToken</span><span style="color: #000000">, </span><span style="color: #008000">// required for Android in case no map has been shown yet</span>
+<span style="color: #000000">      </span><span style="color: #001080">name:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Amsterdam&quot;</span><span style="color: #000000">, </span><span style="color: #008000">// this name can be used to delete the region later</span>
+<span style="color: #000000">      </span><span style="color: #001080">style:</span><span style="color: #000000"> </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #001080">MapStyle</span><span style="color: #000000">.</span><span style="color: #0070C1">OUTDOORS</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">minZoom:</span><span style="color: #000000"> </span><span style="color: #098658">9</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">maxZoom:</span><span style="color: #000000"> </span><span style="color: #098658">11</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">bounds:</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">north:</span><span style="color: #000000"> </span><span style="color: #098658">52.4820</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">east:</span><span style="color: #000000"> </span><span style="color: #098658">5.1087</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">south:</span><span style="color: #000000"> </span><span style="color: #098658">52.2581</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">west:</span><span style="color: #000000"> </span><span style="color: #098658">4.6816</span>
+<span style="color: #000000">      },</span>
+<span style="color: #000000">      </span><span style="color: #008000">// this function is called many times during a download, so</span>
+<span style="color: #000000">      </span><span style="color: #008000">// use it to show an awesome progress bar!</span>
+<span style="color: #000000">      </span><span style="color: #795E26">onProgress</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #0000FF">function</span><span style="color: #000000"> (</span><span style="color: #001080">progress</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Download progress: &quot;</span><span style="color: #000000"> + </span><span style="color: #267F99">JSON</span><span style="color: #000000">.</span><span style="color: #795E26">stringify</span><span style="color: #000000">(</span><span style="color: #001080">progress</span><span style="color: #000000">));</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  ).</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">function</span><span style="color: #000000">() {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Offline region downloaded&quot;</span><span style="color: #000000">);</span>
+<span style="color: #000000">    },</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">error</span><span style="color: #000000">) {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Download error: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">error</span><span style="color: #000000">);</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  );</span>
+</code></pre>
+				<a href="#advanced-example-download-the-current-viewport" id="advanced-example-download-the-current-viewport" style="color: inherit; text-decoration: none;">
+					<h4>Advanced example: download the current viewport</h4>
+				</a>
+				<p>Grab the viewport with the <code>mapbox.getViewport()</code> function and download it at various zoom levels:</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #008000">// I spare you the error handling on this one..</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">getViewport</span><span style="color: #000000">().</span><span style="color: #795E26">then</span><span style="color: #000000">(</span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">viewport</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">downloadOfflineRegion</span><span style="color: #000000">(</span>
+<span style="color: #000000">      {</span>
+<span style="color: #000000">        </span><span style="color: #001080">name:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;LastViewport&quot;</span><span style="color: #000000">, </span><span style="color: #008000">// anything you like really</span>
+<span style="color: #000000">        </span><span style="color: #001080">style:</span><span style="color: #000000"> </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #001080">MapStyle</span><span style="color: #000000">.</span><span style="color: #0070C1">LIGHT</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">minZoom:</span><span style="color: #000000"> </span><span style="color: #001080">viewport</span><span style="color: #000000">.</span><span style="color: #001080">zoomLevel</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #001080">maxZoom:</span><span style="color: #000000"> </span><span style="color: #001080">viewport</span><span style="color: #000000">.</span><span style="color: #001080">zoomLevel</span><span style="color: #000000"> + </span><span style="color: #098658">2</span><span style="color: #000000">, </span><span style="color: #008000">// higher zoom level is lower to the ground</span>
+<span style="color: #000000">        </span><span style="color: #001080">bounds:</span><span style="color: #000000"> </span><span style="color: #001080">viewport</span><span style="color: #000000">.</span><span style="color: #001080">bounds</span><span style="color: #000000">,</span>
+<span style="color: #000000">        </span><span style="color: #795E26">onProgress</span><span style="color: #001080">:</span><span style="color: #000000"> </span><span style="color: #0000FF">function</span><span style="color: #000000"> (</span><span style="color: #001080">progress</span><span style="color: #000000">) {</span>
+<span style="color: #000000">          </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Download %: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">progress</span><span style="color: #000000">.</span><span style="color: #001080">percentage</span><span style="color: #000000">);</span>
+<span style="color: #000000">        }</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">    );</span>
+<span style="color: #000000">  });</span>
+</code></pre>
+				<a href="#listofflineregions" id="listofflineregions" style="color: inherit; text-decoration: none;">
+					<h3>listOfflineRegions</h3>
+				</a>
+				<p>To help you manage offline regions there&#39;s a <code>listOfflineRegions</code> function you can use. You can then fi. call <code>deleteOfflineRegion</code> (see below) and pass in the <code>name</code> to remove any cached region(s) you like.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">listOfflineRegions</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #008000">// required for Android in case no map has been shown yet</span>
+<span style="color: #000000">    </span><span style="color: #001080">accessToken:</span><span style="color: #000000"> </span><span style="color: #001080">accessToken</span>
+<span style="color: #000000">  }).</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">regions</span><span style="color: #000000">) {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #267F99">JSON</span><span style="color: #000000">.</span><span style="color: #795E26">stringify</span><span style="color: #000000">(</span><span style="color: #267F99">JSON</span><span style="color: #000000">.</span><span style="color: #795E26">stringify</span><span style="color: #000000">(</span><span style="color: #001080">regions</span><span style="color: #000000">));</span>
+<span style="color: #000000">    },</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">error</span><span style="color: #000000">) {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Error while listing offline regions: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">error</span><span style="color: #000000">);</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  );</span>
+
+</code></pre>
+				<a href="#deleteofflineregion" id="deleteofflineregion" style="color: inherit; text-decoration: none;">
+					<h3>deleteOfflineRegion</h3>
+				</a>
+				<p>You can remove regions you&#39;ve previously downloaded. Any region(s) matching the <code>name</code> param will be removed locally.</p>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">deleteOfflineRegion</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">name:</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;Amsterdam&quot;</span>
+<span style="color: #000000">  }).</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">function</span><span style="color: #000000">() {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Offline region deleted&quot;</span><span style="color: #000000">);</span>
+<span style="color: #000000">    },</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">error</span><span style="color: #000000">) {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Error while deleting an offline region: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">error</span><span style="color: #000000">);</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  );</span>
+</code></pre>
+				<a href="#permissions" id="permissions" style="color: inherit; text-decoration: none;">
+					<h2>Permissions</h2>
+				</a>
+				<a href="#hasfinelocationpermission--requestfinelocationpermission" id="hasfinelocationpermission--requestfinelocationpermission" style="color: inherit; text-decoration: none;">
+					<h3>hasFineLocationPermission / requestFineLocationPermission</h3>
+				</a>
+				<p>On Android 6 you need to request permission to be able to show the user&#39;s position on the map at runtime when targeting API level 23+.
+				Even if the <code>uses-permission</code> tag for <code>ACCESS_FINE_LOCATION</code> is present in <code>AndroidManifest.xml</code>.</p>
+				<p><strong>You don&#39;t need to do this with plugin version 2.4.0+ as permission is request when required while rendering the map. You&#39;re welcome :)</strong></p>
+				<p>Note that <code>hasFineLocationPermission</code> will return true when:</p>
+				<ul>
+					<li>You&#39;re running this on iOS, or</li>
+					<li>You&#39;re targeting an API level lower than 23, or</li>
+					<li>You&#39;re using Android &lt; 6, or</li>
+					<li>You&#39;ve already granted permission.</li>
+				</ul>
+				<pre><code class="language-js"><span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">hasFineLocationPermission</span><span style="color: #000000">().</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">function</span><span style="color: #000000">(</span><span style="color: #001080">granted</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #008000">// if this is &#039;false&#039; you probably want to call &#039;requestFineLocationPermission&#039; now</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Has Location Permission? &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">granted</span><span style="color: #000000">);</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  );</span>
+
+<span style="color: #000000">  </span><span style="color: #008000">// if no permission was granted previously this will open a user consent screen</span>
+<span style="color: #000000">  </span><span style="color: #001080">mapbox</span><span style="color: #000000">.</span><span style="color: #795E26">requestFineLocationPermission</span><span style="color: #000000">().</span><span style="color: #795E26">then</span><span style="color: #000000">(</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">function</span><span style="color: #000000">() {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Location permission requested&quot;</span><span style="color: #000000">);</span>
+<span style="color: #000000">      }</span>
+<span style="color: #000000">  );</span>
+</code></pre>
+				<p>Note that the <code>show</code> function will also check for permission if you passed in <code>showUserLocation : true</code>.
+				If you didn&#39;t request permission before showing the map, and permission was needed, the plugin will ask the user permission while rendering the map.</p>
+				<a href="#using-marker-images-from-the-internet" id="using-marker-images-from-the-internet" style="color: inherit; text-decoration: none;">
+					<h2>Using marker images from the internet</h2>
+				</a>
+				<p>If you specify <code>icon: &#39;http(s)://some-remote-image&#39;</code>, then on iOS you&#39;ll need to whitelist
+					the domain. Google for iOS ATS for detailed options, but for a quick test you can add this to
+				<code>app/App_Resources/iOS/Info.plist</code>:</p>
+				<pre><code class="language-xml"><span style="color: #000000">    </span><span style="color: #800000">&lt;key&gt;</span><span style="color: #000000">NSAppTransportSecurity</span><span style="color: #800000">&lt;/key&gt;</span>
+<span style="color: #000000">    </span><span style="color: #800000">&lt;dict&gt;</span>
+<span style="color: #000000">        </span><span style="color: #800000">&lt;key&gt;</span><span style="color: #000000">NSAllowsArbitraryLoads</span><span style="color: #800000">&lt;/key&gt;</span>
+<span style="color: #000000">        </span><span style="color: #800000">&lt;true/&gt;</span>
+<span style="color: #000000">    </span><span style="color: #800000">&lt;/dict&gt;</span>
+</code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum">
+						<a href="enums/clogtypes.html" class="tsd-kind-icon">CLog<wbr>Types</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/mapstyle.html" class="tsd-kind-icon">Map<wbr>Style</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/mapboxcommon.html" class="tsd-kind-icon">Mapbox<wbr>Common</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/mapboxviewbase.html" class="tsd-kind-icon">Mapbox<wbr>View<wbr>Base</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/mapboxviewcommonbase.html" class="tsd-kind-icon">Mapbox<wbr>View<wbr>Common<wbr>Base</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/addextrusionoptions.html" class="tsd-kind-icon">Add<wbr>Extrusion<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/addgeojsonclusteredoptions.html" class="tsd-kind-icon">Add<wbr>Geo<wbr>Json<wbr>Clustered<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/addlayeroptions.html" class="tsd-kind-icon">Add<wbr>Layer<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/addpolygonoptions.html" class="tsd-kind-icon">Add<wbr>Polygon<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/addpolylineoptions.html" class="tsd-kind-icon">Add<wbr>Polyline<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/animatecameraoptions.html" class="tsd-kind-icon">Animate<wbr>Camera<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/bounds.html" class="tsd-kind-icon">Bounds</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/deleteofflineregionoptions.html" class="tsd-kind-icon">Delete<wbr>Offline<wbr>Region<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/downloadofflineregionoptions.html" class="tsd-kind-icon">Download<wbr>Offline<wbr>Region<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/downloadprogress.html" class="tsd-kind-icon">Download<wbr>Progress</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/feature.html" class="tsd-kind-icon">Feature</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/geojsonsource.html" class="tsd-kind-icon">GeoJSONSource</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/latlng.html" class="tsd-kind-icon">Lat<wbr>Lng</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/layercommon.html" class="tsd-kind-icon">Layer<wbr>Common</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/listofflineregionsoptions.html" class="tsd-kind-icon">List<wbr>Offline<wbr>Regions<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/mapboxapi.html" class="tsd-kind-icon">Mapbox<wbr>Api</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/mapboxcluster.html" class="tsd-kind-icon">Mapbox<wbr>Cluster</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/mapboxcommonapi.html" class="tsd-kind-icon">Mapbox<wbr>Common<wbr>Api</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/mapboxmarker.html" class="tsd-kind-icon">Mapbox<wbr>Marker</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/mapboxviewapi.html" class="tsd-kind-icon">Mapbox<wbr>View<wbr>Api</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/offlineregion.html" class="tsd-kind-icon">Offline<wbr>Region</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/queryrenderedfeaturesoptions.html" class="tsd-kind-icon">Query<wbr>Rendered<wbr>Features<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/querysourcefeaturesoptions.html" class="tsd-kind-icon">Query<wbr>Source<wbr>Features<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/rastersource.html" class="tsd-kind-icon">Raster<wbr>Source</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/setcenteroptions.html" class="tsd-kind-icon">Set<wbr>Center<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/settiltoptions.html" class="tsd-kind-icon">Set<wbr>Tilt<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/setviewportoptions.html" class="tsd-kind-icon">Set<wbr>Viewport<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/setzoomleveloptions.html" class="tsd-kind-icon">Set<wbr>Zoom<wbr>Level<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/showoptions.html" class="tsd-kind-icon">Show<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/showoptionsmargins.html" class="tsd-kind-icon">Show<wbr>Options<wbr>Margins</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/showresult.html" class="tsd-kind-icon">Show<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/source.html" class="tsd-kind-icon">Source</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/trackuseroptions.html" class="tsd-kind-icon">Track<wbr>User<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/userlocation.html" class="tsd-kind-icon">User<wbr>Location</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/vectorsource.html" class="tsd-kind-icon">Vector<wbr>Source</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/viewport.html" class="tsd-kind-icon">Viewport</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#addsourceoptions" class="tsd-kind-icon">Add<wbr>Source<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#updatesourceoptions" class="tsd-kind-icon">Update<wbr>Source<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#userlocationcameramode" class="tsd-kind-icon">User<wbr>Location<wbr>Camera<wbr>Mode</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#usertrackingmode" class="tsd-kind-icon">User<wbr>Tracking<wbr>Mode</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#mapboxtracecategory" class="tsd-kind-icon">Mapbox<wbr>Trace<wbr>Category</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#accesstokenproperty" class="tsd-kind-icon">access<wbr>Token<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#delayproperty" class="tsd-kind-icon">delay<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#disablerotationproperty" class="tsd-kind-icon">disable<wbr>Rotation<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#disablescrollproperty" class="tsd-kind-icon">disable<wbr>Scroll<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#disabletiltproperty" class="tsd-kind-icon">disable<wbr>Tilt<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#disablezoomproperty" class="tsd-kind-icon">disable<wbr>Zoom<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#hideattributionproperty" class="tsd-kind-icon">hide<wbr>Attribution<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#hidecompassproperty" class="tsd-kind-icon">hide<wbr>Compass<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#hidelogoproperty" class="tsd-kind-icon">hide<wbr>Logo<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#latitudeproperty" class="tsd-kind-icon">latitude<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#longitudeproperty" class="tsd-kind-icon">longitude<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#mapreadyproperty" class="tsd-kind-icon">map<wbr>Ready<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#mapstyleproperty" class="tsd-kind-icon">map<wbr>Style<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#showuserlocationproperty" class="tsd-kind-icon">show<wbr>User<wbr>Location<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#telemetryproperty" class="tsd-kind-icon">telemetry<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#zoomlevelproperty" class="tsd-kind-icon">zoom<wbr>Level<wbr>Property</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#clog" class="tsd-kind-icon">CLog</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
