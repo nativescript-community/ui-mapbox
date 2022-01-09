@@ -30,6 +30,7 @@
     "homepage": "https://github.com/nativescript-community/ui-mapbox",
     "readmeFilename": "README.md",
     "dependencies": {
+        "@nativescript-community/perms": "^2.2.0",
         "@nativescript-community/plugin-seed-tools": "file:tools"
     },
     "ntl": {
