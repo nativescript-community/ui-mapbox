@@ -1,6 +1,6 @@
 {
     "name": "@nativescript-community/ui-mapbox",
-    "version": "6.2.10",
+    "version": "6.2.11",
     "description": "Interactive, thoroughly customizable maps powered by vector tiles and OpenGL.",
     "main": "index",
     "typings": "index.d.ts",

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.11](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.10...v6.2.11) (2022-01-09)
+
+
+### Bug Fixes
+
+* add okhttp implementation ([f73304f](https://github.com/nativescript-community/ui-mapbox/commit/f73304faf9fae447bf0e56c794ed818d2357d887))
+* downgrade iOS Mapbox version ([3aa8196](https://github.com/nativescript-community/ui-mapbox/commit/3aa8196259497799a2f8c1019b0210b9834bb2cf))
+
+
+
+
+
 ## [6.2.10](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.9...v6.2.10) (2021-09-28)
 
 **Note:** Version bump only for package @nativescript-community/ui-mapbox
