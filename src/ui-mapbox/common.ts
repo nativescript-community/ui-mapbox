@@ -657,6 +657,8 @@ export interface MapboxApi {
 
     setOnMoveBeginListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void>;
 
+    setOnMoveEndListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void>;
+
     setOnFlingListener(listener: () => void, nativeMap?: any): Promise<any>;
 
     setOnCameraMoveListener(listener: (reason, animated?: boolean) => void, nativeMap?: any): Promise<any>;
@@ -910,6 +912,9 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     setOnMoveBeginListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void> {
         return this.mapbox.setOnMoveBeginListener(listener, this.getNativeMapView());
     }
+    setOnMoveEndListener(listener: (data?: LatLng) => void, nativeMap?: any): Promise<void> {
+        return this.mapbox.setOnMoveEndListener(listener, this.getNativeMapView());
+    }
     setOnFlingListener(listener: () => void, nativeMap?: any): Promise<any> {
         return this.mapbox.setOnFlingListener(listener, this.getNativeMapView());
     }
@@ -1159,6 +1164,7 @@ export abstract class MapboxViewBase extends MapboxViewCommonBase {
     public static mapReadyEvent: string = 'mapReady';
     public static scrollEvent: string = 'scrollEvent';
     public static moveBeginEvent: string = 'moveBeginEvent';
+    public static moveEndEvent: string = 'moveEndEvent';
 
     public static locationPermissionGrantedEvent: string = 'locationPermissionGranted';
     public static locationPermissionDeniedEvent: string = 'locationPermissionDenied';

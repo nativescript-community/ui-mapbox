@@ -1,4 +1,4 @@
-import { Color, File, ImageSource, Trace, knownFolders, path, Http, Utils } from '@nativescript/core';
+import { Color, File, Http, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import {
     AddExtrusionOptions,
     AddGeoJsonClusteredOptions,
@@ -35,7 +35,7 @@ import {
     Viewport,
     telemetryProperty
 } from './common';
-import { LayerFactory, Layer } from './layers/layer-factory';
+import { Layer, LayerFactory } from './layers/layer-factory';
 import { FilterParser } from './filter/filter-parser';
 
 /**
@@ -422,66 +422,79 @@ class MapLongPressHandlerImpl extends NSObject {
 /**
  * pan handler
  *
- * This is used by the OnScrollListener
+ * This is used by scroll listeners
  */
 @NativeClass
 class MapPanHandlerImpl extends NSObject {
     private _owner: WeakRef<Mapbox>;
-    private _listener: (data?: LatLng) => void;
-    private onMoveBegin: boolean;
+    private _listener: Map<UIGestureRecognizerState, (data?: LatLng) => void>;
     private _mapView: MGLMapView;
 
-    public static initWithOwnerAndListenerForMap(owner: WeakRef<Mapbox>, listener: (data?: LatLng) => void, mapView: MGLMapView): MapPanHandlerImpl {
+    public static initWithOwnerAndListenerForMap(owner: WeakRef<Mapbox>, listener: (data?: LatLng) => void, panState: UIGestureRecognizerState, mapView: MGLMapView): MapPanHandlerImpl {
         const handler = MapPanHandlerImpl.new() as MapPanHandlerImpl;
         handler._owner = owner;
-        handler._listener = listener;
+        handler._listener = new Map([[panState, listener]]);
         handler._mapView = mapView;
-
-        handler.onMoveBegin = false;
 
         return handler;
     }
 
-    public setOnMoveBegin() {
-        this.onMoveBegin = true;
+    public static ObjCExposedMethods = {
+        pan: { returns: interop.types.void, params: [interop.types.id] },
+        panEnd: { returns: interop.types.void, params: [interop.types.id] },
+        panBegin: { returns: interop.types.void, params: [interop.types.id] }
+    };
+
+    public addListener(panState: UIGestureRecognizerState, listener: (data?: LatLng) => void) {
+        this._listener.set(panState, listener);
     }
 
     public pan(recognizer: UIPanGestureRecognizer): void {
-        const panPoint = recognizer.locationInView(this._mapView);
-        const panCoordinate = this._mapView.convertPointToCoordinateFromView(panPoint, this._mapView);
+        const panCoordinate = this.getCoordinates(recognizer);
 
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'MapPanHandlerImpl::pan(): top with state:', recognizer.state);
         }
 
-        // if this is the beginning of the pan simulate the Android onMoveBegin
-        //
-        // See the objc platform declarations in objc!UIKit.d.ts. It doesn't quite match the apple documention
-
-        if (this.onMoveBegin) {
-            if (recognizer.state === UIGestureRecognizerState.Began) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'MapPanHandlerImpl::pan(): calling onMoveBegin listener');
-                }
-
-                this._listener({
-                    lat: panCoordinate.latitude,
-                    lng: panCoordinate.longitude
-                });
-            }
-
-            return;
+        if (recognizer.state === UIGestureRecognizerState.Changed) {
+            this.notifyListener(recognizer.state, panCoordinate.latitude, panCoordinate.longitude);
         }
-
-        this._listener({
-            lat: panCoordinate.latitude,
-            lng: panCoordinate.longitude
-        });
     }
 
-    public static ObjCExposedMethods = {
-        pan: { returns: interop.types.void, params: [interop.types.id] }
-    };
+    public panEnd(recognizer: UIPanGestureRecognizer): void {
+        const panCoordinate = this.getCoordinates(recognizer);
+
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'MapPanHandlerImpl::panEnd(): top with state:', recognizer.state);
+        }
+
+        if (recognizer.state === UIGestureRecognizerState.Ended) {
+            this.notifyListener(recognizer.state, panCoordinate.latitude, panCoordinate.longitude);
+        }
+    }
+
+    public panBegin(recognizer: UIPanGestureRecognizer): void {
+        const panCoordinate = this.getCoordinates(recognizer);
+
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'MapPanHandlerImpl::panBegin(): top with state:', recognizer.state);
+        }
+
+        if (recognizer.state === UIGestureRecognizerState.Began) {
+            this.notifyListener(recognizer.state, panCoordinate.latitude, panCoordinate.longitude);
+        }
+    }
+
+    private getCoordinates(recognizer: UIPanGestureRecognizer) {
+        const panPoint = recognizer.locationInView(this._mapView);
+        return this._mapView.convertPointToCoordinateFromView(panPoint, this._mapView);
+    }
+
+    private notifyListener(panState: UIGestureRecognizerState, latitude: number, longitude: number) {
+        if (this._listener.has(panState)) {
+            this._listener.get(panState)({ lat: latitude, lng: longitude });
+        }
+    }
 }
 
 /**
@@ -845,6 +858,32 @@ export class MapboxView extends MapboxViewBase {
 
                     this.notify({
                         eventName: MapboxViewBase.moveBeginEvent,
+                        object: this,
+                        map: this,
+                        ios: this.nativeMapView
+                    });
+                }, this.nativeMapView);
+
+                this.mapbox.setOnMoveEndListener((data?: LatLng) => {
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, 'initMap(): onMoveEnd listener');
+                    }
+
+                    this.notify({
+                        eventName: MapboxViewBase.moveEndEvent,
+                        object: this,
+                        map: this,
+                        ios: this.nativeMapView
+                    });
+                }, this.nativeMapView);
+
+                this.mapbox.setOnScrollListener((data?: LatLng) => {
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, 'initMap(): onScroll listener');
+                    }
+
+                    this.notify({
+                        eventName: MapboxViewBase.scrollEvent,
                         object: this,
                         map: this,
                         ios: this.nativeMapView
@@ -2247,7 +2286,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 // adding the pan handler to the map oject so it's not GC'd
-                theMap['mapPanHandler'] = MapPanHandlerImpl.initWithOwnerAndListenerForMap(new WeakRef(this), listener, theMap);
+                if (theMap['mapPanHandler'] === undefined) {
+                    theMap['mapPanHandler'] = MapPanHandlerImpl.initWithOwnerAndListenerForMap(new WeakRef(this), listener, UIGestureRecognizerState.Changed, theMap);
+                } else {
+                    (theMap['mapPanHandler'] as MapPanHandlerImpl).addListener(UIGestureRecognizerState.Changed, listener);
+                }
 
                 // there's already a pan recognizer, so find it and attach a target action
                 for (let i = 0; i < theMap.gestureRecognizers.count; i++) {
@@ -2286,11 +2329,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 // adding the pan handler to the map oject so it's not GC'd
-                theMap['mapOnMoveBeginHandler'] = MapPanHandlerImpl.initWithOwnerAndListenerForMap(new WeakRef(this), listener, theMap);
-
-                // tell the panHandler that we're only interested in the first pan per pan gesture
-
-                theMap['mapOnMoveBeginHandler'].setOnMoveBegin();
+                if (theMap['mapPanHandler'] === undefined) {
+                    theMap['mapPanHandler'] = MapPanHandlerImpl.initWithOwnerAndListenerForMap(new WeakRef(this), listener, UIGestureRecognizerState.Began, theMap);
+                } else {
+                    (theMap['mapPanHandler'] as MapPanHandlerImpl).addListener(UIGestureRecognizerState.Began, listener);
+                }
 
                 // there's already a pan recognizer, so find it and attach a target action
 
@@ -2298,7 +2341,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     const recognizer: UIGestureRecognizer = theMap.gestureRecognizers.objectAtIndex(i);
 
                     if (recognizer instanceof UIPanGestureRecognizer) {
-                        recognizer.addTargetAction(theMap['mapOnMoveBeginHandler'], 'pan');
+                        recognizer.addTargetAction(theMap['mapPanHandler'], 'panBegin');
                         break;
                     }
                 }
@@ -2306,7 +2349,43 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.setOnScrollListener: ' + ex);
+                    CLog(CLogTypes.info, 'Error in mapbox.setOnMoveBeginListener: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
+
+    setOnMoveEndListener(listener: () => void, nativeMap?: any): Promise<void> {
+        return new Promise((resolve, reject) => {
+            try {
+                const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+
+                if (!theMap) {
+                    reject('No map has been loaded');
+                    return;
+                }
+
+                if (theMap['mapPanHandler'] === undefined) {
+                    theMap['mapPanHandler'] = MapPanHandlerImpl.initWithOwnerAndListenerForMap(new WeakRef(this), listener, UIGestureRecognizerState.Ended, theMap);
+                } else {
+                    (theMap['mapPanHandler'] as MapPanHandlerImpl).addListener(UIGestureRecognizerState.Ended, listener);
+                }
+
+                // there's already a pan recognizer, so find it and attach a target action
+                for (let i = 0; i < theMap.gestureRecognizers.count; i++) {
+                    const recognizer: UIGestureRecognizer = theMap.gestureRecognizers.objectAtIndex(i);
+
+                    if (recognizer instanceof UIPanGestureRecognizer) {
+                        recognizer.addTargetAction(theMap['mapPanHandler'], 'panEnd');
+                        break;
+                    }
+                }
+
+                resolve();
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.setOnMoveEndListener: ' + ex);
                 }
                 reject(ex);
             }

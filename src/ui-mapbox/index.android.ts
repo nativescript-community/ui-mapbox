@@ -5,9 +5,9 @@
  */
 
 import { request } from '@nativescript-community/perms';
-import { AndroidApplication, Application, Color, File, Image, ImageSource, Trace, Utils, knownFolders, path, Http } from '@nativescript/core';
+import { AndroidApplication, Application, Color, File, Http, Image, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import { FilterParser } from './filter/filter-parser';
-import { LayerFactory, Layer } from './layers/layer-factory';
+import { Layer, LayerFactory } from './layers/layer-factory';
 import {
     AddExtrusionOptions,
     AddGeoJsonClusteredOptions,
@@ -331,6 +331,19 @@ export class MapboxView extends MapboxViewBase {
 
                     this.notify({
                         eventName: MapboxViewBase.moveBeginEvent,
+                        object: this,
+                        event,
+                        map: this,
+                        android: this.nativeMapView
+                    });
+                },
+                onMoveEndEvent: (event) => {
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, 'initMap(): onMoveEndEvent event');
+                    }
+
+                    this.notify({
+                        eventName: MapboxViewBase.moveEndEvent,
                         object: this,
                         event,
                         map: this,
@@ -921,6 +934,26 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
             if (typeof settings.onMoveBeginEvent != 'undefined') {
                 settings.onMoveBeginEvent(point);
+            }
+        }, mapboxNativeViewInstance);
+
+        this.setOnMoveEndListener((point: LatLng) => {
+            if (Trace.isEnabled()) {
+                CLog(CLogTypes.info, 'Mapbox:initEventHandlerShim(): moveEnd:', point);
+            }
+
+            if (typeof settings.onMoveEndEvent != 'undefined') {
+                settings.onMoveEndEvent(point);
+            }
+        }, mapboxNativeViewInstance);
+
+        this.setOnScrollListener((point: LatLng) => {
+            if (Trace.isEnabled()) {
+                CLog(CLogTypes.info, 'Mapbox:initEventHandlerShim(): move:', point);
+            }
+
+            if (typeof settings.onScrollEvent != 'undefined') {
+                settings.onScrollEvent(point);
             }
         }, mapboxNativeViewInstance);
     }
@@ -1895,6 +1928,42 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             } catch (ex) {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.setOnMoveBeginListener: ' + ex);
+                }
+                reject(ex);
+            }
+        });
+    }
+
+    setOnMoveEndListener(listener: (data?: LatLng) => void, nativeMap?): Promise<void> {
+        return new Promise((resolve, reject) => {
+            try {
+                if (!this._mapboxMapInstance) {
+                    reject('No map has been loaded');
+                    return;
+                }
+
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'setOnMoveEndListener():');
+                }
+
+                this.onMoveListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnMoveListener({
+                    onMoveBegin: (detector: any /* MoveGestureDetector */) => {},
+                    onMove: (detector: any /* MoveGestureDetector */) => {},
+                    onMoveEnd: (detector: any /* MoveGestureDetector */) => {
+                        const coordinate = this._mapboxMapInstance.getCameraPosition().target;
+                        return listener({
+                            lat: coordinate.getLatitude(),
+                            lng: coordinate.getLongitude()
+                        });
+                    }
+                });
+
+                this._mapboxMapInstance.addOnMoveListener(this.onMoveListener);
+
+                resolve();
+            } catch (ex) {
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'Error in mapbox.setOnMoveEndListener: ' + ex);
                 }
                 reject(ex);
             }
@@ -2884,7 +2953,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     _getRegionName(offlineRegion: com.mapbox.mapboxsdk.offline.OfflineRegion) {
         const metadata = offlineRegion.getMetadata();
         const jsonStr = new java.lang.String(metadata, 'UTF-8');
-        const jsonObj = new org.json.JSONObject((jsonStr as any) as string);
+        const jsonObj = new org.json.JSONObject(jsonStr as any as string);
         return jsonObj.getString('name');
     }
 
