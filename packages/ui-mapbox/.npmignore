@@ -6,3 +6,4 @@ references.d.ts
 platforms/android/*
 !platforms/android/include.gradle
 !platforms/android/*.aar
+blueprint.md

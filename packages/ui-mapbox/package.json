@@ -1,0 +1,57 @@
+{
+    "name": "@nativescript-community/ui-mapbox",
+    "version": "6.2.10",
+    "description": "Interactive, thoroughly customizable maps powered by vector tiles and OpenGL.",
+    "main": "index",
+    "typings": "index.d.ts",
+    "scripts": {
+        "build": "npm run tsc && npm run readme",
+        "readme": "../../node_modules/.bin/readme generate -c ../../tools/readme/blueprint.json",
+        "tsc": "../../node_modules/.bin/cpy '**/*.d.ts' '../../packages/ui-mapbox' --parents --cwd=../../src/ui-mapbox && ../../node_modules/.bin/tsc -skipLibCheck -d",
+        "clean": "../../node_modules/.bin/rimraf ./*.d.ts ./*.js ./*.js.map"
+    },
+    "nativescript": {
+        "platforms": {
+            "android": "3.0.0",
+            "ios": "3.0.0"
+        }
+    },
+    "keywords": [
+        "NativeScript",
+        "Map",
+        "Maps",
+        "Native Maps",
+        "Mapbox",
+        "iOS",
+        "Android",
+        "Angular",
+        "preview|https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/images/preview.png"
+    ],
+    "author": {
+        "name": "Yermo Lamers",
+        "email": "yml@yml.com",
+        "url": "https://miles-by-motorcycle.com/flyingbricksoftware/about"
+    },
+    "contributors": [
+        {
+            "name": "Eddy Verbruggen - Original Author",
+            "email": "eddyverbruggen@gmail.com"
+        },
+        {
+            "name": "Alex Wells",
+            "email": "autaut03@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/nativescript-community/ui-mapbox/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nativescript-community/ui-mapbox"
+    },
+    "readmeFilename": "README.md",
+    "dependencies": {
+        "@nativescript-community/perms": "^2.2.0"
+    }
+}

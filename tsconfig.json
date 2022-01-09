@@ -1,33 +1,9 @@
-{
+{    
+    "extends": "./tools/tsconfig",
     "compilerOptions": {
-        "target": "es2017",
-        "module": "esnext",
-        "moduleResolution": "node",
-        "removeComments": true,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "jsx": "react",
-        "lib": ["es6", "dom"],
-        "sourceMap": true,
-        "pretty": true,
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
-        "noEmitHelpers": true,
-        "noEmitOnError": false,
-        "noImplicitAny": false,
-        "noImplicitReturns": true,
-        "noImplicitUseStrict": true,
-        "noFallthroughCasesInSwitch": true,
-        "sourceRoot": "../src",
-        "baseUrl": ".",
-        "outDir": "./plugin",
         "paths": {
-            "@nativescript-community/ui-mapbox": ["src/mapbox"],
-            "@nativescript-community/ui-mapbox/*": ["src/*"]
-        },
-        "plugins": [{ "transform": "./node_modules/@nativescript/webpack/transformers/ns-transform-native-classes", "type": "raw" }]
-    },
-    "include": ["src/**/*", "./references.d.ts"],
-    "exclude": ["node_modules", "platforms", "src/angular/**/*"],
-    "compileOnSave": false
+            "@nativescript-community/ui-mapbox": ["src/ui-mapbox"],
+            "@nativescript-community/ui-mapbox/*": ["src/ui-mapbox/*"]
+       },
+    }
 }
