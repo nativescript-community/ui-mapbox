@@ -34,6 +34,15 @@ export class Layer implements LayerCommon {
     public getFilter(): any[] {
         return FilterParser.toJson(this.instance.getFilter());
     }
+
+    public setProperty(name: string, value: any) {
+        const properties = PropertyParser.parsePropertiesForLayer({ [name]: value });
+        this.instance.setProperties(properties);
+    }
+
+    public getProperty(name: string): any {
+        return PropertyParser.propertyValueFromLayer(this.instance, name);
+    }
 }
 
 export class LayerFactory {

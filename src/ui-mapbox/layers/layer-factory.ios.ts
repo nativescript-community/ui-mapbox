@@ -90,4 +90,17 @@ export class Layer implements LayerCommon {
     getFilter(): any[] {
         return FilterParser.toJson(this.instance.predicate);
     }
+
+    setProperty(name: string, value: any) {
+        const properties = PropertyParser.parsePropertiesForLayer({ [name]: value });
+        for (const propKey in properties) {
+            if (Object.prototype.hasOwnProperty.call(properties, propKey)) {
+                this.instance[propKey] = properties[propKey];
+            }
+        }
+    }
+
+    getProperty(name: string): any {
+        return PropertyParser.propertyValueFromLayer(this.instance, name);
+    }
 }

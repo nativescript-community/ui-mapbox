@@ -14,4 +14,6 @@ export declare class Layer implements LayerCommon {
     getNativeInstance(): any;
     setFilter(filter: any[]): void;
     getFilter(): any[];
+    setProperty(name: string, value: any): void;
+    getProperty(name: string): any;
 }
