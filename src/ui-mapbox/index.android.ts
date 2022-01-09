@@ -2167,7 +2167,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    downloadOfflineRegion(options: DownloadOfflineRegionOptions): Promise<void> {
+    downloadOfflineRegion(options: DownloadOfflineRegionOptions): Promise<any> {
         return new Promise((resolve, reject) => {
             try {
                 const styleURL = this._getMapStyle(options.style);
@@ -2181,8 +2181,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const offlineRegionDefinition = new com.mapbox.mapboxsdk.offline.OfflineTilePyramidRegionDefinition(styleURL, bounds, options.minZoom, options.maxZoom, retinaFactor);
 
-                const info = '{name:"' + options.name + '"}';
-                const infoStr = new java.lang.String(info);
+                const info = {
+                    name: options.name,
+                    ...options.metadata
+                };
+                const infoStr = new java.lang.String(JSON.stringify(info));
                 const encodedMetadata = infoStr.getBytes();
 
                 if (!this._accessToken && !options.accessToken) {
@@ -2229,7 +2232,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                         }
 
                                         if (status.isComplete()) {
-                                            resolve();
+                                            resolve(status);
                                         } else if (status.isRequiredResourceCountPrecise()) {
                                         }
                                     },
@@ -2280,8 +2283,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     const name = this._getRegionName(offlineRegion);
                                     const offlineRegionDefinition = offlineRegion.getDefinition();
                                     const bounds = offlineRegionDefinition.getBounds();
+                                    const metadata = this._getRegionMetadata(offlineRegion);
 
                                     regions.push({
+                                        id: offlineRegion.getID(),
                                         name,
                                         style: offlineRegionDefinition.getStyleURL(),
                                         minZoom: offlineRegionDefinition.getMinZoom(),
@@ -2291,7 +2296,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                             east: bounds.getLonEast(),
                                             south: bounds.getLatSouth(),
                                             west: bounds.getLonWest()
-                                        }
+                                        },
+                                        metadata,
+                                        pixelRatio: offlineRegionDefinition.getPixelRatio(),
+                                        type: offlineRegionDefinition.getType()
                                     });
                                 }
                             }
@@ -2311,8 +2319,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     deleteOfflineRegion(options: DeleteOfflineRegionOptions): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                if (!options || !options.name) {
-                    reject("Pass in the 'name' param");
+                if (!options || (!options.id && !options.name)) {
+                    reject("Pass in the 'id' or 'name' param");
                     return;
                 }
 
@@ -2327,8 +2335,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             if (offlineRegions !== null) {
                                 for (let i = 0; i < offlineRegions.length; i++) {
                                     const offlineRegion = offlineRegions[i];
-                                    const name = this._getRegionName(offlineRegion);
-                                    if (name === options.name) {
+                                    const regionId = options.id ? offlineRegion.getID() : this._getRegionName(offlineRegion);
+                                    if (regionId === (options.id || options.name)) {
                                         found = true;
                                         offlineRegion.delete(
                                             new com.mapbox.mapboxsdk.offline.OfflineRegion.OfflineRegionDeleteCallback({
@@ -2353,7 +2361,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 );
             } catch (ex) {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.listOfflineRegions: ' + ex);
+                    CLog(CLogTypes.info, 'Error in mapbox.deleteOfflineRegion: ' + ex);
                 }
                 reject(ex);
             }
@@ -2954,7 +2962,18 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         const metadata = offlineRegion.getMetadata();
         const jsonStr = new java.lang.String(metadata, 'UTF-8');
         const jsonObj = new org.json.JSONObject(jsonStr as any as string);
-        return jsonObj.getString('name');
+        try {
+            return jsonObj.getString('name');
+        } catch (error) {
+            return '';
+        }
+    }
+
+    _getRegionMetadata(offlineRegion: com.mapbox.mapboxsdk.offline.OfflineRegion) {
+        const metadata = offlineRegion.getMetadata();
+        const jsonStr = new java.lang.String(metadata, 'UTF-8');
+        const jsonObj = new org.json.JSONObject(jsonStr as any as string);
+        return JSON.parse(jsonObj.toString());
     }
 
     /**

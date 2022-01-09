@@ -230,9 +230,14 @@ export interface SetViewportOptions {
 
 export interface DeleteOfflineRegionOptions {
     /**
+     * The id of the offline region to delete.
+     */
+    id?: string;
+
+    /**
      * The name of the offline region to delete.
      */
-    name: string;
+    name?: string;
 }
 
 // ------------------------------------------------------------
@@ -369,6 +374,9 @@ export interface OfflineRegion {
     minZoom: number;
     maxZoom: number;
     style: MapStyle;
+    metadata?: any;
+    pixelRatio?: any;
+    type?: any;
 }
 
 // ------------------------------------------------------------
