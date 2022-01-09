@@ -5,12 +5,9 @@
  */
 
 import { request } from '@nativescript-community/perms';
-import { AndroidApplication, Application, Color, File, Image, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
-import { getImage } from '@nativescript/core/http';
-import { FilterParser } from './filter/filter-parser.android';
-import { GeoUtils } from './geo.utils';
-import { layout } from '@nativescript/core/utils';
-import { LayerFactory } from './layers/layer-factory';
+import { AndroidApplication, Application, Color, File, Image, ImageSource, Trace, Utils, knownFolders, path, Http } from '@nativescript/core';
+import { FilterParser } from './filter/filter-parser';
+import { LayerFactory, Layer } from './layers/layer-factory';
 import {
     AddExtrusionOptions,
     AddGeoJsonClusteredOptions,
@@ -46,11 +43,11 @@ import {
     UserLocationCameraMode,
     Viewport,
     telemetryProperty
-} from './mapbox.common';
+} from './common';
 
 // Export the enums for devs not using TS
 
-export { MapboxTraceCategory, MapStyle };
+export * from './common';
 
 function _getLocation(loc: globalAndroid.location.Location) {
     if (loc === null) {
@@ -3244,7 +3241,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 return;
             }
             // ..or not to cache
-            getImage(marker.icon).then(
+            Http.getImage(marker.icon).then(
                 (output) => {
                     marker.iconDownloaded = output.android;
                     this._markerIconDownloadCache[marker.icon] = marker.iconDownloaded;
@@ -3277,40 +3274,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     project(data: LatLng) {
         const mapboxPoint = new com.mapbox.mapboxsdk.geometry.LatLng(data.lat, data.lng);
         const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
-        return { x: layout.toDeviceIndependentPixels(screenLocation.x), y: layout.toDeviceIndependentPixels(screenLocation.y) };
-    }
-}
-
-export class Layer implements LayerCommon {
-    public id: string;
-    private instance: any;
-
-    constructor(instance: any) {
-        this.instance = instance;
-        this.id = instance.getId();
-    }
-
-    public visibility(): boolean {
-        return this.instance.getVisibility().getValue() === 'visible' ? true : false;
-    }
-
-    public show(): void {
-        this.instance.setProperties([new com.mapbox.mapboxsdk.style.layers.PropertyValue('visibility', 'visible')]);
-    }
-
-    public hide(): void {
-        this.instance.setProperties([new com.mapbox.mapboxsdk.style.layers.PropertyValue('visibility', 'none')]);
-    }
-
-    public getNativeInstance() {
-        return this.instance;
-    }
-
-    public setFilter(filter: any[]) {
-        this.instance.setFilter(FilterParser.parseJson(filter));
-    }
-
-    public getFilter(): any[] {
-        return FilterParser.toJson(this.instance.getFilter());
+        return { x: Utils.layout.toDeviceIndependentPixels(screenLocation.x), y: Utils.layout.toDeviceIndependentPixels(screenLocation.y) };
     }
 }

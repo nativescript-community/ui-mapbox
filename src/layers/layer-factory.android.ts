@@ -1,6 +1,40 @@
-import { Layer } from '../mapbox.android';
-import { LayerCommon } from '../mapbox.common';
-import { PropertyParser } from './parser/property-parser.android';
+import { LayerCommon } from '../common';
+import { FilterParser } from '../filter/filter-parser';
+import { PropertyParser } from './parser/property-parser';
+
+export class Layer implements LayerCommon {
+    public id: string;
+    private instance: any;
+
+    constructor(instance: any) {
+        this.instance = instance;
+        this.id = instance.getId();
+    }
+
+    public visibility(): boolean {
+        return this.instance.getVisibility().getValue() === 'visible' ? true : false;
+    }
+
+    public show(): void {
+        this.instance.setProperties([new com.mapbox.mapboxsdk.style.layers.PropertyValue('visibility', 'visible')]);
+    }
+
+    public hide(): void {
+        this.instance.setProperties([new com.mapbox.mapboxsdk.style.layers.PropertyValue('visibility', 'none')]);
+    }
+
+    public getNativeInstance() {
+        return this.instance;
+    }
+
+    public setFilter(filter: any[]) {
+        this.instance.setFilter(FilterParser.parseJson(filter));
+    }
+
+    public getFilter(): any[] {
+        return FilterParser.toJson(this.instance.getFilter());
+    }
+}
 
 export class LayerFactory {
     static async createLayer(style, source): Promise<LayerCommon> {

@@ -1,6 +1,6 @@
-import { LayerCommon } from '../mapbox.common';
-import { Layer } from '../mapbox.ios';
-import { PropertyParser } from './parser/property-parser.ios';
+import { LayerCommon } from '../common';
+import { FilterParser } from '../filter/filter-parser';
+import { PropertyParser } from './parser/property-parser';
 
 export class LayerFactory {
     static async createLayer(style, source): Promise<LayerCommon> {
@@ -48,5 +48,46 @@ export class LayerFactory {
 
     private static parseProperties(layerType, propertiesObject): any {
         return PropertyParser.parsePropertiesForLayer(propertiesObject);
+    }
+}
+
+export class Layer implements LayerCommon {
+    public id: string;
+    private instance;
+
+    constructor(instance) {
+        this.instance = instance;
+        this.id = instance.identifier;
+    }
+
+    visibility(): boolean {
+        return this.instance.visible;
+    }
+
+    show(): void {
+        this.instance.visible = true;
+    }
+
+    hide(): void {
+        this.instance.visible = false;
+    }
+
+    getNativeInstance() {
+        return this.instance;
+    }
+
+    setFilter(filter: any[]) {
+        if (this.instance instanceof MGLVectorStyleLayer) {
+            // MGLVectorStyleLayer is the base type of many layer types. Predicates only supported on vector style layers.
+            // See https://docs.mapbox.com/ios/maps/api/6.3.0/Classes/MGLVectorStyleLayer.html
+
+            this.instance.predicate = FilterParser.parseJson(filter);
+        } else {
+            throw new Error('Set filter only support for vector layer.');
+        }
+    }
+
+    getFilter(): any[] {
+        return FilterParser.toJson(this.instance.predicate);
     }
 }
