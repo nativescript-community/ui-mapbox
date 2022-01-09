@@ -1,0 +1,23 @@
+<ActionBar>
+    <NavigationButton android.systemIcon="ic_menu_back" (tap)="goBack()"></NavigationButton>
+    <Label text="Basic Map"></Label>
+</ActionBar>
+
+<StackLayout>
+    <ContentView height="100%" width="100%">
+        <Mapbox
+            accessToken="YOUR_ACCESS_TOKEN"
+            mapStyle="traffic_day"
+            latitude="50.467735"
+            longitude="13.427718"
+            hideCompass="true"
+            zoomLevel="18"
+            showUserLocation="false"
+            disableZoom="false"
+            disableRotation="false"
+            disableScroll="false"
+            disableTilt="false"
+            (mapReady)="onMapReady($event)">
+        </Mapbox>
+    </ContentView>
+</StackLayout>
