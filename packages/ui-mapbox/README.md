@@ -1,92 +1,126 @@
-<a href="https://www.mapbox.com">
-  <img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/mapbox_logo.png" width="400"/>
-</a>
+<!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️-->
+<!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      DO NOT EDIT THIS READEME DIRECTLY! Edit "bluesprint.md" instead.
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+<h1 align="center">@nativescript-community/ui-mapbox</h1>
+<p align="center">
+		<a href="https://npmcharts.com/compare/@nativescript-community/ui-mapbox?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/@nativescript-community/ui-mapbox.svg" height="20"/></a>
+<a href="https://www.npmjs.com/package/@nativescript-community/ui-mapbox"><img alt="NPM Version" src="https://img.shields.io/npm/v/@nativescript-community/ui-mapbox.svg" height="20"/></a>
+	</p>
 
-# NativeScript Mapbox plugin
+<p align="center">
+  <b>Interactive, thoroughly customizable maps powered by vector tiles and OpenGL.</b></br>
+  <sub><sub>
+</p>
 
-[npm-image]:http://img.shields.io/npm/v/@nativescript-community/ui-mapbox.svg
-[npm-url]:https://npmjs.org/package/@nativescript-community/ui-mapbox
-[downloads-image]:http://img.shields.io/npm/dm/@nativescript-community/ui-mapbox.svg
-
-Awesome native OpenGL-powered maps - by Mapbox
-
-<img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/ios-demoapp-slice.png" width="375px" height="196px" />
-
-
-# WARNING
-
-As we switched to a community managed plugin we upgraded the version of the Mapbox SDKs. Though starting from iOS SDK 6.0 and android SDK 9.0 they need special handling for downloading the SDK:
-[iOS](https://docs.mapbox.com/ios/maps/overview/#configure-credentials)
-
-[Android](https://docs.mapbox.com/android/maps/overview/#configure-credentials)
-
-On android the plugin default to 8.x. You can change it by creating a `before-plugins.gradle` in `App_Resources/Android` with (showing current versions):
-```
-ext {
-    okHttpVersion = "3.12.10"
-    def mapboxVersion =  "8.6.6"
-    def mapboxTelemetryVersion =  "6.1.0"
-    def mapboxPluginsVersion =  "v9"
-    def mapboxAnnotationPluginVersion =  "0.9.0"
-    def mapboxGesturesVersion =  "0.7.0"
-}
-
-```
-
-On iOS we dont force anything so it will get the latest one. If you want to change it create a `Podfile` in `App_Resources/iOS` with (see demo app):
-```
-pod 'Mapbox-iOS-SDK', '~> 5.1.1'
-```
+<br />
 
 
-## Before you begin - Prerequisites
+
+[](#table-of-contents)
+
+## Table of Contents
+
+* [Prerequisites](#prerequisites)
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Issues](#issues)
+* [Usage](#usage)
+	* [XML](#xml)
+	* [Angular](#angular)
+* [API](#api)
+* [Markers](#markers)
+* [Viewport](#viewport)
+* [Declaring Programmatically](#declaring-programmatically)
+* [Methods](#methods)
+	* [show](#show)
+	* [hide](#hide)
+	* [unhide](#unhide)
+	* [destroy 💥](#destroy-)
+	* [setMapStyle](#setmapstyle)
+	* [addMarkers](#addmarkers)
+	* [Updating markers](#updating-markers)
+	* [removeMarkers](#removemarkers)
+	* [setViewport](#setviewport)
+	* [getViewport](#getviewport)
+	* [setCenter](#setcenter)
+	* [getCenter](#getcenter)
+	* [setZoomLevel](#setzoomlevel)
+	* [getZoomLevel](#getzoomlevel)
+	* [animateCamera](#animatecamera)
+	* [setTilt (Android only)](#settilt-android-only)
+	* [getTilt (Android only)](#gettilt-android-only)
+	* [getUserLocation](#getuserlocation)
+	* [trackUser](#trackuser)
+	* [addSource](#addsource)
+	* [removeSource](#removesource)
+	* [addLayer](#addlayer)
+	* [removeLayer](#removelayer)
+	* [queryRenderedFeatures](#queryrenderedfeatures)
+	* [querySourceFeatures](#querysourcefeatures)
+	* [addLinePoint](#addlinepoint)
+	* [addPolygon (**deprecated**, use addLayer() instead)](#addpolygon-deprecated-use-addlayer-instead)
+	* [removePolygons](#removepolygons)
+	* [addPolyline](#addpolyline)
+	* [removePolylines](#removepolylines)
+	* [setOnMapClickListener](#setonmapclicklistener)
+	* [setOnMapLongClickListener](#setonmaplongclicklistener)
+	* [setOnScrollListener](#setonscrolllistener)
+* [Offline maps](#offline-maps)
+	* [downloadOfflineRegion](#downloadofflineregion)
+		* [Advanced example: download the current viewport](#advanced-example-download-the-current-viewport)
+	* [listOfflineRegions](#listofflineregions)
+	* [deleteOfflineRegion](#deleteofflineregion)
+* [Permissions](#permissions)
+	* [hasFineLocationPermission / requestFineLocationPermission](#hasfinelocationpermission--requestfinelocationpermission)
+* [Using marker images from the internet](#using-marker-images-from-the-internet)
+* [Demos and Development](#demos-and-development)
+	* [Setup](#setup)
+	* [Build](#build)
+	* [Demos](#demos)
+* [Questions](#questions)
+
+
+[](#prerequisites)
+
+## Prerequisites
+
 You either need your own tile server such as the one provided by [openmaptiles.org](https://openmaptiles.org) or a Mapbox API access token (they have a 🆓 Starter plan!), so [sign up with Mapbox](https://www.mapbox.com/signup/).
 Once you've registered go to your Account > Apps > New token. The 'Default Secret Token' is what you'll need.
 
-You will also need to set up your development environment. Please refer to the [NativeScript documentation](https://docs.nativescript.org/start/quick-setup).
 
-# Installation
+[](#installation)
 
-```
-$ ns plugin install @nativescript-community/ui-mapbox
-```
+## Installation
+Run the following command from the root of your project:
 
-# DEMOS
-
-Two demo applications are available in the repository. 
-
-To run them, you'll need to clone the github repository and build the plugin. See below.
-
-You will also need an access token. Your access_token can then be set in the top level mapbox_config.ts file.
-
-The style can be set to one of the Mapbox style names or it can be the URL of your own hosted tile server.
-
-> NOTE: As of this writing, the NativeScript demo only works with a mapbox token. The demo-angular will work with either a self hosted tile server or a mapbox token.
-
-## Demo prerequisites
-```
-npm i
-npm run setup
-```
+`ns plugin add @nativescript-community/ui-mapbox`
 
 
-## To run the Angular demo
+[](#configuration)
 
-```
-npm run build
-cd ./demo-angular
-ns run <platform>
-```
+## Configuration
 
-## To run the plain Nativescript demo
-```
-npm run build
-cd ./demo
-ns run <platform>
-```
+Add any other additional configuration instructions here.
 
-## Roadmap
-[https://github.com/orgs/nativescript-community/projects/4](https://github.com/orgs/nativescript-community/projects/4)
+
+[](#issues)
 
 ## Issues
 
@@ -101,23 +135,17 @@ On Android the plugin adds this to the `<application>` node of `app/App_Resource
 
 If you get an error related to `TelemetryService` then please check it's there.
 
+
+[](#usage)
+
 ## Usage
-
-### Demo app (XML + TypeScript)
-If you want a quickstart, see the demo in this repository.
-It shows you how to draw a map in XML and JS with almost all possible options.
-
-### Demo app (Angular)
-There is also the beginnings of an Angular demo in demo-angular in this repository.
-
-## Declaring a map in the view
 
 ### XML
 You can instantiate a map from JS or TS. As the map is yet another view component it will play nice with any NativeScript layout you throw it in. You can also easily add multiple maps to the same page or to different pages in any layout you like.
 
 A simple layout could look like this:
 
-<img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/screenshots/ios-xml-declared.png" width="373px" height="361px" />
+<img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/images/ios-xml-declared.png" width="373px" height="361px" />
 
 Could be rendered by a definition like this:
 
@@ -144,7 +172,7 @@ Could be rendered by a definition like this:
 Component:
 
 ```typescript
-import { registerElement } from "nativescript-angular/element-registry";
+import { registerElement } from '@nativescript/angular';
 registerElement("Mapbox", () => require("@nativescript-community/ui-mapbox").MapboxView);
 ```
 
@@ -169,7 +197,10 @@ View:
   </ContentView>
 ```
 
-### Available XML/Angular options
+
+[](#api)
+
+## API
 All currently supported options for your XML based map are (__don't__ use other properties - if you need styling wrap the map in a `ContentView` and apply things like `width` to that container!):
 
 |option|default|description
@@ -189,11 +220,15 @@ All currently supported options for your XML based map are (__don't__ use other 
 |`disableScroll`|false|Don't allow the user to move the center of the map (one finger drag)
 |`disableTilt`|false|Don't allow the user to tilt the map (two finger drag up or down)
 |`mapReady`|-|The name of a callback function you can declare to interact with the map after it has been drawn
-|`moveBeginEvent`|-|The name of a function to be called when the map is moved.
+|`moveBeginEvent`|-|The name of a function to be called when the map has begun to move.
+|`moveEndEvent`|-|The name of a function to be called when the map has completed moving.
 |`locationPermissionGranted`|-|The name of a callback function you can declare to get notified when the user granted location permissions
 |`locationPermissionDenied`|-|The name of a callback function you can declare to get notified when the user denied location permissions (will never fire on iOS because there's nothing to deny)
 
-### Want to add markers?
+
+[](#markers)
+
+## Markers
 This is where that last option in the table above comes in - `mapReady`.
 It allows you to interact with the map after it has been drawn to the page.
 
@@ -223,7 +258,10 @@ function onMapReady(args) {
 exports.onMapReady = onMapReady;
 ```
 
-### .. or want to set the viewport bounds?
+
+[](#viewport)
+
+## Viewport
 
 ```js
 var mapbox = require("@nativescript-community/ui-mapbox");
@@ -250,13 +288,21 @@ The methods you can invoke like this from an XML-declared map are:
 
 Check out the usage details on the functions below.
 
-## Declaring a map programmatically
+
+[](#declaring-programmatically)
+
+## Declaring Programmatically
 
 Add a container to your view XML where you want to programmatically add the map. Give it an id. 
 
 ```
 <ContentView id="mapContainer" />
 ```
+
+
+[](#methods)
+
+## Methods
 
 ### show
 ```ts
@@ -404,7 +450,7 @@ You can update the map style after you've loaded it.
   ])
 ```
 
-#### Updating markers
+### Updating markers
 Plugin version 4.2.0 added the option to update makers. Just call `update` on the `MapboxMarker` reference you created above.
 You can update the following properties (all but the icon really):
 
@@ -853,6 +899,9 @@ Add a listener to retrieve lat and lng of where the user scrolls to on the map.
   });
 ```
 
+
+[](#offline-maps)
+
 ## Offline maps
 For situations where you want the user to pre-load certain regions you can use these methods to create and remove offline regions.
 
@@ -947,6 +996,9 @@ You can remove regions you've previously downloaded. Any region(s) matching the 
 ```
 
 
+
+[](#permissions)
+
 ## Permissions
 
 ### hasFineLocationPermission / requestFineLocationPermission
@@ -980,6 +1032,9 @@ Note that `hasFineLocationPermission` will return true when:
 Note that the `show` function will also check for permission if you passed in `showUserLocation : true`.
 If you didn't request permission before showing the map, and permission was needed, the plugin will ask the user permission while rendering the map.
 
+
+[](#using-marker-images-from-the-internet)
+
 ## Using marker images from the internet
 If you specify `icon: 'http(s)://some-remote-image'`, then on iOS you'll need to whitelist
 the domain. Google for iOS ATS for detailed options, but for a quick test you can add this to
@@ -992,3 +1047,48 @@ the domain. Google for iOS ATS for detailed options, but for a quick test you ca
         <true/>
 	</dict>
 ```
+
+
+[](#demos-and-development)
+
+## Demos and Development
+
+
+### Setup
+
+To run the demos, you must clone this repo **recursively**.
+
+```
+git clone https://github.com/@nativescript-community/ui-mapbox.git --recursive
+```
+
+**Install Dependencies:**
+```bash
+npm i # or 'yarn install' or 'pnpm install'
+```
+
+**Interactive Menu:**
+
+To start the interactive menu, run `npm start` (or `yarn start` or `pnpm start`). This will list all of the commonly used scripts.
+
+### Build
+
+```bash
+npm run build
+
+npm run build.angular # or for Angular
+```
+
+### Demos
+
+```bash
+npm run demo.[ng|react|svelte|vue].[ios|android]
+
+npm run demo.svelte.ios # Example
+```
+
+[](#questions)
+
+## Questions
+
+If you have any questions/issues/comments please feel free to create an issue or start a conversation in the [NativeScript Community Discord](https://nativescript.org/discord).
