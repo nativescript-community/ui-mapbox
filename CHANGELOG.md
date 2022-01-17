@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.12](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.11...v6.2.12) (2022-01-17)
+
+
+### Bug Fixes
+
+* tap handler on ios ([fabe6ab](https://github.com/nativescript-community/ui-mapbox/commit/fabe6abedbb8d03fa2e220272f604b6528ebd196))
+
+
+
+
+
 ## [6.2.11](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.10...v6.2.11) (2022-01-09)
 
 
