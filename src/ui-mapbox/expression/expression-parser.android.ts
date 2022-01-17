@@ -1,4 +1,4 @@
-export class FilterParser {
+export class ExpressionParser {
     static parseJson(json: any[]): com.mapbox.mapboxsdk.style.expressions.Expression {
         const expression = com.mapbox.mapboxsdk.style.expressions.Expression.Converter.convert(JSON.stringify(json));
         return expression;

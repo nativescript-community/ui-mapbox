@@ -1,7 +1,7 @@
 import { Color, ContentView, ImageSource, Property, Trace, booleanConverter } from '@nativescript/core';
 
 export * from './geo.utils';
-export * from './filter/filter-parser';
+export * from './expression/expression-parser';
 export * from './layers/layer-factory';
 export * from './layers/parser/property-parser';
 
@@ -345,6 +345,7 @@ export interface GeoJSONSource extends Source {
     cluster?: {
         radius;
         maxZoom;
+        properties?: { [property: string]: [any, any] } ;
     };
 }
 

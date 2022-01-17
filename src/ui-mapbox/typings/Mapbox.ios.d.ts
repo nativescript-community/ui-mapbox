@@ -2661,6 +2661,8 @@ declare var MGLShapeSourceOptionClusterRadius: string;
 
 declare var MGLShapeSourceOptionClustered: string;
 
+declare var MGLShapeSourceOptionClusterProperties: string;
+
 declare var MGLShapeSourceOptionLineDistanceMetrics: string;
 
 declare var MGLShapeSourceOptionMaximumZoomLevel: string;
