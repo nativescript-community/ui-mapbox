@@ -2780,13 +2780,16 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             sourceOptions[MGLShapeSourceOptionMaximumZoomLevelForClustering] = options.cluster.maxZoom || 13;
 
                             if (options.cluster.properties) {
+                                const clusterProperties = {};
                                 for (const property of Object.keys(options.cluster.properties)) {
-                                    const propertyValues = options.cluster.properties[property];
-                                    const expressions = Utils.ios.collections.jsArrayToNSArray([ExpressionParser.parseJson(propertyValues[0]), ExpressionParser.parseJson(propertyValues[1])]);
-                                    const clusterProperties = {};
+                                    let [operator, operand] = options.cluster.properties[property];
+                                    if (!Array.isArray(operator)) {
+                                        operator = [operator];
+                                    }
+                                    const expressions = Utils.ios.collections.jsArrayToNSArray([ExpressionParser.parseJson(operator), ExpressionParser.parseJson(operand)]);
                                     clusterProperties[property] = expressions;
-                                    sourceOptions[MGLShapeSourceOptionClusterProperties] = clusterProperties;
                                 }
+                                sourceOptions[MGLShapeSourceOptionClusterProperties] = clusterProperties;
                             }
                         }
 

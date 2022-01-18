@@ -2514,7 +2514,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             if (options.cluster.properties) {
                                 for (const property of Object.keys(options.cluster.properties)) {
                                     const propertyValues = options.cluster.properties[property];
-                                    geojsonOptions.withClusterProperty(property, ExpressionParser.parseJson(propertyValues[0]), ExpressionParser.parseJson(propertyValues[1]));
+                                    let operator = propertyValues[0];
+                                    if (!Array.isArray(operator)) {
+                                        operator = [operator];
+                                    }
+                                    geojsonOptions.withClusterProperty(property, ExpressionParser.parseJson(operator), ExpressionParser.parseJson(propertyValues[1]));
                                 }
                             }
                         }
