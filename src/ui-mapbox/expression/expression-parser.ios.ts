@@ -1,4 +1,4 @@
-export class FilterParser {
+export class ExpressionParser {
     static parseJson(json: any[]): NSPredicate {
         const filterStr = NSString.stringWithString(JSON.stringify(json));
         const filterData = filterStr.dataUsingEncoding(NSUTF8StringEncoding);

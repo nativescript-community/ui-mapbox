@@ -1,5 +1,5 @@
 import { LayerCommon } from '../common';
-import { FilterParser } from '../filter/filter-parser';
+import { ExpressionParser } from '../expression/expression-parser';
 import { PropertyParser } from './parser/property-parser';
 
 export class Layer implements LayerCommon {
@@ -28,11 +28,11 @@ export class Layer implements LayerCommon {
     }
 
     public setFilter(filter: any[]) {
-        this.instance.setFilter(FilterParser.parseJson(filter));
+        this.instance.setFilter(ExpressionParser.parseJson(filter));
     }
 
     public getFilter(): any[] {
-        return FilterParser.toJson(this.instance.getFilter());
+        return ExpressionParser.toJson(this.instance.getFilter());
     }
 
     public setProperty(name: string, value: any) {

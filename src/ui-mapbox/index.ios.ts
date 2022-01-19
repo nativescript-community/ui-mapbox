@@ -36,7 +36,7 @@ import {
     telemetryProperty
 } from './common';
 import { Layer, LayerFactory } from './layers/layer-factory';
-import { FilterParser } from './filter/filter-parser';
+import { ExpressionParser } from './expression/expression-parser';
 
 /**
  * "Delegate" for catching mapview events
@@ -1939,7 +1939,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const { x, y } = theMap.convertCoordinateToPointToView({ latitude: options.point.lat, longitude: options.point.lng }, theMap);
                 const queryLayerIds = options.layers ? NSSet.setWithArray<string>(Utils.ios.collections.jsArrayToNSArray(options.layers)) : null;
-                const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                const queryFilter = options.filter ? ExpressionParser.parseJson(options.filter) : null;
                 const features = theMap.visibleFeaturesAtPointInStyleLayersWithIdentifiersPredicate({ x, y }, queryLayerIds, queryFilter);
 
                 const result = [];
@@ -1973,7 +1973,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 let features;
-                const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                const queryFilter = options.filter ? ExpressionParser.parseJson(options.filter) : null;
                 if (source instanceof MGLShapeSource) {
                     features = source.featuresMatchingPredicate(queryFilter);
                 } else if (source instanceof MGLVectorTileSource) {
@@ -2778,6 +2778,19 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             sourceOptions[MGLShapeSourceOptionClustered] = true;
                             sourceOptions[MGLShapeSourceOptionClusterRadius] = options.cluster.radius || 40;
                             sourceOptions[MGLShapeSourceOptionMaximumZoomLevelForClustering] = options.cluster.maxZoom || 13;
+
+                            if (options.cluster.properties) {
+                                const clusterProperties = {};
+                                for (const property of Object.keys(options.cluster.properties)) {
+                                    let [operator, operand] = options.cluster.properties[property];
+                                    if (!Array.isArray(operator)) {
+                                        operator = [operator];
+                                    }
+                                    const expressions = Utils.ios.collections.jsArrayToNSArray([ExpressionParser.parseJson(operator), ExpressionParser.parseJson(operand)]);
+                                    clusterProperties[property] = expressions;
+                                }
+                                sourceOptions[MGLShapeSourceOptionClusterProperties] = clusterProperties;
+                            }
                         }
 
                         source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, geoJsonShape, sourceOptions);
@@ -2969,7 +2982,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         try {
-            const lineFeatures = lineSource.featuresMatchingPredicate(FilterParser.parseJson(['==', '$type', 'LineString']));
+            const lineFeatures = lineSource.featuresMatchingPredicate(ExpressionParser.parseJson(['==', '$type', 'LineString']));
 
             if (lineFeatures.count === 0) {
                 throw new Error('no line string feature found');

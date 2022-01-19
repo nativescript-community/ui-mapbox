@@ -6,7 +6,7 @@
 
 import { request } from '@nativescript-community/perms';
 import { AndroidApplication, Application, Color, File, Http, Image, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
-import { FilterParser } from './filter/filter-parser';
+import { ExpressionParser } from './expression/expression-parser';
 import { Layer, LayerFactory } from './layers/layer-factory';
 import {
     AddExtrusionOptions,
@@ -1610,7 +1610,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
 
                 if (this._mapboxMapInstance.queryRenderedFeatures) {
-                    const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                    const queryFilter = options.filter ? ExpressionParser.parseJson(options.filter) : null;
                     const features = this._mapboxMapInstance.queryRenderedFeatures(screenLocation, queryFilter, options.layers);
                     const result = [];
                     for (let i = 0; i < features.size(); i++) {
@@ -1643,7 +1643,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 let features;
-                const queryFilter = options.filter ? FilterParser.parseJson(options.filter) : null;
+                const queryFilter = options.filter ? ExpressionParser.parseJson(options.filter) : null;
                 if (source instanceof com.mapbox.mapboxsdk.style.sources.GeoJsonSource) {
                     features = source.querySourceFeatures(queryFilter);
                 } else if (source instanceof com.mapbox.mapboxsdk.style.sources.VectorSource) {
@@ -2510,6 +2510,17 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 .withCluster(true)
                                 .withClusterMaxZoom(options.cluster.maxZoom || 13)
                                 .withClusterRadius(options.cluster.radius || 40);
+
+                            if (options.cluster.properties) {
+                                for (const property of Object.keys(options.cluster.properties)) {
+                                    const propertyValues = options.cluster.properties[property];
+                                    let operator = propertyValues[0];
+                                    if (!Array.isArray(operator)) {
+                                        operator = [operator];
+                                    }
+                                    geojsonOptions.withClusterProperty(property, ExpressionParser.parseJson(operator), ExpressionParser.parseJson(propertyValues[1]));
+                                }
+                            }
                         }
 
                         const geoJsonSource = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id, geojsonOptions);
@@ -2679,7 +2690,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 throw new Error(`no source found with id: ${sId}`);
             }
 
-            const lineFeatures = lineSource.querySourceFeatures(FilterParser.parseJson(['==', '$type', 'LineString']));
+            const lineFeatures = lineSource.querySourceFeatures(ExpressionParser.parseJson(['==', '$type', 'LineString']));
 
             if (lineFeatures.size() === 0) {
                 throw new Error('no line string feature found');
