@@ -97,4 +97,5 @@ export declare class Mapbox extends MapboxCommon implements MapboxApi {
         x: number;
         y: number;
     };
+    projectBack(screenCoordinate: { x: number, y: number }): LatLng;
 }

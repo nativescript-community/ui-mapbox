@@ -703,6 +703,8 @@ export interface MapboxApi {
 
     removeImage(imageId: string, nativeMap?: any): Promise<void>;
     project(data: LatLng): { x: number; y: number };
+
+    projectBack(point: { x: number, y: number }): LatLng;
 }
 
 // ------------------------------------------------------------
@@ -1060,6 +1062,9 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     }
     project(data: LatLng) {
         return this.mapbox && this.mapbox.project(data);
+    }
+    projectBack(screenCoordinate: { x: number, y: number }): LatLng {
+        return this.mapbox && this.mapbox.projectBack(screenCoordinate);
     }
 }
 

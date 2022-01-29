@@ -3391,4 +3391,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
         return { x: Utils.layout.toDeviceIndependentPixels(screenLocation.x), y: Utils.layout.toDeviceIndependentPixels(screenLocation.y) };
     }
+    projectBack(screenCoordinate: { x: number, y: number }): LatLng {
+        const pointf = new android.graphics.PointF(screenCoordinate.x, screenCoordinate.y);
+        const coordinate = this._mapboxMapInstance.getProjection().fromScreenLocation(pointf);
+        return {
+            lat: coordinate.getLatitude(),
+            lng: coordinate.getLongitude()
+        }
+    }
 }

@@ -3159,6 +3159,19 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         const { x, y } = theMap.convertCoordinateToPointToView({ latitude: data.lat, longitude: data.lng }, theMap);
         return { x, y };
     }
+
+    projectBack(screenCoordinate: { x: number, y: number }): LatLng {
+        const theMap: MGLMapView = this._mapboxViewInstance;
+        const cgPoint = {
+            x: screenCoordinate.x,
+            y: screenCoordinate.y
+        }
+        const coordinate = theMap.convertPointToCoordinateFromView(cgPoint, theMap);
+        return {
+            lat: coordinate.latitude,
+            lng: coordinate.longitude
+        }
+    }
 }
 
 const _addObserver = (eventName, callback) => NSNotificationCenter.defaultCenter.addObserverForNameObjectQueueUsingBlock(eventName, null, NSOperationQueue.mainQueue, callback);
