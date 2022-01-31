@@ -342,6 +342,7 @@ export interface GeoJSONSource extends Source {
     data?: any;
     minzoom?: number;
     maxzoom?: number;
+    lineMetrics?: boolean;
     cluster?: {
         radius;
         maxZoom;
