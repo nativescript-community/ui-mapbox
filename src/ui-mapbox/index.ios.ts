@@ -2759,12 +2759,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             reject("Remove the layer with this id first with 'removeLayer': " + id);
                             return;
                         }
-                        let geoJsonShape: MGLShape;
-                        if (options.data) {
-                            const content: NSString = NSString.stringWithString(JSON.stringify(options.data));
-                            const nsData: NSData = content.dataUsingEncoding(NSUTF8StringEncoding);
-                            geoJsonShape = MGLShape.shapeWithDataEncodingError(nsData, NSUTF8StringEncoding);
-                        }
 
                         const sourceOptions: any = {};
                         if (options.minzoom !== undefined) {
@@ -2793,8 +2787,18 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             }
                         }
 
-                        source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, geoJsonShape, sourceOptions);
-
+                        if (typeof options.data === 'string') {
+                            const url = NSURL.URLWithString(options.data);
+                            source = MGLShapeSource.alloc().initWithIdentifierURLOptions(id, url, sourceOptions);
+                        } else {
+                            let geoJsonShape: MGLShape;
+                            if (options.data) {
+                                const content: NSString = NSString.stringWithString(JSON.stringify(options.data));
+                                const nsData: NSData = content.dataUsingEncoding(NSUTF8StringEncoding);
+                                geoJsonShape = MGLShape.shapeWithDataEncodingError(nsData, NSUTF8StringEncoding);
+                            }
+                            source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(id, geoJsonShape, sourceOptions);
+                        }
                         break;
                     case 'raster': {
                         const sourceOptions: any = {
