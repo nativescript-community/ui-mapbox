@@ -1,4 +1,4 @@
-import { LayerCommon } from '../common';
+import { LayerCommon, LayerType } from "../common"
 import { ExpressionParser } from '../expression/expression-parser';
 import { PropertyParser } from './parser/property-parser';
 
@@ -42,6 +42,40 @@ export class Layer implements LayerCommon {
 
     public getProperty(name: string): any {
         return PropertyParser.propertyValueFromLayer(this.instance, name);
+    }
+
+    public type(): LayerType {
+        if (this.instance instanceof com.mapbox.mapboxsdk.style.layers.FillLayer) {
+            return "fill"
+        }
+        if (this.instance instanceof com.mapbox.mapboxsdk.style.layers.LineLayer) {
+            return "line"
+        }
+        if (this.instance instanceof com.mapbox.mapboxsdk.style.layers.SymbolLayer) {
+            return "symbol"
+        }
+        if (this.instance instanceof com.mapbox.mapboxsdk.style.layers.CircleLayer) {
+            return "circle"
+        }
+        if (this.instance instanceof com.mapbox.mapboxsdk.style.layers.HeatmapLayer) {
+            return "heatmap"
+        }
+        if (this.instance instanceof com.mapbox.mapboxsdk.style.layers.FillExtrusionLayer) {
+            return "fill-extrusion"
+        }
+        if (this.instance instanceof com.mapbox.mapboxsdk.style.layers.RasterLayer) {
+            return "raster"
+        }
+        if (this.instance instanceof com.mapbox.mapboxsdk.style.layers.HillshadeLayer) {
+            return "hillshade"
+        }
+        if (this.instance instanceof com.mapbox.mapboxsdk.style.layers.BackgroundLayer) {
+            return "background"
+        }
+
+        // there is no sky layer in the Android Mapbox SDK
+
+        return null;
     }
 }
 
