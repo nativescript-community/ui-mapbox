@@ -53,7 +53,7 @@ export class LayerFactory {
 
 export class Layer implements LayerCommon {
     public id: string;
-    private instance: MGLStyleLayer;
+    private instance;
 
     constructor(instance: MGLStyleLayer) {
         this.instance = instance;
