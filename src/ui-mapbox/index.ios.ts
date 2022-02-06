@@ -2773,7 +2773,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         if (options.maxzoom !== undefined) {
                             sourceOptions[MGLShapeSourceOptionMaximumZoomLevel] = options.maxzoom;
                         }
-
+                        if (options.lineMetrics !== undefined) {
+                            sourceOptions[MGLShapeSourceOptionLineDistanceMetrics] = options.lineMetrics;
+                        }
                         if (options.cluster) {
                             sourceOptions[MGLShapeSourceOptionClustered] = true;
                             sourceOptions[MGLShapeSourceOptionClusterRadius] = options.cluster.radius || 40;

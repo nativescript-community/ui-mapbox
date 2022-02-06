@@ -2505,6 +2505,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         if (options.maxzoom) {
                             geojsonOptions.withMaxZoom(options.maxzoom);
                         }
+
+                        if (options.lineMetrics !== undefined) {
+                            geojsonOptions.withLineMetrics(options.lineMetrics);
+                        }
+
                         if (options.cluster) {
                             geojsonOptions
                                 .withCluster(true)
