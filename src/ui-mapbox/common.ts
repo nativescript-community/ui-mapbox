@@ -872,6 +872,13 @@ export interface MapboxViewApi {
     onLowMemory(): Promise<any>;
 
     onDestroy(): Promise<any>;
+
+    project(data: LatLng): {
+        x: number;
+        y: number;
+    };
+
+    projectBack(screenCoordinate: { x: number, y: number }): LatLng;
 }
 
 // ----------------------------------------------------------------------------------------
