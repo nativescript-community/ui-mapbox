@@ -263,11 +263,19 @@ export interface AddGeoJsonClusteredOptions {
     clusters?: MapboxCluster[];
 }
 
+// ------------------------------------------------------------
+
+export type LayerType = "fill" | "line" | "symbol" | "circle" | "heatmap" | "fill-extrusion" | "raster" | "hillshade" | "background" | "sky"
+
+export type SupportedLayerType = LayerType & ("line" | "circle" | "fill" | "symbol" | "raster")
+
+// ------------------------------------------------------------
+
 export interface AddLayerOptions {
     id: string;
     source: string;
     sourceLayer: string;
-    type: string;
+    type: SupportedLayerType;
 
     /**
      * 'circle' paint properties
@@ -554,6 +562,7 @@ export interface LayerCommon {
     getNativeInstance(): any;
     setFilter(filter: any[]): void;
     getFilter(): any[];
+    type(): LayerType;
 }
 
 // ------------------------------------------------------------

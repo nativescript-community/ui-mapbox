@@ -1,4 +1,4 @@
-import { LayerCommon } from '../common';
+import { LayerCommon, LayerType } from "../common"
 import { ExpressionParser } from '../expression/expression-parser';
 import { PropertyParser } from './parser/property-parser';
 
@@ -55,9 +55,43 @@ export class Layer implements LayerCommon {
     public id: string;
     private instance;
 
-    constructor(instance) {
+    constructor(instance: MGLStyleLayer) {
         this.instance = instance;
         this.id = instance.identifier;
+    }
+
+    type(): LayerType {
+        if (this.instance instanceof MGLFillStyleLayer) {
+            return "fill"
+        }
+        if (this.instance instanceof MGLLineStyleLayer) {
+            return "line"
+        }
+        if (this.instance instanceof MGLSymbolStyleLayer) {
+            return "symbol"
+        }
+        if (this.instance instanceof MGLCircleStyleLayer) {
+            return "circle"
+        }
+        if (this.instance instanceof MGLHeatmapStyleLayer) {
+            return "heatmap"
+        }
+        if (this.instance instanceof MGLFillExtrusionStyleLayer) {
+            return "fill-extrusion"
+        }
+        if (this.instance instanceof MGLRasterStyleLayer) {
+            return "raster"
+        }
+        if (this.instance instanceof MGLHillshadeStyleLayer) {
+            return "hillshade"
+        }
+        if (this.instance instanceof MGLBackgroundStyleLayer) {
+            return "background"
+        }
+
+        // there is no sky layer in the Mapbox iOS SDK
+
+        return null;
     }
 
     visibility(): boolean {
