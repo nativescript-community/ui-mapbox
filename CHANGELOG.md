@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.14](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.13...v6.2.14) (2022-02-09)
+
+
+### Bug Fixes
+
+* **`updateSource`:** `updateSource` method was missing in the API ([499e99a](https://github.com/nativescript-community/ui-mapbox/commit/499e99a8c59e06b0387f84321bc89940d224abb0))
+* added project methods to API ([99d0642](https://github.com/nativescript-community/ui-mapbox/commit/99d06422767834046018ba2aace6257a413b720e))
+* removed ios type from native layer instance to remove build error ([efb0f12](https://github.com/nativescript-community/ui-mapbox/commit/efb0f12eed40114581cfa94eae6daf30f0b1d53e))
+
+
+### Features
+
+* **layer type:** added property `type` to layer class that returns the GeoJSON layer type ([7c87bb2](https://github.com/nativescript-community/ui-mapbox/commit/7c87bb2086eeff65139818120cc1c20c28ad12c3))
+* **lineMetrics:** added source property `lineMetrics` ([477082d](https://github.com/nativescript-community/ui-mapbox/commit/477082db32077fc04005e6ee1ad5595d5511b0e9))
+* **projectBack:** added projectBack method as inverse method to project ([7bbb6e0](https://github.com/nativescript-community/ui-mapbox/commit/7bbb6e0a1c5895f4825ed60ac55aca41e0a35835))
+
+
+
+
+
 ## [6.2.13](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.12...v6.2.13) (2022-01-19)
 
 **Note:** Version bump only for package @nativescript-community/ui-mapbox
