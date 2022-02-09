@@ -630,6 +630,7 @@ export interface MapboxApi {
     trackUser(options: TrackUserOptions, nativeMap?: any): Promise<void>;
 
     addSource(id: string, options: AddSourceOptions, nativeMapView?: any): Promise<any>;
+
     updateSource(id: string, options: UpdateSourceOptions, nativeMapView?: any): Promise<any>;
 
     removeSource(id: string, nativeMap?: any): Promise<any>;
@@ -829,6 +830,8 @@ export interface MapboxViewApi {
     forceUserLocationUpdate(location): void;
 
     addSource(id: string, options: AddSourceOptions): Promise<any>;
+
+    updateSource(id: string, options: UpdateSourceOptions): Promise<any>;
 
     removeSource(id: string, nativeMap?: any): Promise<any>;
 
