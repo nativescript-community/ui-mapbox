@@ -2410,7 +2410,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      */
     updateSource(id: string, options: UpdateSourceOptions, nativeMap?) {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             try {
                 const theMap: com.mapbox.mapboxsdk.maps.MapboxMap = nativeMap || this._mapboxMapInstance;
                 if (!theMap) {
@@ -2427,6 +2427,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     case 'geojson':
                         const geoJsonString = JSON.stringify(options.data);
                         (source as com.mapbox.mapboxsdk.style.sources.GeoJsonSource).setGeoJson(geoJsonString);
+                        resolve();
                         break;
                     default:
                         reject('Invalid source type: ' + options['type']);
