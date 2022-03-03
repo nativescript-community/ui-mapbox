@@ -638,6 +638,8 @@ export interface MapboxApi {
 
     trackUser(options: TrackUserOptions, nativeMap?: any): Promise<void>;
 
+    getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode;
+
     addSource(id: string, options: AddSourceOptions, nativeMapView?: any): Promise<any>;
 
     updateSource(id: string, options: UpdateSourceOptions, nativeMapView?: any): Promise<any>;
@@ -832,6 +834,8 @@ export interface MapboxViewApi {
 
     trackUser(options: TrackUserOptions): Promise<any>;
 
+    getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode;
+
     showUserLocationMarker(options): void;
 
     hideUserLocationMarker(options): void;
@@ -1004,6 +1008,9 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     }
     trackUser(options: TrackUserOptions): Promise<any> {
         return this.mapbox.trackUser(options, this.getNativeMapView());
+    }
+    getUserLocationCameraMode(): UserLocationCameraMode {
+        return this.mapbox.getUserLocationCameraMode(this.getNativeMapView());
     }
     addSource(id: string, options: AddSourceOptions): Promise<any> {
         return this.mapbox.addSource(id, options, this.getNativeMapView());

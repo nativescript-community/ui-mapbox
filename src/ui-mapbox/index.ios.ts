@@ -1821,6 +1821,19 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
     }
 
+    _convertCameraMode(mode: MGLUserTrackingMode): UserLocationCameraMode {
+        switch (mode) {
+            case MGLUserTrackingMode.None:
+                return "NONE";
+            case MGLUserTrackingMode.Follow:
+                return "TRACKING";
+            case MGLUserTrackingMode.FollowWithHeading:
+                return "TRACKING_COMPASS";
+            case MGLUserTrackingMode.FollowWithCourse:
+                return "TRACKING_GPS_NORTH";
+        }
+    }
+
     /**
      * show a user location marker
      *
@@ -3174,6 +3187,16 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             lat: coordinate.latitude,
             lng: coordinate.longitude
         }
+    }
+
+    getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode {
+        let theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+
+        if (!theMap) {
+            return "NONE";
+        }
+
+        return this._convertCameraMode(theMap.userTrackingMode);
     }
 }
 

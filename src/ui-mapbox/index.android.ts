@@ -2971,6 +2971,36 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return renderMode;
     }
 
+    _convertCameraMode( mode: any ): UserLocationCameraMode {
+
+        const modeRef = com.mapbox.mapboxsdk.location.modes.CameraMode;
+
+        switch (mode) {
+            case modeRef.NONE:
+                return "NONE";
+
+            case modeRef.NONE_COMPASS:
+                return "NONE_COMPASS";
+
+            case modeRef.NONE_GPS:
+                return "NONE_GPS";
+
+            case modeRef.TRACKING:
+                return "TRACKING";
+
+            case modeRef.TRACKING_COMPASS:
+                return "TRACKING_COMPASS";
+
+            case modeRef.TRACKING_GPS:
+                return "TRACKING_GPS";
+
+            case modeRef.TRACKING_GPS_NORTH:
+                return "TRACKING_GPS_NORTH";
+        }
+
+        return "NONE";
+    }
+
     _fineLocationPermissionGranted() {
         let hasPermission = android.os.Build.VERSION.SDK_INT < 23; // Android M. (6.0)
 
@@ -3404,5 +3434,17 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             lat: coordinate.getLatitude(),
             lng: coordinate.getLongitude()
         }
+    }
+
+    getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode {
+        if (!this._mapboxMapInstance) {
+            return "NONE";
+        }
+
+        if (!this._locationComponent) {
+            return "NONE";
+        }
+
+        return this._convertCameraMode(this._locationComponent.getCameraMode());
     }
 }
