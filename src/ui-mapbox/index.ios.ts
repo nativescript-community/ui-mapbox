@@ -581,21 +581,6 @@ const _getMapStyle = (input: any): NSURL => {
     }
 };
 
-function _getTrackingMode(input: UserLocationCameraMode): MGLUserTrackingMode {
-    /*
-  if (input === "FOLLOW") {
-    return MGLUserTrackingMode.Follow;
-  } else if (input === "FOLLOW_WITH_HEADING") {
-    return MGLUserTrackingMode.FollowWithHeading;
-  } else if (input === "FOLLOW_WITH_COURSE") {
-    return MGLUserTrackingMode.FollowWithCourse;
-  } else {
-    return MGLUserTrackingMode.None;
-  }
-*/
-    return MGLUserTrackingMode.None;
-}
-
 function _getLocation(loc: MGLUserLocation) {
     if (loc === null) {
         return null;
@@ -1775,35 +1760,36 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @todo come up with a reasonable set of cross platform defaults.
      */
     _stringToCameraMode(mode: UserLocationCameraMode): any {
-        switch (mode) {
-            case 'NONE':
+        switch(mode) {
+            case "NONE":
                 return MGLUserTrackingMode.None;
 
-            case 'NONE_COMPASS':
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, '_stringToCameraMode(): NONE_COMPASS unsupported on iOS');
-                }
+            case "NONE_COMPASS":
+                console.log("MapboxView::_stringToCameraMode(): NONE_COMPASS unsupported on iOS");
                 return MGLUserTrackingMode.None;
 
-            case 'NONE_GPS':
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, '_stringToCameraMode(): NONE_GPS unsupported on iOS');
-                }
+            case "NONE_GPS":
+                console.log("MapboxView::_stringToCameraMode(): NONE_GPS unsupported on iOS");
                 return MGLUserTrackingMode.None;
 
-            case 'TRACKING':
+            case "TRACKING":
                 return MGLUserTrackingMode.Follow;
 
-            case 'TRACKING_COMPASS':
+            case "TRACKING_COMPASS":
                 return MGLUserTrackingMode.FollowWithHeading;
 
-            case 'TRACKING_GPS':
+            case "TRACKING_GPS":
                 // a reasonable approximation.
                 return MGLUserTrackingMode.Follow;
 
-            case 'TRACKING_GPS_NORTH':
+            case "TRACKING_GPS_NORTH":
                 return MGLUserTrackingMode.FollowWithCourse;
+
+            default:
+                console.log(`_stringToCameraMode: invalid cameraMode: ${mode}`);
         }
+
+        return MGLUserTrackingMode.None;
     }
 
     _stringToRenderMode(mode): any {
@@ -3109,7 +3095,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                theMap.setUserTrackingModeAnimated(_getTrackingMode(options.cameraMode), options.animated !== false);
+                theMap.setUserTrackingModeAnimated(this._stringToCameraMode(options.cameraMode), options.animated !== false);
 
                 resolve();
             } catch (ex) {
