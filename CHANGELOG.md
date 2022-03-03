@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.15](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.14...v6.2.15) (2022-03-03)
+
+
+### Bug Fixes
+
+* **resolve in `updateSource`:** added missing resolve ([78803e4](https://github.com/nativescript-community/ui-mapbox/commit/78803e460b0689f9495c3f87f29774640ca9f5da))
+* **tracking user:** tracking the user was not implemented on iOS ([242fe63](https://github.com/nativescript-community/ui-mapbox/commit/242fe635391088af29bd74dab5b11431340305df))
+* **tracking user:** tracking the user was not implemented on iOS ([80d7d9f](https://github.com/nativescript-community/ui-mapbox/commit/80d7d9f5f5219a669db260b70a57d08f5d41d383))
+
+
+### Features
+
+* **access tracking mode:** method to retrieve the current tracking mode ([b7a6cf2](https://github.com/nativescript-community/ui-mapbox/commit/b7a6cf2119969fd5daa304b69497cc9c5f9ca834))
+* **access tracking mode:** method to retrieve the current tracking mode ([9182871](https://github.com/nativescript-community/ui-mapbox/commit/9182871d281ad181a5596a9500f6a8e4dfba2b07))
+
+
+
+
+
 ## [6.2.14](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.13...v6.2.14) (2022-02-09)
 
 
