@@ -3119,7 +3119,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const layer = theMap.style.layerWithIdentifier(name);
 
-                resolve(new Layer(layer));
+                resolve(layer ? new Layer(layer) : null);
             } catch (ex) {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'Error in mapbox.getLayer: ' + ex);
