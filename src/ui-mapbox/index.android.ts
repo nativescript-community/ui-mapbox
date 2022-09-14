@@ -1345,13 +1345,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (marker.icon) {
                     // for markers from url see UrlMarker in https://github.com/mapbox/mapbox-gl-native/issues/5370
                     if (marker.icon.startsWith('res://')) {
-                        let cached = this.iconCache[marker.iconPath];
+                        let cached = this.iconCache[marker.icon];
                         if (!cached) {
                             const resourcename = marker.icon.substring(6);
                             const res = Utils.ad.getApplicationContext().getResources();
                             const identifier = res.getIdentifier(resourcename, 'drawable', Utils.ad.getApplication().getPackageName());
                             if (identifier !== 0) {
-                                cached = this.iconCache[marker.iconPath] = iconFactory.fromResource(identifier);
+                                cached = this.iconCache[marker.icon] = iconFactory.fromResource(identifier);
                             }
                         }
                         if (cached) {
