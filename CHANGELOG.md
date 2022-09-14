@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.19](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.15...v6.2.19) (2022-09-14)
+
+
+### Bug Fixes
+
+* **standard user location annotation view:** restored standard user location annotation view ([cf9e189](https://github.com/nativescript-community/ui-mapbox/commit/cf9e189e9fc461b5e20f9c3c06aec3f9927e5153))
+
+
+
+
+
+## [6.2.18](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.15...v6.2.18) (2022-09-14)
+
+
+### Bug Fixes
+
+* **standard user location annotation view:** restored standard user location annotation view ([cf9e189](https://github.com/nativescript-community/ui-mapbox/commit/cf9e189e9fc461b5e20f9c3c06aec3f9927e5153))
+
+
+
+
+
+## [6.2.17](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.15...v6.2.17) (2022-09-14)
+
+
+### Bug Fixes
+
+* **standard user location annotation view:** restored standard user location annotation view ([cf9e189](https://github.com/nativescript-community/ui-mapbox/commit/cf9e189e9fc461b5e20f9c3c06aec3f9927e5153))
+
+
+
+
+
+## [6.2.16](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.15...v6.2.16) (2022-09-14)
+
+
+### Bug Fixes
+
+* **standard user location annotation view:** restored standard user location annotation view ([cf9e189](https://github.com/nativescript-community/ui-mapbox/commit/cf9e189e9fc461b5e20f9c3c06aec3f9927e5153))
+
+
+
+
+
 ## [6.2.15](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.14...v6.2.15) (2022-03-03)
 
 

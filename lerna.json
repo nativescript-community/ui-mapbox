@@ -2,8 +2,8 @@
   "packages": [
     "packages/*"
   ],
-  "version": "6.2.15",
-  "npmClient": "npm",
+  "version": "6.2.19",
+  "npmClient": "pnpm",
   "command": {
     "publish": {
       "conventionalCommits": true,
