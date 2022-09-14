@@ -1,0 +1,8 @@
+*.map
+*.ts
+!*.d.ts
+tsconfig.json
+references.d.ts
+platforms/android/*
+!platforms/android/include.gradle
+!platforms/android/*.aar

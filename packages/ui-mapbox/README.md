@@ -1,4 +1,4 @@
-<!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️--><!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️-->
+<!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️-->
 <!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -31,9 +31,6 @@
 
 <br />
 
-
-
-[](#table-of-contents)
 
 
 [](#table-of-contents)
@@ -102,16 +99,10 @@
 
 [](#prerequisites)
 
-
-[](#prerequisites)
-
 ## Prerequisites
 
 You either need your own tile server such as the one provided by [openmaptiles.org](https://openmaptiles.org) or a Mapbox API access token (they have a 🆓 Starter plan!), so [sign up with Mapbox](https://www.mapbox.com/signup/).
 Once you've registered go to your Account > Apps > New token. The 'Default Secret Token' is what you'll need.
-
-
-[](#installation)
 
 
 [](#installation)
@@ -124,15 +115,9 @@ Run the following command from the root of your project:
 
 [](#configuration)
 
-
-[](#configuration)
-
 ## Configuration
 
 Add any other additional configuration instructions here.
-
-
-[](#issues)
 
 
 [](#issues)
@@ -149,9 +134,6 @@ On Android the plugin adds this to the `<application>` node of `app/App_Resource
 ```
 
 If you get an error related to `TelemetryService` then please check it's there.
-
-
-[](#usage)
 
 
 [](#usage)
@@ -218,9 +200,6 @@ View:
 
 [](#api)
 
-
-[](#api)
-
 ## API
 All currently supported options for your XML based map are (__don't__ use other properties - if you need styling wrap the map in a `ContentView` and apply things like `width` to that container!):
 
@@ -245,9 +224,6 @@ All currently supported options for your XML based map are (__don't__ use other 
 |`moveEndEvent`|-|The name of a function to be called when the map has completed moving.
 |`locationPermissionGranted`|-|The name of a callback function you can declare to get notified when the user granted location permissions
 |`locationPermissionDenied`|-|The name of a callback function you can declare to get notified when the user denied location permissions (will never fire on iOS because there's nothing to deny)
-
-
-[](#markers)
 
 
 [](#markers)
@@ -285,9 +261,6 @@ exports.onMapReady = onMapReady;
 
 [](#viewport)
 
-
-[](#viewport)
-
 ## Viewport
 
 ```js
@@ -318,9 +291,6 @@ Check out the usage details on the functions below.
 
 [](#declaring-programmatically)
 
-
-[](#declaring-programmatically)
-
 ## Declaring Programmatically
 
 Add a container to your view XML where you want to programmatically add the map. Give it an id. 
@@ -328,9 +298,6 @@ Add a container to your view XML where you want to programmatically add the map.
 ```
 <ContentView id="mapContainer" />
 ```
-
-
-[](#methods)
 
 
 [](#methods)
@@ -935,9 +902,6 @@ Add a listener to retrieve lat and lng of where the user scrolls to on the map.
 
 [](#offline-maps)
 
-
-[](#offline-maps)
-
 ## Offline maps
 For situations where you want the user to pre-load certain regions you can use these methods to create and remove offline regions.
 
@@ -1035,9 +999,6 @@ You can remove regions you've previously downloaded. Any region(s) matching the 
 
 [](#permissions)
 
-
-[](#permissions)
-
 ## Permissions
 
 ### hasFineLocationPermission / requestFineLocationPermission
@@ -1074,9 +1035,6 @@ If you didn't request permission before showing the map, and permission was need
 
 [](#using-marker-images-from-the-internet)
 
-
-[](#using-marker-images-from-the-internet)
-
 ## Using marker images from the internet
 If you specify `icon: 'http(s)://some-remote-image'`, then on iOS you'll need to whitelist
 the domain. Google for iOS ATS for detailed options, but for a quick test you can add this to
@@ -1089,9 +1047,6 @@ the domain. Google for iOS ATS for detailed options, but for a quick test you ca
         <true/>
 	</dict>
 ```
-
-
-[](#demos-and-development)
 
 
 [](#demos-and-development)
@@ -1131,9 +1086,6 @@ npm run demo.[ng|react|svelte|vue].[ios|android]
 
 npm run demo.svelte.ios # Example
 ```
-
-[](#questions)
-
 
 [](#questions)
 

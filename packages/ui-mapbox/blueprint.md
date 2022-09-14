@@ -1,141 +1,23 @@
-<!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️--><!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️-->
-<!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      DO NOT EDIT THIS READEME DIRECTLY! Edit "bluesprint.md" instead.
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-<h1 align="center">@nativescript-community/ui-mapbox</h1>
-<p align="center">
-		<a href="https://npmcharts.com/compare/@nativescript-community/ui-mapbox?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/@nativescript-community/ui-mapbox.svg" height="20"/></a>
-<a href="https://www.npmjs.com/package/@nativescript-community/ui-mapbox"><img alt="NPM Version" src="https://img.shields.io/npm/v/@nativescript-community/ui-mapbox.svg" height="20"/></a>
-	</p>
+{{ load:../../tools/readme/edit-warning.md }}
+{{ template:title }}
+{{ template:badges }}
+{{ template:description }}
 
-<p align="center">
-  <b>Interactive, thoroughly customizable maps powered by vector tiles and OpenGL.</b></br>
-  <sub><sub>
-</p>
-
-<br />
-
-
-
-[](#table-of-contents)
-
-
-[](#table-of-contents)
-
-## Table of Contents
-
-* [Prerequisites](#prerequisites)
-* [Installation](#installation)
-* [Configuration](#configuration)
-* [Issues](#issues)
-* [Usage](#usage)
-	* [XML](#xml)
-	* [Angular](#angular)
-* [API](#api)
-* [Markers](#markers)
-* [Viewport](#viewport)
-* [Declaring Programmatically](#declaring-programmatically)
-* [Methods](#methods)
-	* [show](#show)
-	* [hide](#hide)
-	* [unhide](#unhide)
-	* [destroy 💥](#destroy-)
-	* [setMapStyle](#setmapstyle)
-	* [addMarkers](#addmarkers)
-	* [Updating markers](#updating-markers)
-	* [removeMarkers](#removemarkers)
-	* [setViewport](#setviewport)
-	* [getViewport](#getviewport)
-	* [setCenter](#setcenter)
-	* [getCenter](#getcenter)
-	* [setZoomLevel](#setzoomlevel)
-	* [getZoomLevel](#getzoomlevel)
-	* [animateCamera](#animatecamera)
-	* [setTilt (Android only)](#settilt-android-only)
-	* [getTilt (Android only)](#gettilt-android-only)
-	* [getUserLocation](#getuserlocation)
-	* [trackUser](#trackuser)
-	* [addSource](#addsource)
-	* [removeSource](#removesource)
-	* [addLayer](#addlayer)
-	* [removeLayer](#removelayer)
-	* [queryRenderedFeatures](#queryrenderedfeatures)
-	* [querySourceFeatures](#querysourcefeatures)
-	* [addLinePoint](#addlinepoint)
-	* [addPolygon (**deprecated**, use addLayer() instead)](#addpolygon-deprecated-use-addlayer-instead)
-	* [removePolygons](#removepolygons)
-	* [addPolyline](#addpolyline)
-	* [removePolylines](#removepolylines)
-	* [setOnMapClickListener](#setonmapclicklistener)
-	* [setOnMapLongClickListener](#setonmaplongclicklistener)
-	* [setOnScrollListener](#setonscrolllistener)
-* [Offline maps](#offline-maps)
-	* [downloadOfflineRegion](#downloadofflineregion)
-		* [Advanced example: download the current viewport](#advanced-example-download-the-current-viewport)
-	* [listOfflineRegions](#listofflineregions)
-	* [deleteOfflineRegion](#deleteofflineregion)
-* [Permissions](#permissions)
-	* [hasFineLocationPermission / requestFineLocationPermission](#hasfinelocationpermission--requestfinelocationpermission)
-* [Using marker images from the internet](#using-marker-images-from-the-internet)
-* [Demos and Development](#demos-and-development)
-	* [Setup](#setup)
-	* [Build](#build)
-	* [Demos](#demos)
-* [Questions](#questions)
-
-
-[](#prerequisites)
-
-
-[](#prerequisites)
+{{ template:toc }}
 
 ## Prerequisites
 
 You either need your own tile server such as the one provided by [openmaptiles.org](https://openmaptiles.org) or a Mapbox API access token (they have a 🆓 Starter plan!), so [sign up with Mapbox](https://www.mapbox.com/signup/).
 Once you've registered go to your Account > Apps > New token. The 'Default Secret Token' is what you'll need.
 
-
-[](#installation)
-
-
-[](#installation)
-
 ## Installation
 Run the following command from the root of your project:
 
-`ns plugin add @nativescript-community/ui-mapbox`
-
-
-[](#configuration)
-
-
-[](#configuration)
+`ns plugin add {{ pkg.name }}`
 
 ## Configuration
 
 Add any other additional configuration instructions here.
-
-
-[](#issues)
-
-
-[](#issues)
 
 ## Issues
 
@@ -149,12 +31,6 @@ On Android the plugin adds this to the `<application>` node of `app/App_Resource
 ```
 
 If you get an error related to `TelemetryService` then please check it's there.
-
-
-[](#usage)
-
-
-[](#usage)
 
 ## Usage
 
@@ -215,12 +91,6 @@ View:
   </ContentView>
 ```
 
-
-[](#api)
-
-
-[](#api)
-
 ## API
 All currently supported options for your XML based map are (__don't__ use other properties - if you need styling wrap the map in a `ContentView` and apply things like `width` to that container!):
 
@@ -245,12 +115,6 @@ All currently supported options for your XML based map are (__don't__ use other 
 |`moveEndEvent`|-|The name of a function to be called when the map has completed moving.
 |`locationPermissionGranted`|-|The name of a callback function you can declare to get notified when the user granted location permissions
 |`locationPermissionDenied`|-|The name of a callback function you can declare to get notified when the user denied location permissions (will never fire on iOS because there's nothing to deny)
-
-
-[](#markers)
-
-
-[](#markers)
 
 ## Markers
 This is where that last option in the table above comes in - `mapReady`.
@@ -282,12 +146,6 @@ function onMapReady(args) {
 exports.onMapReady = onMapReady;
 ```
 
-
-[](#viewport)
-
-
-[](#viewport)
-
 ## Viewport
 
 ```js
@@ -315,12 +173,6 @@ The methods you can invoke like this from an XML-declared map are:
 
 Check out the usage details on the functions below.
 
-
-[](#declaring-programmatically)
-
-
-[](#declaring-programmatically)
-
 ## Declaring Programmatically
 
 Add a container to your view XML where you want to programmatically add the map. Give it an id. 
@@ -328,12 +180,6 @@ Add a container to your view XML where you want to programmatically add the map.
 ```
 <ContentView id="mapContainer" />
 ```
-
-
-[](#methods)
-
-
-[](#methods)
 
 ## Methods
 
@@ -932,12 +778,6 @@ Add a listener to retrieve lat and lng of where the user scrolls to on the map.
   });
 ```
 
-
-[](#offline-maps)
-
-
-[](#offline-maps)
-
 ## Offline maps
 For situations where you want the user to pre-load certain regions you can use these methods to create and remove offline regions.
 
@@ -1032,12 +872,6 @@ You can remove regions you've previously downloaded. Any region(s) matching the 
 ```
 
 
-
-[](#permissions)
-
-
-[](#permissions)
-
 ## Permissions
 
 ### hasFineLocationPermission / requestFineLocationPermission
@@ -1071,12 +905,6 @@ Note that `hasFineLocationPermission` will return true when:
 Note that the `show` function will also check for permission if you passed in `showUserLocation : true`.
 If you didn't request permission before showing the map, and permission was needed, the plugin will ask the user permission while rendering the map.
 
-
-[](#using-marker-images-from-the-internet)
-
-
-[](#using-marker-images-from-the-internet)
-
 ## Using marker images from the internet
 If you specify `icon: 'http(s)://some-remote-image'`, then on iOS you'll need to whitelist
 the domain. Google for iOS ATS for detailed options, but for a quick test you can add this to
@@ -1090,53 +918,5 @@ the domain. Google for iOS ATS for detailed options, but for a quick test you ca
 	</dict>
 ```
 
-
-[](#demos-and-development)
-
-
-[](#demos-and-development)
-
-## Demos and Development
-
-
-### Setup
-
-To run the demos, you must clone this repo **recursively**.
-
-```
-git clone https://github.com/@nativescript-community/ui-mapbox.git --recursive
-```
-
-**Install Dependencies:**
-```bash
-npm i # or 'yarn install' or 'pnpm install'
-```
-
-**Interactive Menu:**
-
-To start the interactive menu, run `npm start` (or `yarn start` or `pnpm start`). This will list all of the commonly used scripts.
-
-### Build
-
-```bash
-npm run build
-
-npm run build.angular # or for Angular
-```
-
-### Demos
-
-```bash
-npm run demo.[ng|react|svelte|vue].[ios|android]
-
-npm run demo.svelte.ios # Example
-```
-
-[](#questions)
-
-
-[](#questions)
-
-## Questions
-
-If you have any questions/issues/comments please feel free to create an issue or start a conversation in the [NativeScript Community Discord](https://nativescript.org/discord).
+{{ load:../../tools/readme/demos-and-development.md }}
+{{ load:../../tools/readme/questions.md }}
