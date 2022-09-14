@@ -17,7 +17,8 @@
         "readme": "node ./tools/readme.js",
         "start": "./node_modules/.bin/ntl -A -s 15 -o",
         "submodules": "git submodule update --init",
-        "update": "node ./tools/update.js"
+        "update": "node ./tools/update.js",
+        "doc": "node tools/builddoc.mjs && git add docs/* && git commit -m \"chore:doc\""
     },
     "repository": {
         "type": "git",
@@ -47,5 +48,10 @@
         "@nativescript-community/plugin-seed-tools": {
             "injected": true
         }
+    },
+    "engines": {
+        "npm": "please use yarn or pnpm",
+        "yarn": ">= 1.19.1",
+        "pnpm": ">= 7.0.0"
     }
 }
