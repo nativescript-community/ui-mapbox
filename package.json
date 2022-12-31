@@ -45,9 +45,7 @@
         }
     },
     "dependenciesMeta": {
-        "@nativescript-community/plugin-seed-tools": {
-            "injected": true
-        }
+        "@nativescript-community/plugin-seed-tools": {}
     },
     "engines": {
         "npm": "please use yarn or pnpm",
