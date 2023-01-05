@@ -12,28 +12,613 @@
 <div class="col-8 col-content">
 <div class="tsd-page-title">
 <h2>A Nativescript plugin for Mapbox Native Maps.</h2></div>
-<div class="tsd-panel tsd-typography">
-<a href="#ios-builds-errors" id="ios-builds-errors" style="color: inherit; text-decoration: none;">
-  <h1>iOS builds errors</h1>
-</a>
-<p>If you get can&#39;t find symbol MGLMapView and the like remove node_modules and platforms
-from your project and rebuild. </p>
-<p>For reasons I have yet to figure out, linking to the src directory from a
-project&#39;s package.json cause all kinds of errors. </p>
-<p>So build the plugin from the src directory using</p>
-<pre><code><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-0">run</span><span class="hl-1"> </span><span class="hl-0">build</span><span class="hl-1">.</span><span class="hl-0">dist</span>
-</code></pre>
-<p>and the reference </p>
-<pre><code><span class="hl-2">file</span><span class="hl-1">:&lt;</span><span class="hl-3">path_to</span><span class="hl-1">&gt;/</span><span class="hl-0">nativescript</span><span class="hl-1">-</span><span class="hl-0">mapbox</span><span class="hl-1">-</span><span class="hl-0">fbs</span><span class="hl-1">/</span><span class="hl-0">publish</span><span class="hl-1">/</span><span class="hl-0">dist</span><span class="hl-1">/</span><span class="hl-4">package</span>
-</code></pre>
-<p>in your project&#39;s package.json.</p>
+<div class="tsd-panel tsd-typography"><!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️-->
+<p><a href="#demos-and-development"></a></p>
 
-<a href="#typings" id="typings" style="color: inherit; text-decoration: none;">
-  <h1>Typings</h1>
+<a href="#demos-and-development" id="demos-and-development" style="color: inherit; text-decoration: none;">
+  <h2>Demos and Development</h2>
 </a>
-<p>When upgrading the underlying libraries the typings have to be re-generated. </p>
-<p>Remember to update the pod respositories list in case it&#39;s unable to find the
-updated pod file.</p>
+
+<a href="#repo-setup" id="repo-setup" style="color: inherit; text-decoration: none;">
+  <h3>Repo Setup</h3>
+</a>
+<p>The repo uses submodules. If you did not clone with <code> --recursive</code> then you need to call</p>
+<pre><code><span class="hl-0">git</span><span class="hl-1"> </span><span class="hl-0">submodule</span><span class="hl-1"> </span><span class="hl-0">update</span><span class="hl-1"> --</span><span class="hl-0">init</span>
+</code></pre>
+<p>The package manager used to install and link dependencies must be <code>pnpm</code> or <code>yarn</code>. <code>npm</code> wont work.</p>
+<p>To develop and test:
+if you use <code>yarn</code> then run <code>yarn</code>
+if you use <code>pnpm</code> then run <code>pnpm i</code></p>
+<p><strong>Interactive Menu:</strong></p>
+<p>To start the interactive menu, run <code>npm start</code> (or <code>yarn start</code> or <code>pnpm start</code>). This will list all of the commonly used scripts.</p>
+
+<a href="#build" id="build" style="color: inherit; text-decoration: none;">
+  <h3>Build</h3>
+</a>
+<pre><code class="language-bash"><span class="hl-1">npm run build.all</span>
+</code></pre>
+
+<a href="#demos" id="demos" style="color: inherit; text-decoration: none;">
+  <h3>Demos</h3>
+</a>
+<pre><code class="language-bash"><span class="hl-1">npm run demo.[ng|react|svelte|vue].[ios|android]</span><br/><br/><span class="hl-1">npm run demo.svelte.ios </span><span class="hl-2"># Example</span>
+</code></pre>
+<p><a href="#contributing"></a></p>
+
+<a href="#contributing" id="contributing" style="color: inherit; text-decoration: none;">
+  <h2>Contributing</h2>
+</a>
+
+<a href="#update-repo" id="update-repo" style="color: inherit; text-decoration: none;">
+  <h3>Update repo</h3>
+</a>
+<p>You can update the repo files quite easily</p>
+<p>First update the submodules</p>
+<pre><code class="language-bash"><span class="hl-1">npm run update</span>
+</code></pre>
+<p>Then commit the changes
+Then update common files</p>
+<pre><code class="language-bash"><span class="hl-1">npm run sync</span>
+</code></pre>
+<p>Then you can run <code>yarn|pnpm</code>, commit changed files if any</p>
+
+<a href="#update-readme" id="update-readme" style="color: inherit; text-decoration: none;">
+  <h3>Update readme</h3>
+</a>
+<pre><code class="language-bash"><span class="hl-1">npm run readme</span>
+</code></pre>
+
+<a href="#update-doc" id="update-doc" style="color: inherit; text-decoration: none;">
+  <h3>Update doc</h3>
+</a>
+<pre><code class="language-bash"><span class="hl-1">npm run doc</span>
+</code></pre>
+
+<a href="#publish" id="publish" style="color: inherit; text-decoration: none;">
+  <h3>Publish</h3>
+</a>
+<p>The publishing is completely handled by <code>lerna</code> (you can add <code>-- --bump major</code> to force a major release)
+Simply run </p>
+<pre><code class="language-shell"><span class="hl-1">npm run publish</span>
+</code></pre>
+<p><br><br><!-- ⚠️ This README has been generated from the file(s) "blueprint.md" ⚠️--></p>
+<!--  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      DO NOT EDIT THIS READEME DIRECTLY! Edit "bluesprint.md" instead.
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+<h1 align="center">@nativescript-community/ui-mapbox</h1>
+<p align="center">
+        <a href="https://npmcharts.com/compare/@nativescript-community/ui-mapbox?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/@nativescript-community/ui-mapbox.svg" height="20"/></a>
+<a href="https://www.npmjs.com/package/@nativescript-community/ui-mapbox"><img alt="NPM Version" src="https://img.shields.io/npm/v/@nativescript-community/ui-mapbox.svg" height="20"/></a>
+    </p>
+
+<p align="center">
+  <b>Interactive, thoroughly customizable maps powered by vector tiles and OpenGL.</b></br>
+  <sub><sub>
+</p>
+
+<br />
+
+
+
+<p><a href="#table-of-contents"></a></p>
+<p><a href="#table-of-contents"></a></p>
+
+<a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
+  <h2>Table of Contents</h2>
+</a>
+<ul>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#issues">Issues</a></li>
+<li><a href="#usage">Usage</a><ul>
+<li><a href="#xml">XML</a></li>
+<li><a href="#angular">Angular</a></li>
+</ul>
+</li>
+<li><a href="#api">API</a></li>
+<li><a href="#markers">Markers</a></li>
+<li><a href="#viewport">Viewport</a></li>
+<li><a href="#declaring-programmatically">Declaring Programmatically</a></li>
+<li><a href="#methods">Methods</a><ul>
+<li><a href="#show">show</a></li>
+<li><a href="#hide">hide</a></li>
+<li><a href="#unhide">unhide</a></li>
+<li><a href="#destroy-">destroy 💥</a></li>
+<li><a href="#setmapstyle">setMapStyle</a></li>
+<li><a href="#addmarkers">addMarkers</a></li>
+<li><a href="#updating-markers">Updating markers</a></li>
+<li><a href="#removemarkers">removeMarkers</a></li>
+<li><a href="#setviewport">setViewport</a></li>
+<li><a href="#getviewport">getViewport</a></li>
+<li><a href="#setcenter">setCenter</a></li>
+<li><a href="#getcenter">getCenter</a></li>
+<li><a href="#setzoomlevel">setZoomLevel</a></li>
+<li><a href="#getzoomlevel">getZoomLevel</a></li>
+<li><a href="#animatecamera">animateCamera</a></li>
+<li><a href="#settilt-android-only">setTilt (Android only)</a></li>
+<li><a href="#gettilt-android-only">getTilt (Android only)</a></li>
+<li><a href="#getuserlocation">getUserLocation</a></li>
+<li><a href="#trackuser">trackUser</a></li>
+<li><a href="#addsource">addSource</a></li>
+<li><a href="#removesource">removeSource</a></li>
+<li><a href="#addlayer">addLayer</a></li>
+<li><a href="#removelayer">removeLayer</a></li>
+<li><a href="#queryrenderedfeatures">queryRenderedFeatures</a></li>
+<li><a href="#querysourcefeatures">querySourceFeatures</a></li>
+<li><a href="#addlinepoint">addLinePoint</a></li>
+<li><a href="#addpolygon-deprecated-use-addlayer-instead">addPolygon (<strong>deprecated</strong>, use addLayer() instead)</a></li>
+<li><a href="#removepolygons">removePolygons</a></li>
+<li><a href="#addpolyline">addPolyline</a></li>
+<li><a href="#removepolylines">removePolylines</a></li>
+<li><a href="#setonmapclicklistener">setOnMapClickListener</a></li>
+<li><a href="#setonmaplongclicklistener">setOnMapLongClickListener</a></li>
+<li><a href="#setonscrolllistener">setOnScrollListener</a></li>
+</ul>
+</li>
+<li><a href="#offline-maps">Offline maps</a><ul>
+<li><a href="#downloadofflineregion">downloadOfflineRegion</a><ul>
+<li><a href="#advanced-example-download-the-current-viewport">Advanced example: download the current viewport</a></li>
+</ul>
+</li>
+<li><a href="#listofflineregions">listOfflineRegions</a></li>
+<li><a href="#deleteofflineregion">deleteOfflineRegion</a></li>
+</ul>
+</li>
+<li><a href="#permissions">Permissions</a><ul>
+<li><a href="#hasfinelocationpermission--requestfinelocationpermission">hasFineLocationPermission / requestFineLocationPermission</a></li>
+</ul>
+</li>
+<li><a href="#using-marker-images-from-the-internet">Using marker images from the internet</a></li>
+<li><a href="#demos-and-development">Demos and Development</a><ul>
+<li><a href="#setup">Setup</a></li>
+<li><a href="#build">Build</a></li>
+<li><a href="#demos">Demos</a></li>
+</ul>
+</li>
+<li><a href="#questions">Questions</a></li>
+</ul>
+<p><a href="#prerequisites"></a></p>
+<p><a href="#prerequisites"></a></p>
+
+<a href="#prerequisites" id="prerequisites" style="color: inherit; text-decoration: none;">
+  <h2>Prerequisites</h2>
+</a>
+<p>You either need your own tile server such as the one provided by <a href="https://openmaptiles.org">openmaptiles.org</a> or a Mapbox API access token (they have a 🆓 Starter plan!), so <a href="https://www.mapbox.com/signup/">sign up with Mapbox</a>.
+Once you&#39;ve registered go to your Account &gt; Apps &gt; New token. The &#39;Default Secret Token&#39; is what you&#39;ll need.</p>
+<p><a href="#installation"></a></p>
+<p><a href="#installation"></a></p>
+
+<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+  <h2>Installation</h2>
+</a>
+<p>Run the following command from the root of your project:</p>
+<p><code>ns plugin add @nativescript-community/ui-mapbox</code></p>
+<p><a href="#configuration"></a></p>
+<p><a href="#configuration"></a></p>
+
+<a href="#configuration" id="configuration" style="color: inherit; text-decoration: none;">
+  <h2>Configuration</h2>
+</a>
+<p>Add any other additional configuration instructions here.</p>
+<p><a href="#issues"></a></p>
+<p><a href="#issues"></a></p>
+
+<a href="#issues" id="issues" style="color: inherit; text-decoration: none;">
+  <h2>Issues</h2>
+</a>
+<p>If you get an error during iOS build related to Podspec versions, probably the easiest fix is:
+<code>ns platform remove ios</code> and <code>ns platform add ios</code>.</p>
+<p>On Android the plugin adds this to the <code>&lt;application&gt;</code> node of <code>app/App_Resources/Android/AndroidManifest.xml</code> (the plugin already attempts to do so):</p>
+<pre><code class="language-xml"><span class="hl-1">  </span><span class="hl-3">&lt;</span><span class="hl-4">service</span><span class="hl-1"> </span><span class="hl-5">android:name</span><span class="hl-1">=</span><span class="hl-6">&quot;com.mapbox.services.android.telemetry.service.TelemetryService&quot;</span><span class="hl-1"> </span><span class="hl-3">/&gt;</span>
+</code></pre>
+<p>If you get an error related to <code>TelemetryService</code> then please check it&#39;s there.</p>
+<p><a href="#usage"></a></p>
+<p><a href="#usage"></a></p>
+
+<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+  <h2>Usage</h2>
+</a>
+
+<a href="#xml" id="xml" style="color: inherit; text-decoration: none;">
+  <h3>XML</h3>
+</a>
+<p>You can instantiate a map from JS or TS. As the map is yet another view component it will play nice with any NativeScript layout you throw it in. You can also easily add multiple maps to the same page or to different pages in any layout you like.</p>
+<p>A simple layout could look like this:</p>
+<img src="https://raw.githubusercontent.com/nativescript-community/ui-mapbox/master/images/ios-xml-declared.png" width="373px" height="361px" />
+
+<p>Could be rendered by a definition like this:</p>
+<pre><code class="language-xml"><span class="hl-3">&lt;</span><span class="hl-4">Page</span><span class="hl-1"> </span><span class="hl-5">xmlns</span><span class="hl-1">=</span><span class="hl-6">&quot;http://schemas.nativescript.org/tns.xsd&quot;</span><span class="hl-1"> </span><span class="hl-5">xmlns:map</span><span class="hl-1">=</span><span class="hl-6">&quot;@nativescript-community/ui-mapbox&quot;</span><span class="hl-1"> </span><span class="hl-5">navigatingTo</span><span class="hl-1">=</span><span class="hl-6">&quot;navigatingTo&quot;</span><span class="hl-3">&gt;</span><br/><span class="hl-1">  </span><span class="hl-3">&lt;</span><span class="hl-4">StackLayout</span><span class="hl-3">&gt;</span><br/><span class="hl-1">    </span><span class="hl-3">&lt;</span><span class="hl-4">Label</span><span class="hl-1"> </span><span class="hl-5">text</span><span class="hl-1">=</span><span class="hl-6">&quot;Nice map, huh!&quot;</span><span class="hl-1"> </span><span class="hl-5">class</span><span class="hl-1">=</span><span class="hl-6">&quot;title&quot;</span><span class="hl-3">/&gt;</span><br/><span class="hl-1">    </span><span class="hl-3">&lt;</span><span class="hl-4">ContentView</span><span class="hl-1"> </span><span class="hl-5">height</span><span class="hl-1">=</span><span class="hl-6">&quot;240&quot;</span><span class="hl-1"> </span><span class="hl-5">width</span><span class="hl-1">=</span><span class="hl-6">&quot;240&quot;</span><span class="hl-3">&gt;</span><br/><span class="hl-1">      </span><span class="hl-3">&lt;</span><span class="hl-4">map:MapboxView</span><br/><span class="hl-1">          </span><span class="hl-5">accessToken</span><span class="hl-1">=</span><span class="hl-6">&quot;your_token&quot;</span><br/><span class="hl-1">          </span><span class="hl-5">mapStyle</span><span class="hl-1">=</span><span class="hl-6">&quot;traffic_night&quot;</span><br/><span class="hl-1">          </span><span class="hl-5">latitude</span><span class="hl-1">=</span><span class="hl-6">&quot;52.3702160&quot;</span><br/><span class="hl-1">          </span><span class="hl-5">longitude</span><span class="hl-1">=</span><span class="hl-6">&quot;4.8951680&quot;</span><br/><span class="hl-1">          </span><span class="hl-5">zoomLevel</span><span class="hl-1">=</span><span class="hl-6">&quot;3&quot;</span><br/><span class="hl-1">          </span><span class="hl-5">showUserLocation</span><span class="hl-1">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-1">          </span><span class="hl-5">mapReady</span><span class="hl-1">=</span><span class="hl-6">&quot;onMapReady&quot;</span><span class="hl-3">&gt;</span><br/><span class="hl-1">      </span><span class="hl-3">&lt;/</span><span class="hl-4">map:MapboxView</span><span class="hl-3">&gt;</span><br/><span class="hl-1">    </span><span class="hl-3">&lt;/</span><span class="hl-4">ContentView</span><span class="hl-3">&gt;</span><br/><span class="hl-1">  </span><span class="hl-3">&lt;/</span><span class="hl-4">StackLayout</span><span class="hl-3">&gt;</span><br/><span class="hl-3">&lt;/</span><span class="hl-4">Page</span><span class="hl-3">&gt;</span>
+</code></pre>
+
+<a href="#angular" id="angular" style="color: inherit; text-decoration: none;">
+  <h3>Angular</h3>
+</a>
+<p>Component:</p>
+<pre><code class="language-typescript"><span class="hl-7">import</span><span class="hl-1"> { </span><span class="hl-0">registerElement</span><span class="hl-1"> } </span><span class="hl-7">from</span><span class="hl-1"> </span><span class="hl-8">&#39;@nativescript/angular&#39;</span><span class="hl-1">;</span><br/><span class="hl-9">registerElement</span><span class="hl-1">(</span><span class="hl-8">&quot;Mapbox&quot;</span><span class="hl-1">, () </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-9">require</span><span class="hl-1">(</span><span class="hl-8">&quot;@nativescript-community/ui-mapbox&quot;</span><span class="hl-1">).</span><span class="hl-0">MapboxView</span><span class="hl-1">);</span>
+</code></pre>
+<p>View:</p>
+<pre><code class="language-html"><span class="hl-1">  </span><span class="hl-3">&lt;</span><span class="hl-11">ContentView</span><span class="hl-1"> </span><span class="hl-5">height</span><span class="hl-1">=</span><span class="hl-6">&quot;100%&quot;</span><span class="hl-1"> </span><span class="hl-5">width</span><span class="hl-1">=</span><span class="hl-6">&quot;100%&quot;</span><span class="hl-3">&gt;</span><br/><span class="hl-1">    </span><span class="hl-3">&lt;</span><span class="hl-11">Mapbox</span><br/><span class="hl-1">        </span><span class="hl-5">accessToken</span><span class="hl-1">=</span><span class="hl-6">&quot;your_token&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">mapStyle</span><span class="hl-1">=</span><span class="hl-6">&quot;traffic_day&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">latitude</span><span class="hl-1">=</span><span class="hl-6">&quot;50.467735&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">longitude</span><span class="hl-1">=</span><span class="hl-6">&quot;13.427718&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">hideCompass</span><span class="hl-1">=</span><span class="hl-6">&quot;true&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">zoomLevel</span><span class="hl-1">=</span><span class="hl-6">&quot;18&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">showUserLocation</span><span class="hl-1">=</span><span class="hl-6">&quot;false&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">disableZoom</span><span class="hl-1">=</span><span class="hl-6">&quot;false&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">disableRotation</span><span class="hl-1">=</span><span class="hl-6">&quot;false&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">disableScroll</span><span class="hl-1">=</span><span class="hl-6">&quot;false&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">disableTilt</span><span class="hl-1">=</span><span class="hl-6">&quot;false&quot;</span><br/><span class="hl-1">        </span><span class="hl-5">(mapReady)</span><span class="hl-1">=</span><span class="hl-6">&quot;onMapReady($event)&quot;</span><span class="hl-3">&gt;</span><br/><span class="hl-1">    </span><span class="hl-3">&lt;/</span><span class="hl-11">Mapbox</span><span class="hl-3">&gt;</span><br/><span class="hl-1">  </span><span class="hl-3">&lt;/</span><span class="hl-11">ContentView</span><span class="hl-3">&gt;</span>
+</code></pre>
+<p><a href="#api"></a></p>
+<p><a href="#api"></a></p>
+
+<a href="#api" id="api" style="color: inherit; text-decoration: none;">
+  <h2>API</h2>
+</a>
+<p>All currently supported options for your XML based map are (<strong>don&#39;t</strong> use other properties - if you need styling wrap the map in a <code>ContentView</code> and apply things like <code>width</code> to that container!):</p>
+<table>
+<thead>
+<tr>
+<th>option</th>
+<th>default</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>accesstoken</code></td>
+<td>-</td>
+<td>see &#39;Prerequisites&#39; above</td>
+</tr>
+<tr>
+<td><code>delay</code></td>
+<td>0</td>
+<td>A delay in milliseconds - you can set this to have better control over when Mapbox is invoked so it won&#39;t clash with other computations your app may need to perform.</td>
+</tr>
+<tr>
+<td><code>mapStyle</code></td>
+<td>streets</td>
+<td>streets, light, dark, satellite_streets, satellite, traffic_day, traffic_night, an URL starting with mapbox:// or pointing to a custom JSON definition (http://, https://, or local relative to nativescript app path ~/)</td>
+</tr>
+<tr>
+<td><code>latitude </code></td>
+<td>-</td>
+<td>Set the center of the map by passing this in</td>
+</tr>
+<tr>
+<td><code>longitude</code></td>
+<td>-</td>
+<td>.. and this as well</td>
+</tr>
+<tr>
+<td><code>zoomLevel</code></td>
+<td>0</td>
+<td>0-20</td>
+</tr>
+<tr>
+<td><code>showUserLocation </code></td>
+<td>false</td>
+<td>Requires location permissions on Android which you can remove from <code>AndroidManifest.xml</code> if you don&#39;t need them</td>
+</tr>
+<tr>
+<td><code>hideCompass </code></td>
+<td>false</td>
+<td>Don&#39;t show the compass in the top right corner during rotation of the map</td>
+</tr>
+<tr>
+<td><code>hideLogo</code></td>
+<td>false</td>
+<td>Mapbox requires <code>false</code> if you&#39;re on a free plan</td>
+</tr>
+<tr>
+<td><code>hideAttribution </code></td>
+<td>true</td>
+<td>Mapbox requires <code>false</code> if you&#39;re on a free plan</td>
+</tr>
+<tr>
+<td><code>disableZoom</code></td>
+<td>false</td>
+<td>Don&#39;t allow the user to zoom in or out (pinch and double-tap)</td>
+</tr>
+<tr>
+<td><code>disableRotation</code></td>
+<td>false</td>
+<td>Don&#39;t allow the user to rotate the map (two finger gesture)</td>
+</tr>
+<tr>
+<td><code>disableScroll</code></td>
+<td>false</td>
+<td>Don&#39;t allow the user to move the center of the map (one finger drag)</td>
+</tr>
+<tr>
+<td><code>disableTilt</code></td>
+<td>false</td>
+<td>Don&#39;t allow the user to tilt the map (two finger drag up or down)</td>
+</tr>
+<tr>
+<td><code>mapReady</code></td>
+<td>-</td>
+<td>The name of a callback function you can declare to interact with the map after it has been drawn</td>
+</tr>
+<tr>
+<td><code>moveBeginEvent</code></td>
+<td>-</td>
+<td>The name of a function to be called when the map has begun to move.</td>
+</tr>
+<tr>
+<td><code>moveEndEvent</code></td>
+<td>-</td>
+<td>The name of a function to be called when the map has completed moving.</td>
+</tr>
+<tr>
+<td><code>locationPermissionGranted</code></td>
+<td>-</td>
+<td>The name of a callback function you can declare to get notified when the user granted location permissions</td>
+</tr>
+<tr>
+<td><code>locationPermissionDenied</code></td>
+<td>-</td>
+<td>The name of a callback function you can declare to get notified when the user denied location permissions (will never fire on iOS because there&#39;s nothing to deny)</td>
+</tr>
+</tbody></table>
+<p><a href="#markers"></a></p>
+<p><a href="#markers"></a></p>
+
+<a href="#markers" id="markers" style="color: inherit; text-decoration: none;">
+  <h2>Markers</h2>
+</a>
+<p>This is where that last option in the table above comes in - <code>mapReady</code>.
+It allows you to interact with the map after it has been drawn to the page.</p>
+<p>Open <code>main-page.[js|ts]</code> and add this (see <a href="#addmarkers"><code>addMarkers</code></a> further below for the full marker API):</p>
+<pre><code class="language-js"><span class="hl-10">var</span><span class="hl-1"> </span><span class="hl-0">mapbox</span><span class="hl-1"> = </span><span class="hl-9">require</span><span class="hl-1">(</span><span class="hl-8">&quot;@nativescript-community/ui-mapbox&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-10">function</span><span class="hl-1"> </span><span class="hl-9">onMapReady</span><span class="hl-1">(</span><span class="hl-0">args</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-2">// you can tap into the native MapView objects (MGLMapView for iOS and com.mapbox.mapboxsdk.maps.MapView for Android)</span><br/><span class="hl-1">  </span><span class="hl-10">var</span><span class="hl-1"> </span><span class="hl-0">nativeMapView</span><span class="hl-1"> = </span><span class="hl-0">args</span><span class="hl-1">.</span><span class="hl-0">ios</span><span class="hl-1"> ? </span><span class="hl-0">args</span><span class="hl-1">.</span><span class="hl-0">ios</span><span class="hl-1"> : </span><span class="hl-0">args</span><span class="hl-1">.</span><span class="hl-0">android</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;Mapbox onMapReady for &quot;</span><span class="hl-1"> + (</span><span class="hl-0">args</span><span class="hl-1">.</span><span class="hl-0">ios</span><span class="hl-1"> ? </span><span class="hl-8">&quot;iOS&quot;</span><span class="hl-1"> : </span><span class="hl-8">&quot;Android&quot;</span><span class="hl-1">) + </span><span class="hl-8">&quot;, native object received: &quot;</span><span class="hl-1"> + </span><span class="hl-0">nativeMapView</span><span class="hl-1">);</span><br/><br/><span class="hl-1">  </span><span class="hl-2">// .. or use the convenience methods exposed on args.map, for instance:</span><br/><span class="hl-1">  </span><span class="hl-0">args</span><span class="hl-1">.</span><span class="hl-0">map</span><span class="hl-1">.</span><span class="hl-9">addMarkers</span><span class="hl-1">([</span><br/><span class="hl-1">    {</span><br/><span class="hl-1">      </span><span class="hl-0">lat:</span><span class="hl-1"> </span><span class="hl-12">52.3602160</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">lng:</span><span class="hl-1"> </span><span class="hl-12">4.8891680</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">title:</span><span class="hl-1"> </span><span class="hl-8">&#39;One-line title here&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">subtitle:</span><span class="hl-1"> </span><span class="hl-8">&#39;Really really nice location&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">selected:</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1">, </span><span class="hl-2">// makes the callout show immediately when the marker is added (note: only 1 marker can be selected at a time)</span><br/><span class="hl-1">      </span><span class="hl-9">onCalloutTap</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-10">function</span><span class="hl-1">(){</span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;&#39;Nice location&#39; marker callout tapped&quot;</span><span class="hl-1">);}</span><br/><span class="hl-1">    }]</span><br/><span class="hl-1">  );</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-13">exports</span><span class="hl-1">.</span><span class="hl-0">onMapReady</span><span class="hl-1"> = </span><span class="hl-0">onMapReady</span><span class="hl-1">;</span>
+</code></pre>
+<p><a href="#viewport"></a></p>
+<p><a href="#viewport"></a></p>
+
+<a href="#viewport" id="viewport" style="color: inherit; text-decoration: none;">
+  <h2>Viewport</h2>
+</a>
+<pre><code class="language-js"><span class="hl-10">var</span><span class="hl-1"> </span><span class="hl-0">mapbox</span><span class="hl-1"> = </span><span class="hl-9">require</span><span class="hl-1">(</span><span class="hl-8">&quot;@nativescript-community/ui-mapbox&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-10">function</span><span class="hl-1"> </span><span class="hl-9">onMapReady</span><span class="hl-1">(</span><span class="hl-0">args</span><span class="hl-1">) {</span><br/><span class="hl-1">  </span><span class="hl-0">args</span><span class="hl-1">.</span><span class="hl-0">map</span><span class="hl-1">.</span><span class="hl-9">setViewport</span><span class="hl-1">(</span><br/><span class="hl-1">      {</span><br/><span class="hl-1">        </span><span class="hl-0">bounds:</span><span class="hl-1"> {</span><br/><span class="hl-1">          </span><span class="hl-0">north:</span><span class="hl-1"> </span><span class="hl-12">52.4820</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">east:</span><span class="hl-1"> </span><span class="hl-12">5.1087</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">south:</span><span class="hl-1"> </span><span class="hl-12">52.2581</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">west:</span><span class="hl-1"> </span><span class="hl-12">4.6816</span><br/><span class="hl-1">        },</span><br/><span class="hl-1">        </span><span class="hl-0">animated:</span><span class="hl-1"> </span><span class="hl-10">true</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  );</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-13">exports</span><span class="hl-1">.</span><span class="hl-0">onMapReady</span><span class="hl-1"> = </span><span class="hl-0">onMapReady</span><span class="hl-1">;</span>
+</code></pre>
+<p>The methods you can invoke like this from an XML-declared map are:
+<code>addMarkers</code>, <code>setViewport</code>, <code>removeMarkers</code>, <code>getCenter</code>, <code>setCenter</code>, <code>getZoomLevel</code>, <code>setZoomLevel</code>, <code>getViewport</code>, <code>getTilt</code>, <code>setTilt</code>, <code>setMapStyle</code>, <code>animateCamera</code>, <code>addPolygon</code>, <code>removePolygons</code>, <code>addPolyline</code>, <code>removePolylines</code>, <code>getUserLocation</code>, <code>trackUser</code>, <code>setOnMapClickListener</code>, <code>setOnMapLongClickListener</code> and <code>destroy</code>.</p>
+<p>Check out the usage details on the functions below.</p>
+<p><a href="#declaring-programmatically"></a></p>
+<p><a href="#declaring-programmatically"></a></p>
+
+<a href="#declaring-programmatically" id="declaring-programmatically" style="color: inherit; text-decoration: none;">
+  <h2>Declaring Programmatically</h2>
+</a>
+<p>Add a container to your view XML where you want to programmatically add the map. Give it an id. </p>
+<pre><code><span class="hl-1">&lt;</span><span class="hl-0">ContentView</span><span class="hl-1"> </span><span class="hl-0">id</span><span class="hl-1">=</span><span class="hl-8">&quot;mapContainer&quot;</span><span class="hl-1"> /&gt;</span>
+</code></pre>
+<p><a href="#methods"></a></p>
+<p><a href="#methods"></a></p>
+
+<a href="#methods" id="methods" style="color: inherit; text-decoration: none;">
+  <h2>Methods</h2>
+</a>
+
+<a href="#show" id="show" style="color: inherit; text-decoration: none;">
+  <h3>show</h3>
+</a>
+<pre><code class="language-ts"><br/><span class="hl-1">    </span><span class="hl-10">const</span><span class="hl-1"> </span><span class="hl-14">contentView</span><span class="hl-1"> : </span><span class="hl-13">ContentView</span><span class="hl-1"> = &lt;</span><span class="hl-13">ContentView</span><span class="hl-1">&gt;</span><span class="hl-0">page</span><span class="hl-1">.</span><span class="hl-9">getViewById</span><span class="hl-1">( </span><span class="hl-8">&#39;mapContainer&#39;</span><span class="hl-1"> );</span><br/><br/><span class="hl-1">    </span><span class="hl-10">const</span><span class="hl-1"> </span><span class="hl-14">settings</span><span class="hl-1"> = {</span><br/><br/><span class="hl-1">      </span><span class="hl-2">// NOTE: passing in the container here.</span><br/><br/><span class="hl-1">      </span><span class="hl-0">container:</span><span class="hl-1"> </span><span class="hl-0">contentView</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">accessToken:</span><span class="hl-1"> </span><span class="hl-14">ACCESS_TOKEN</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">style:</span><span class="hl-1"> </span><span class="hl-0">MapStyle</span><span class="hl-1">.</span><span class="hl-14">LIGHT</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">margins:</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-0">left:</span><span class="hl-1"> </span><span class="hl-12">18</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-0">right:</span><span class="hl-1"> </span><span class="hl-12">18</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-0">top:</span><span class="hl-1"> </span><span class="hl-0">isIOS</span><span class="hl-1"> ? </span><span class="hl-12">390</span><span class="hl-1"> : </span><span class="hl-12">454</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-0">bottom:</span><span class="hl-1"> </span><span class="hl-0">isIOS</span><span class="hl-1"> ? </span><span class="hl-12">50</span><span class="hl-1"> : </span><span class="hl-12">8</span><br/><span class="hl-1">      },</span><br/><span class="hl-1">      </span><span class="hl-0">center:</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-0">lat:</span><span class="hl-1"> </span><span class="hl-12">52.3702160</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-0">lng:</span><span class="hl-1"> </span><span class="hl-12">4.8951680</span><br/><span class="hl-1">      },</span><br/><span class="hl-1">      </span><span class="hl-0">zoomLevel:</span><span class="hl-1"> </span><span class="hl-12">9</span><span class="hl-1">, </span><span class="hl-2">// 0 (most of the world) to 20, default 0</span><br/><span class="hl-1">      </span><span class="hl-0">showUserLocation:</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1">, </span><span class="hl-2">// default false</span><br/><span class="hl-1">      </span><span class="hl-0">hideAttribution:</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1">, </span><span class="hl-2">// default false</span><br/><span class="hl-1">      </span><span class="hl-0">hideLogo:</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1">, </span><span class="hl-2">// default false</span><br/><span class="hl-1">      </span><span class="hl-0">hideCompass:</span><span class="hl-1"> </span><span class="hl-10">false</span><span class="hl-1">, </span><span class="hl-2">// default false</span><br/><span class="hl-1">      </span><span class="hl-0">disableRotation:</span><span class="hl-1"> </span><span class="hl-10">false</span><span class="hl-1">, </span><span class="hl-2">// default false</span><br/><span class="hl-1">      </span><span class="hl-0">disableScroll:</span><span class="hl-1"> </span><span class="hl-10">false</span><span class="hl-1">, </span><span class="hl-2">// default false</span><br/><span class="hl-1">      </span><span class="hl-0">disableZoom:</span><span class="hl-1"> </span><span class="hl-10">false</span><span class="hl-1">, </span><span class="hl-2">// default false</span><br/><span class="hl-1">      </span><span class="hl-0">disableTilt:</span><span class="hl-1"> </span><span class="hl-10">false</span><span class="hl-1">, </span><span class="hl-2">// default false</span><br/><span class="hl-1">      </span><span class="hl-0">markers:</span><span class="hl-1"> [</span><br/><span class="hl-1">        {</span><br/><span class="hl-1">          </span><span class="hl-0">id:</span><span class="hl-1"> </span><span class="hl-12">1</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">lat:</span><span class="hl-1"> </span><span class="hl-12">52.3732160</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">lng:</span><span class="hl-1"> </span><span class="hl-12">4.8941680</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">title:</span><span class="hl-1"> </span><span class="hl-8">&#39;Nice location&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">subtitle:</span><span class="hl-1"> </span><span class="hl-8">&#39;Really really nice location&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">iconPath:</span><span class="hl-1"> </span><span class="hl-8">&#39;res/markers/green_pin_marker.png&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-9">onTap</span><span class="hl-0">:</span><span class="hl-1"> () </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;&#39;Nice location&#39; marker tapped&quot;</span><span class="hl-1">),</span><br/><span class="hl-1">          </span><span class="hl-9">onCalloutTap</span><span class="hl-0">:</span><span class="hl-1"> () </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;&#39;Nice location&#39; marker callout tapped&quot;</span><span class="hl-1">)</span><br/><span class="hl-1">        }</span><br/><span class="hl-1">      ]</span><br/><span class="hl-1">    };</span><br/><br/><span class="hl-1">    </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">( </span><span class="hl-8">&quot;main-view-model:: doShow(): creating new MapboxView.&quot;</span><span class="hl-1"> );</span><br/><br/><span class="hl-1">    </span><span class="hl-10">const</span><span class="hl-1"> </span><span class="hl-14">mapView</span><span class="hl-1"> = </span><span class="hl-10">new</span><span class="hl-1"> </span><span class="hl-9">MapboxView</span><span class="hl-1">();</span><br/><br/><span class="hl-1">    </span><span class="hl-2">// Bind some event handlers onto our newly created map view. </span><br/><br/><span class="hl-1">    </span><span class="hl-0">mapView</span><span class="hl-1">.</span><span class="hl-9">on</span><span class="hl-1">( </span><span class="hl-8">&#39;mapReady&#39;</span><span class="hl-1">, ( </span><span class="hl-0">args</span><span class="hl-1"> : </span><span class="hl-13">any</span><span class="hl-1"> ) </span><span class="hl-10">=&gt;</span><span class="hl-1"> {</span><br/><br/><span class="hl-1">      </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">( </span><span class="hl-8">&quot;main-view-model: onMapReady fired.&quot;</span><span class="hl-1"> );</span><br/><br/><span class="hl-1">      </span><span class="hl-2">// this is an instance of class MapboxView</span><br/><br/><span class="hl-1">      </span><span class="hl-10">this</span><span class="hl-1">.</span><span class="hl-0">mapboxView</span><span class="hl-1"> = </span><span class="hl-0">args</span><span class="hl-1">.</span><span class="hl-0">map</span><span class="hl-1">;</span><br/><br/><span class="hl-1">      </span><span class="hl-2">// get a reference to the Mapbox API shim object so we can directly call its methods.</span><br/><br/><span class="hl-1">      </span><span class="hl-10">this</span><span class="hl-1">.</span><span class="hl-0">mapbox</span><span class="hl-1"> = </span><span class="hl-10">this</span><span class="hl-1">.</span><span class="hl-0">mapboxView</span><span class="hl-1">.</span><span class="hl-9">getMapboxApi</span><span class="hl-1">();</span><br/><br/><span class="hl-1">      </span><span class="hl-10">this</span><span class="hl-1">.</span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">setOnMapClickListener</span><span class="hl-1">( </span><span class="hl-0">point</span><span class="hl-1"> </span><span class="hl-10">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">`&gt;&gt; Map clicked: </span><span class="hl-10">${</span><span class="hl-14">JSON</span><span class="hl-15">.</span><span class="hl-9">stringify</span><span class="hl-15">(</span><span class="hl-0">point</span><span class="hl-15">)</span><span class="hl-10">}</span><span class="hl-8">`</span><span class="hl-1">);</span><br/><span class="hl-1">        </span><span class="hl-7">return</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1">;</span><br/><span class="hl-1">      });</span><br/><br/><span class="hl-1">      </span><span class="hl-10">this</span><span class="hl-1">.</span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">setOnMapLongClickListener</span><span class="hl-1">( </span><span class="hl-0">point</span><span class="hl-1"> </span><span class="hl-10">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">`&gt;&gt; Map longpressed: </span><span class="hl-10">${</span><span class="hl-14">JSON</span><span class="hl-15">.</span><span class="hl-9">stringify</span><span class="hl-15">(</span><span class="hl-0">point</span><span class="hl-15">)</span><span class="hl-10">}</span><span class="hl-8">`</span><span class="hl-1">);</span><br/><span class="hl-1">        </span><span class="hl-7">return</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1">;</span><br/><span class="hl-1">      });</span><br/><br/><span class="hl-1">      </span><span class="hl-10">this</span><span class="hl-1">.</span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">setOnScrollListener</span><span class="hl-1">((</span><span class="hl-0">point</span><span class="hl-1">: </span><span class="hl-13">LatLng</span><span class="hl-1">) </span><span class="hl-10">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-2">// console.log(`&gt;&gt; Map scrolled`);</span><br/><span class="hl-1">      });</span><br/><br/><span class="hl-1">      </span><span class="hl-10">this</span><span class="hl-1">.</span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">setOnFlingListener</span><span class="hl-1">(() </span><span class="hl-10">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">`&gt;&gt; Map flinged&quot;`</span><span class="hl-1">);</span><br/><span class="hl-1">      }).</span><span class="hl-9">catch</span><span class="hl-1">( </span><span class="hl-0">err</span><span class="hl-1"> </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-0">err</span><span class="hl-1">) );</span><br/><br/><span class="hl-1">    });</span><br/><br/><span class="hl-1">    </span><span class="hl-0">mapView</span><span class="hl-1">.</span><span class="hl-9">setConfig</span><span class="hl-1">( </span><span class="hl-0">settings</span><span class="hl-1"> );</span><br/><span class="hl-1">    </span><span class="hl-0">contentView</span><span class="hl-1">.</span><span class="hl-0">content</span><span class="hl-1"> = </span><span class="hl-0">mapView</span><span class="hl-1">;</span><br/><span class="hl-1">  </span>
+</code></pre>
+
+<a href="#hide" id="hide" style="color: inherit; text-decoration: none;">
+  <h3>hide</h3>
+</a>
+<p>All further examples assume <code>mapbox</code> has been required.
+Also, all functions support promises, but we&#39;re leaving out the <code>.then()</code> stuff for brevity where it doesn&#39;t add value.</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">hide</span><span class="hl-1">();</span>
+</code></pre>
+
+<a href="#unhide" id="unhide" style="color: inherit; text-decoration: none;">
+  <h3>unhide</h3>
+</a>
+<p>If you previously called <code>hide()</code> you can quickly unhide the map,
+instead of redrawing it (which is a lot slower and you loose the viewport position, etc).</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">unhide</span><span class="hl-1">();</span>
+</code></pre>
+
+<a href="#destroy-💥" id="destroy-💥" style="color: inherit; text-decoration: none;">
+  <h3>destroy 💥</h3>
+</a>
+<p>To clean up the map entirely you can destroy instead of hide it:</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">destroy</span><span class="hl-1">();</span>
+</code></pre>
+
+<a href="#setmapstyle" id="setmapstyle" style="color: inherit; text-decoration: none;">
+  <h3>setMapStyle</h3>
+</a>
+<p>You can update the map style after you&#39;ve loaded it.</p>
+<blockquote>
+<p>With Mapbox Android SDK 6.1.x (used in plugin version 4.1.0) I&#39;ve seen Android crash a few seconds after this has been used, so test this well and perhaps don&#39;t use it when in doubt.</p>
+</blockquote>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">setMapStyle</span><span class="hl-1">(</span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-0">MapStyle</span><span class="hl-1">.</span><span class="hl-14">DARK</span><span class="hl-1">);</span>
+</code></pre>
+
+<a href="#addmarkers" id="addmarkers" style="color: inherit; text-decoration: none;">
+  <h3>addMarkers</h3>
+</a>
+<pre><code class="language-typescript"><span class="hl-1">  </span><span class="hl-7">import</span><span class="hl-1"> { </span><span class="hl-0">MapboxMarker</span><span class="hl-1"> } </span><span class="hl-7">from</span><span class="hl-1"> </span><span class="hl-8">&quot;@nativescript-community/ui-mapbox&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-1">  </span><span class="hl-10">const</span><span class="hl-1"> </span><span class="hl-14">firstMarker</span><span class="hl-1"> = &lt;</span><span class="hl-13">MapboxMarker</span><span class="hl-1">&gt;{ </span><span class="hl-2">//cast as a MapboxMarker to pick up helper functions such as update()</span><br/><span class="hl-1">    </span><span class="hl-0">id:</span><span class="hl-1"> </span><span class="hl-12">2</span><span class="hl-1">, </span><span class="hl-2">// can be user in &#39;removeMarkers()&#39;</span><br/><span class="hl-1">    </span><span class="hl-0">lat:</span><span class="hl-1"> </span><span class="hl-12">52.3602160</span><span class="hl-1">, </span><span class="hl-2">// mandatory</span><br/><span class="hl-1">    </span><span class="hl-0">lng:</span><span class="hl-1"> </span><span class="hl-12">4.8891680</span><span class="hl-1">, </span><span class="hl-2">// mandatory</span><br/><span class="hl-1">    </span><span class="hl-0">title:</span><span class="hl-1"> </span><span class="hl-8">&#39;One-line title here&#39;</span><span class="hl-1">, </span><span class="hl-2">// no popup unless set</span><br/><span class="hl-1">    </span><span class="hl-0">subtitle:</span><span class="hl-1"> </span><span class="hl-8">&#39;Infamous subtitle!&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-2">// icon: &#39;res://cool_marker&#39;, // preferred way, otherwise use:</span><br/><span class="hl-1">    </span><span class="hl-0">icon:</span><span class="hl-1"> </span><span class="hl-8">&#39;http(s)://website/coolimage.png&#39;</span><span class="hl-1">, </span><span class="hl-2">// from the internet (see the note at the bottom of this readme), or:</span><br/><span class="hl-1">    </span><span class="hl-0">iconPath:</span><span class="hl-1"> </span><span class="hl-8">&#39;~/assets/markers/home_marker.png&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-0">selected:</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1">, </span><span class="hl-2">// makes the callout show immediately when the marker is added (note: only 1 marker can be selected at a time)</span><br/><span class="hl-1">    </span><span class="hl-9">onTap</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-0">marker</span><span class="hl-1"> </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;Marker tapped with title: &#39;&quot;</span><span class="hl-1"> + </span><span class="hl-0">marker</span><span class="hl-1">.</span><span class="hl-0">title</span><span class="hl-1"> + </span><span class="hl-8">&quot;&#39;&quot;</span><span class="hl-1">),</span><br/><span class="hl-1">    </span><span class="hl-9">onCalloutTap</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-0">marker</span><span class="hl-1"> </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-9">alert</span><span class="hl-1">(</span><span class="hl-8">&quot;Marker callout tapped with title: &#39;&quot;</span><span class="hl-1"> + </span><span class="hl-0">marker</span><span class="hl-1">.</span><span class="hl-0">title</span><span class="hl-1"> + </span><span class="hl-8">&quot;&#39;&quot;</span><span class="hl-1">)</span><br/><span class="hl-1">  };</span><br/><br/><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">addMarkers</span><span class="hl-1">([</span><br/><span class="hl-1">    </span><span class="hl-0">firstMarker</span><span class="hl-1">,</span><br/><span class="hl-1">    {</span><br/><span class="hl-1">      </span><span class="hl-2">// more markers..</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  ])</span>
+</code></pre>
+
+<a href="#updating-markers" id="updating-markers" style="color: inherit; text-decoration: none;">
+  <h3>Updating markers</h3>
+</a>
+<p>Plugin version 4.2.0 added the option to update makers. Just call <code>update</code> on the <code>MapboxMarker</code> reference you created above.
+You can update the following properties (all but the icon really):</p>
+<pre><code class="language-typescript"><span class="hl-1">  </span><span class="hl-0">firstMarker</span><span class="hl-1">.</span><span class="hl-9">update</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-0">lat:</span><span class="hl-1"> </span><span class="hl-12">52.3622160</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-0">lng:</span><span class="hl-1"> </span><span class="hl-12">4.8911680</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-0">title:</span><span class="hl-1"> </span><span class="hl-8">&#39;One-line title here (UPDATE)&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-0">subtitle:</span><span class="hl-1"> </span><span class="hl-8">&#39;Updated subtitle&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-0">selected:</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1">, </span><span class="hl-2">// this will trigger the callout upon update</span><br/><span class="hl-1">    </span><span class="hl-9">onTap</span><span class="hl-0">:</span><span class="hl-1"> (</span><span class="hl-0">marker</span><span class="hl-1">: </span><span class="hl-13">MapboxMarker</span><span class="hl-1">) </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">`UPDATED Marker tapped with title: </span><span class="hl-10">${</span><span class="hl-0">marker</span><span class="hl-15">.</span><span class="hl-0">title</span><span class="hl-10">}</span><span class="hl-8">`</span><span class="hl-1">),</span><br/><span class="hl-1">    </span><span class="hl-9">onCalloutTap</span><span class="hl-0">:</span><span class="hl-1"> (</span><span class="hl-0">marker</span><span class="hl-1">: </span><span class="hl-13">MapboxMarker</span><span class="hl-1">) </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-9">alert</span><span class="hl-1">(</span><span class="hl-8">`UPDATED Marker callout tapped with title: </span><span class="hl-10">${</span><span class="hl-0">marker</span><span class="hl-15">.</span><span class="hl-0">title</span><span class="hl-10">}</span><span class="hl-8">`</span><span class="hl-1">)</span><br/><span class="hl-1">  })</span>
+</code></pre>
+
+<a href="#removemarkers" id="removemarkers" style="color: inherit; text-decoration: none;">
+  <h3>removeMarkers</h3>
+</a>
+<p>You can either remove all markers by not passing in an argument,
+or remove specific marker id&#39;s (which you specified previously).</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-2">// remove all markers</span><br/><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">removeMarkers</span><span class="hl-1">();</span><br/><br/><span class="hl-1">  </span><span class="hl-2">// remove specific markers by id</span><br/><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">removeMarkers</span><span class="hl-1">([</span><span class="hl-12">1</span><span class="hl-1">, </span><span class="hl-12">2</span><span class="hl-1">]);</span>
+</code></pre>
+
+<a href="#setviewport" id="setviewport" style="color: inherit; text-decoration: none;">
+  <h3>setViewport</h3>
+</a>
+<p>If you want to for instance make the viewport contain all markers you
+can set the bounds to the lat/lng of the outermost markers using this function.</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">setViewport</span><span class="hl-1">(</span><br/><span class="hl-1">      {</span><br/><span class="hl-1">        </span><span class="hl-0">bounds:</span><span class="hl-1"> {</span><br/><span class="hl-1">          </span><span class="hl-0">north:</span><span class="hl-1"> </span><span class="hl-12">52.4820</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">east:</span><span class="hl-1"> </span><span class="hl-12">5.1087</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">south:</span><span class="hl-1"> </span><span class="hl-12">52.2581</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-0">west:</span><span class="hl-1"> </span><span class="hl-12">4.6816</span><br/><span class="hl-1">        },</span><br/><span class="hl-1">        </span><span class="hl-0">animated:</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1"> </span><span class="hl-2">// default true</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  )</span>
+</code></pre>
+
+<a href="#getviewport" id="getviewport" style="color: inherit; text-decoration: none;">
+  <h3>getViewport</h3>
+</a>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">getViewport</span><span class="hl-1">().</span><span class="hl-9">then</span><span class="hl-1">(</span><br/><span class="hl-1">      </span><span class="hl-10">function</span><span class="hl-1">(</span><span class="hl-0">result</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;Mapbox getViewport done, result: &quot;</span><span class="hl-1"> + </span><span class="hl-14">JSON</span><span class="hl-1">.</span><span class="hl-9">stringify</span><span class="hl-1">(</span><span class="hl-0">result</span><span class="hl-1">));</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  )</span>
+</code></pre>
+
+<a href="#setcenter" id="setcenter" style="color: inherit; text-decoration: none;">
+  <h3>setCenter</h3>
+</a>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">setCenter</span><span class="hl-1">(</span><br/><span class="hl-1">      {</span><br/><span class="hl-1">        </span><span class="hl-0">lat:</span><span class="hl-1"> </span><span class="hl-12">52.3602160</span><span class="hl-1">, </span><span class="hl-2">// mandatory</span><br/><span class="hl-1">        </span><span class="hl-0">lng:</span><span class="hl-1"> </span><span class="hl-12">4.8891680</span><span class="hl-1">, </span><span class="hl-2">// mandatory</span><br/><span class="hl-1">        </span><span class="hl-0">animated:</span><span class="hl-1"> </span><span class="hl-10">false</span><span class="hl-1"> </span><span class="hl-2">// default true</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  )</span>
+</code></pre>
+
+<a href="#getcenter" id="getcenter" style="color: inherit; text-decoration: none;">
+  <h3>getCenter</h3>
+</a>
+<p>Here the promise callback makes sense, so adding it to the example:</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">getCenter</span><span class="hl-1">().</span><span class="hl-9">then</span><span class="hl-1">(</span><br/><span class="hl-1">      </span><span class="hl-10">function</span><span class="hl-1">(</span><span class="hl-0">result</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;Mapbox getCenter done, result: &quot;</span><span class="hl-1"> + </span><span class="hl-14">JSON</span><span class="hl-1">.</span><span class="hl-9">stringify</span><span class="hl-1">(</span><span class="hl-0">result</span><span class="hl-1">));</span><br/><span class="hl-1">      },</span><br/><span class="hl-1">      </span><span class="hl-10">function</span><span class="hl-1">(</span><span class="hl-0">error</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;mapbox getCenter error: &quot;</span><span class="hl-1"> + </span><span class="hl-0">error</span><span class="hl-1">);</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  )</span>
+</code></pre>
+
+<a href="#setzoomlevel" id="setzoomlevel" style="color: inherit; text-decoration: none;">
+  <h3>setZoomLevel</h3>
+</a>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">setZoomLevel</span><span class="hl-1">(</span><br/><span class="hl-1">      {</span><br/><span class="hl-1">        </span><span class="hl-0">level:</span><span class="hl-1"> </span><span class="hl-12">6.5</span><span class="hl-1">, </span><span class="hl-2">// mandatory, 0-20</span><br/><span class="hl-1">        </span><span class="hl-0">animated:</span><span class="hl-1"> </span><span class="hl-10">true</span><span class="hl-1"> </span><span class="hl-2">// default true</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  )</span>
+</code></pre>
+
+<a href="#getzoomlevel" id="getzoomlevel" style="color: inherit; text-decoration: none;">
+  <h3>getZoomLevel</h3>
+</a>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">getZoomLevel</span><span class="hl-1">().</span><span class="hl-9">then</span><span class="hl-1">(</span><br/><span class="hl-1">      </span><span class="hl-10">function</span><span class="hl-1">(</span><span class="hl-0">result</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;Mapbox getZoomLevel done, result: &quot;</span><span class="hl-1"> + </span><span class="hl-14">JSON</span><span class="hl-1">.</span><span class="hl-9">stringify</span><span class="hl-1">(</span><span class="hl-0">result</span><span class="hl-1">));</span><br/><span class="hl-1">      },</span><br/><span class="hl-1">      </span><span class="hl-10">function</span><span class="hl-1">(</span><span class="hl-0">error</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;mapbox getZoomLevel error: &quot;</span><span class="hl-1"> + </span><span class="hl-0">error</span><span class="hl-1">);</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  )</span>
+</code></pre>
+
+<a href="#animatecamera" id="animatecamera" style="color: inherit; text-decoration: none;">
+  <h3>animateCamera</h3>
+</a>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-2">// this is a boring triangle drawn near Amsterdam Central Station</span><br/><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">animateCamera</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-2">// this is where we animate to</span><br/><span class="hl-1">    </span><span class="hl-0">target:</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-0">lat:</span><span class="hl-1"> </span><span class="hl-12">52.3732160</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-0">lng:</span><span class="hl-1"> </span><span class="hl-12">4.8941680</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    </span><span class="hl-0">zoomLevel:</span><span class="hl-1"> </span><span class="hl-12">17</span><span class="hl-1">, </span><span class="hl-2">// Android</span><br/><span class="hl-1">    </span><span class="hl-0">altitude:</span><span class="hl-1"> </span><span class="hl-12">2000</span><span class="hl-1">, </span><span class="hl-2">// iOS (meters from the ground)</span><br/><span class="hl-1">    </span><span class="hl-0">bearing:</span><span class="hl-1"> </span><span class="hl-12">270</span><span class="hl-1">, </span><span class="hl-2">// Where the camera is pointing, 0-360 (degrees)</span><br/><span class="hl-1">    </span><span class="hl-0">tilt:</span><span class="hl-1"> </span><span class="hl-12">50</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-0">duration:</span><span class="hl-1"> </span><span class="hl-12">5000</span><span class="hl-1"> </span><span class="hl-2">// default 10000 (milliseconds)</span><br/><span class="hl-1">  })</span>
+</code></pre>
+
+<a href="#settilt-android-only" id="settilt-android-only" style="color: inherit; text-decoration: none;">
+  <h3>setTilt (Android only)</h3>
+</a>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">setTilt</span><span class="hl-1">(</span><br/><span class="hl-1">      {</span><br/><span class="hl-1">        </span><span class="hl-0">tilt:</span><span class="hl-1"> </span><span class="hl-12">40</span><span class="hl-1">, </span><span class="hl-2">// default 30 (degrees angle)</span><br/><span class="hl-1">        </span><span class="hl-0">duration:</span><span class="hl-1"> </span><span class="hl-12">4000</span><span class="hl-1"> </span><span class="hl-2">// default 5000 (milliseconds)</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  )</span>
+</code></pre>
+
+<a href="#gettilt-android-only" id="gettilt-android-only" style="color: inherit; text-decoration: none;">
+  <h3>getTilt (Android only)</h3>
+</a>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">getTilt</span><span class="hl-1">().</span><span class="hl-9">then</span><span class="hl-1">(</span><br/><span class="hl-1">      </span><span class="hl-10">function</span><span class="hl-1">(</span><span class="hl-0">tilt</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;Current map tilt: &quot;</span><span class="hl-1"> +  </span><span class="hl-0">tilt</span><span class="hl-1">);</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  )</span>
+</code></pre>
+
+<a href="#getuserlocation" id="getuserlocation" style="color: inherit; text-decoration: none;">
+  <h3>getUserLocation</h3>
+</a>
+<p>If the user&#39;s location is shown on the map you can get their coordinates and speed:</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">getUserLocation</span><span class="hl-1">().</span><span class="hl-9">then</span><span class="hl-1">(</span><br/><span class="hl-1">      </span><span class="hl-10">function</span><span class="hl-1">(</span><span class="hl-0">userLocation</span><span class="hl-1">) {</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;Current user location: &quot;</span><span class="hl-1"> +  </span><span class="hl-0">userLocation</span><span class="hl-1">.</span><span class="hl-0">location</span><span class="hl-1">.</span><span class="hl-0">lat</span><span class="hl-1"> + </span><span class="hl-8">&quot;, &quot;</span><span class="hl-1"> + </span><span class="hl-0">userLocation</span><span class="hl-1">.</span><span class="hl-0">location</span><span class="hl-1">.</span><span class="hl-0">lng</span><span class="hl-1">);</span><br/><span class="hl-1">        </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&quot;Current user speed: &quot;</span><span class="hl-1"> +  </span><span class="hl-0">userLocation</span><span class="hl-1">.</span><span class="hl-0">speed</span><span class="hl-1">);</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">  )</span>
+</code></pre>
+
+<a href="#trackuser" id="trackuser" style="color: inherit; text-decoration: none;">
+  <h3>trackUser</h3>
+</a>
+<p>In case you&#39;re showing the user&#39;s location, you can have the map track the position.
+The map will continuously move along with the last known location.</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">trackUser</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-0">mode:</span><span class="hl-1"> </span><span class="hl-8">&quot;FOLLOW_WITH_HEADING&quot;</span><span class="hl-1">, </span><span class="hl-2">// &quot;NONE&quot; | &quot;FOLLOW&quot; | &quot;FOLLOW_WITH_HEADING&quot; | &quot;FOLLOW_WITH_COURSE&quot;</span><br/><span class="hl-1">    </span><span class="hl-0">animated:</span><span class="hl-1"> </span><span class="hl-10">true</span><br/><span class="hl-1">  });</span>
+</code></pre>
+
+<a href="#addsource" id="addsource" style="color: inherit; text-decoration: none;">
+  <h3>addSource</h3>
+</a>
+<p><a href="https://docs.mapbox.com/mapbox-gl-js/api/#map#addsource">https://docs.mapbox.com/mapbox-gl-js/api/#map#addsource</a> </p>
+<p>Supported source types:</p>
+<ul>
+<li>Vector</li>
+<li>GeoJson </li>
+<li>Raster</li>
+</ul>
+<p>Adds a vector to GeoJSON source to the map.</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">addSource</span><span class="hl-1">( </span><span class="hl-0">id</span><span class="hl-1">, {</span><br/><span class="hl-1">    </span><span class="hl-0">type:</span><span class="hl-1"> </span><span class="hl-8">&#39;vector&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-0">url:</span><span class="hl-1"> </span><span class="hl-8">&#39;url to source&#39;</span><br/><span class="hl-1">  } );</span>
+</code></pre>
+<p>-or-</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">addSource</span><span class="hl-1">( </span><span class="hl-0">id</span><span class="hl-1">, {</span><br/><span class="hl-1">    </span><span class="hl-8">&#39;type&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;geojson&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-8">&#39;data&#39;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-8">&quot;type&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&quot;Feature&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-8">&quot;geometry&quot;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-8">&quot;type&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&quot;LineString&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-8">&quot;coordinates&quot;</span><span class="hl-0">:</span><span class="hl-1"> [ [ </span><span class="hl-0">lng</span><span class="hl-1">, </span><span class="hl-0">lat</span><span class="hl-1"> ], [ </span><span class="hl-0">lng</span><span class="hl-1">, </span><span class="hl-0">lat</span><span class="hl-1"> ], ..... ]</span><br/><span class="hl-1">        }</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  );</span>
+</code></pre>
+
+<a href="#removesource" id="removesource" style="color: inherit; text-decoration: none;">
+  <h3>removeSource</h3>
+</a>
+<p>Remove a source by id</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">removeSource</span><span class="hl-1">( </span><span class="hl-0">id</span><span class="hl-1"> );</span>
+</code></pre>
+
+<a href="#addlayer" id="addlayer" style="color: inherit; text-decoration: none;">
+  <h3>addLayer</h3>
+</a>
+<p><a href="https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers">https://docs.mapbox.com/mapbox-gl-js/style-spec/#layers</a></p>
+<p>Supported layer types:</p>
+<ul>
+<li>Line</li>
+<li>Circle </li>
+<li>Fill</li>
+<li>Symbol</li>
+<li>Raster</li>
+</ul>
+<p>To add a line:</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">addLayer</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-8">&#39;id&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-0">someid</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-8">&#39;type&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;line&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-8">&#39;source&#39;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;type&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;geojson&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;data&#39;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-8">&quot;type&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&quot;Feature&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-8">&quot;geometry&quot;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">          </span><span class="hl-8">&quot;type&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&quot;LineString&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">            </span><span class="hl-8">&quot;coordinates&quot;</span><span class="hl-0">:</span><span class="hl-1"> [ [ </span><span class="hl-0">lng</span><span class="hl-1">, </span><span class="hl-0">lat</span><span class="hl-1"> ], [ </span><span class="hl-0">lng</span><span class="hl-1">, </span><span class="hl-0">lat</span><span class="hl-1"> ], ..... ]</span><br/><span class="hl-1">          }</span><br/><span class="hl-1">        }</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">    },</span><br/><span class="hl-1">    </span><span class="hl-8">&#39;layout&#39;</span><span class="hl-1">: {</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;line-cap&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;round&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;line-join&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;round&#39;</span><br/><span class="hl-1">    },    </span><br/><span class="hl-1">    </span><span class="hl-8">&#39;paint&#39;</span><span class="hl-1">: {</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;line-color&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;#ed6498&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;line-width&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-12">5</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;line-opacity&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-12">.8</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;line-dash-array&#39;</span><span class="hl-0">:</span><span class="hl-1"> [ </span><span class="hl-12">1</span><span class="hl-1">, </span><span class="hl-12">1</span><span class="hl-1">, </span><span class="hl-12">1</span><span class="hl-1">, ..]</span><br/><span class="hl-1">    }</span><br/><span class="hl-1">  });</span>
+</code></pre>
+<p>To add a circle:</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">addLayer</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-8">&quot;id&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-0">someid</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-8">&quot;type&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;circle&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">    </span><span class="hl-8">&quot;source&quot;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-8">&quot;type&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;geojson&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">&quot;data&quot;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-8">&quot;type&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&quot;Feature&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">        </span><span class="hl-8">&quot;geometry&quot;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">          </span><span class="hl-8">&quot;type&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&quot;Point&quot;</span><span class="hl-1">,</span><br/><span class="hl-1">          </span><span class="hl-8">&quot;coordinates&quot;</span><span class="hl-0">:</span><span class="hl-1"> [ </span><span class="hl-0">lng</span><span class="hl-1">, </span><span class="hl-0">lat</span><span class="hl-1"> ]</span><br/><span class="hl-1">        }</span><br/><span class="hl-1">      }</span><br/><span class="hl-1">    }, </span><br/><span class="hl-1">    </span><span class="hl-8">&quot;paint&quot;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-8">&quot;circle-radius&quot;</span><span class="hl-0">:</span><span class="hl-1"> {</span><br/><span class="hl-1">        </span><span class="hl-8">&quot;stops&quot;</span><span class="hl-0">:</span><span class="hl-1"> [</span><br/><span class="hl-1">          [</span><span class="hl-12">0</span><span class="hl-1">, </span><span class="hl-12">0</span><span class="hl-1">],</span><br/><span class="hl-1">          [</span><span class="hl-12">20</span><span class="hl-1">, </span><span class="hl-12">8000</span><span class="hl-1"> ]</span><br/><span class="hl-1">        ],</span><br/><span class="hl-1">        </span><span class="hl-8">&quot;base&quot;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-12">2</span><br/><span class="hl-1">      },</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;circle-opacity&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-12">0.05</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;circle-color&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;#ed6498&#39;</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;circle-stroke-width&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-12">2</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-8">&#39;circle-stroke-color&#39;</span><span class="hl-0">:</span><span class="hl-1"> </span><span class="hl-8">&#39;#ed6498&#39;</span><br/><span class="hl-1">    } </span><br/><span class="hl-1">  });</span>
+</code></pre>
+<p>Source may be a geojson or vector source description or may be 
+the id of a source added using addSource()</p>
+
+<a href="#removelayer" id="removelayer" style="color: inherit; text-decoration: none;">
+  <h3>removeLayer</h3>
+</a>
+<p>Remove a layer added with addLayer() by id.</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">removeLayer</span><span class="hl-1">( </span><span class="hl-0">id</span><span class="hl-1"> );</span>
+</code></pre>
+
+<a href="#queryrenderedfeatures" id="queryrenderedfeatures" style="color: inherit; text-decoration: none;">
+  <h3>queryRenderedFeatures</h3>
+</a>
+<p><a href="https://docs.mapbox.com/mapbox-gl-js/api/map/#map#queryrenderedfeatures">https://docs.mapbox.com/mapbox-gl-js/api/map/#map#queryrenderedfeatures</a>
+Returns an array of GeoJSON Feature objects representing visible features that satisfy the query parameters.</p>
+<pre><code class="language-js"><span class="hl-0">mapbox</span><br/><span class="hl-1">  .</span><span class="hl-9">queryRenderedFeatures</span><span class="hl-1">({</span><br/><span class="hl-1">    </span><span class="hl-0">point:</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-0">lat:</span><span class="hl-1"> </span><span class="hl-12">52.3701494345567</span><span class="hl-1">,</span><br/><span class="hl-1">      </span><span class="hl-0">lng:</span><span class="hl-1"> </span><span class="hl-12">4.823684692382513</span><span class="hl-1">,</span><br/><span class="hl-1">      },</span><br/><span class="hl-1">    </span><span class="hl-0">layers:</span><span class="hl-1"> [</span><span class="hl-8">&#39;circle-with-source-object&#39;</span><span class="hl-1">],</span><br/><span class="hl-1">    </span><span class="hl-0">filter:</span><span class="hl-1"> [</span><span class="hl-8">&#39;==&#39;</span><span class="hl-1">, [</span><span class="hl-8">&#39;get&#39;</span><span class="hl-1">, </span><span class="hl-8">&#39;querySample&#39;</span><span class="hl-1">], </span><span class="hl-8">&#39;2&#39;</span><span class="hl-1">],</span><br/><span class="hl-1">  })</span><br/><span class="hl-1">  .</span><span class="hl-9">then</span><span class="hl-1">((</span><span class="hl-0">result</span><span class="hl-1">) </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&#39;query rendered features&#39;</span><span class="hl-1">, </span><span class="hl-0">result</span><span class="hl-1">))</span>
+</code></pre>
+
+<a href="#querysourcefeatures" id="querysourcefeatures" style="color: inherit; text-decoration: none;">
+  <h3>querySourceFeatures</h3>
+</a>
+<p><a href="https://docs.mapbox.com/mapbox-gl-js/api/map/#map#querysourcefeatures">https://docs.mapbox.com/mapbox-gl-js/api/map/#map#querysourcefeatures</a>
+Returns an array of GeoJSON Feature objects representing features within the specified vector tile or GeoJSON source that satisfy the query parameters.</p>
+<pre><code class="language-js"><span class="hl-0">mapbox</span><br/><span class="hl-1">  .</span><span class="hl-9">querySourceFeatures</span><span class="hl-1">(</span><span class="hl-8">&#39;source_id&#39;</span><span class="hl-1">, { </span><span class="hl-0">filter:</span><span class="hl-1"> [</span><span class="hl-8">&#39;==&#39;</span><span class="hl-1">, [</span><span class="hl-8">&#39;get&#39;</span><span class="hl-1">, </span><span class="hl-8">&#39;querySample&#39;</span><span class="hl-1">], </span><span class="hl-8">&#39;2&#39;</span><span class="hl-1">] })</span><br/><span class="hl-1">  .</span><span class="hl-9">then</span><span class="hl-1">((</span><span class="hl-0">result</span><span class="hl-1">) </span><span class="hl-10">=&gt;</span><span class="hl-1"> </span><span class="hl-0">console</span><span class="hl-1">.</span><span class="hl-9">log</span><span class="hl-1">(</span><span class="hl-8">&#39;query source features&#39;</span><span class="hl-1">, </span><span class="hl-0">result</span><span class="hl-1">));</span>
+</code></pre>
+
+<a href="#addlinepoint" id="addlinepoint" style="color: inherit; text-decoration: none;">
+  <h3>addLinePoint</h3>
+</a>
+<p>Dynamically add a point to a line.</p>
+<pre><code class="language-js"><span class="hl-1">  </span><span class="hl-0">mapbox</span><span class="hl-1">.</span><span class="hl-9">addLinePoint</span><span class="hl-1">( </span><span class="hl-3">&lt;</span><span class="hl-4">id</span><span class="hl-1"> </span><span class="hl-5">of</span><span class="hl-1"> </span><span class="hl-5">line</span><span class="hl-1"> </span><span class="hl-5">layer</span><span class="hl-3">&gt;</span><span class="hl-1">, lnglat )</span>
+</code></pre>
+<p>where lnglat is an array of two points, a longitude and a latitude.</p>
+
+<a href="#addpolygon-deprecated-use-addlayer-instead" id="addpolygon-deprecated-use-addlayer-instead" style="color: inherit; text-decoration: none;">
+  <h3>addPolygon (<strong>deprecated</strong>, use addLayer() instead)</h3>
+</a>
+<p>Draw a shape. Just connect the dots like we did as a toddler.</p>
+<p>The first person to tweet a snowman drawn with this function gets a T-shirt (from</p>
 </div></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
@@ -44,6 +629,7 @@ updated pod file.</p>
 <h4 class="uppercase">Member Visibility</h4><form>
 <ul id="tsd-filter-options">
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li></ul></form></div>
 <div class="tsd-theme-toggle">
 <h4 class="uppercase">Theme</h4><select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
@@ -53,12 +639,8 @@ updated pod file.</p>
 <div class="tsd-accordion-details">
 <ul>
 <li class="current selected"><a href="modules.html">A <wbr/>Nativescript plugin for <wbr/>Mapbox <wbr/>Native <wbr/>Maps.</a>
-<ul>
-<li class="tsd-kind-module"><a href="modules/common.html">common</a></li>
-<li class="tsd-kind-module"><a href="modules/expression_expression_parser.html">expression/expression-<wbr/>parser</a></li>
-<li class="tsd-kind-module"><a href="modules/index.html">index</a></li>
-<li class="tsd-kind-module"><a href="modules/layers_layer_factory.html">layers/layer-<wbr/>factory</a></li>
-<li class="tsd-kind-module"><a href="modules/layers_parser_property_parser.html">layers/parser/property-<wbr/>parser</a></li></ul></li></ul></div></details></nav></div></div>
+<ul></ul></li></ul></div></details></nav>
+<nav class="tsd-navigation secondary menu-sticky"></nav></div></div>
 <div class="container tsd-generator">
 <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
 <div class="overlay"></div><script src="assets/main.js"></script></body></html>
