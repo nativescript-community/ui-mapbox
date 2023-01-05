@@ -13,7 +13,7 @@
         "demo.ng.ios": "cd ./demo-ng && ns run ios --no-hmr --env.watchNodeModules",
         "publish": "npm run clean && npm run build.all && npm run readme && lerna publish --no-private --create-release=github --force-publish",
         "postinstall": "npm run setup",
-        "readme": "node ./tools/readme.js",
+        "readme": "lerna run readme && node ./tools/readme.js",
         "start": "./node_modules/.bin/ntl -A -s 15 -o",
         "submodules": "git submodule update --init",
         "update": "node ./tools/update.js",
