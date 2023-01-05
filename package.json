@@ -1,5 +1,4 @@
 {
-    "name": "@nativescript-community/ui-mapbox",
     "version": "1.0.0",
     "description": "A Nativescript plugin for Mapbox Native Maps.",
     "scripts": {
