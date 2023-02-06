@@ -1907,20 +1907,17 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                // adding the tap handler to the map object so it's not garbage collected.
                 theMap['mapTapHandler'] = MapTapHandlerImpl.initWithOwnerAndListenerForMap(new WeakRef(this), listener, theMap);
                 const tapGestureRecognizer = UITapGestureRecognizer.alloc().initWithTargetAction(theMap['mapTapHandler'], 'tap');
-
-                // cancel the default tap handler
                 for (let i = 0; i < theMap.gestureRecognizers.count; i++) {
-                    const recognizer: UIGestureRecognizer = theMap.gestureRecognizers.objectAtIndex(i);
+                    const recognizer = theMap.gestureRecognizers.objectAtIndex(i);
                     if (recognizer instanceof UITapGestureRecognizer) {
-                        tapGestureRecognizer.requireGestureRecognizerToFail(recognizer);
+                        recognizer.addTargetAction(theMap['mapTapHandler'], 'tap');
+                        break;
                     }
                 }
 
                 theMap.addGestureRecognizer(tapGestureRecognizer);
-
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
