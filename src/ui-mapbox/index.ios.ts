@@ -1451,29 +1451,29 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @todo come up with a reasonable set of cross platform defaults.
      */
     _stringToCameraMode(mode: UserLocationCameraMode): any {
-        switch(mode) {
-            case "NONE":
+        switch (mode) {
+            case 'NONE':
                 return MGLUserTrackingMode.None;
 
-            case "NONE_COMPASS":
-                console.log("MapboxView::_stringToCameraMode(): NONE_COMPASS unsupported on iOS");
+            case 'NONE_COMPASS':
+                console.log('MapboxView::_stringToCameraMode(): NONE_COMPASS unsupported on iOS');
                 return MGLUserTrackingMode.None;
 
-            case "NONE_GPS":
-                console.log("MapboxView::_stringToCameraMode(): NONE_GPS unsupported on iOS");
+            case 'NONE_GPS':
+                console.log('MapboxView::_stringToCameraMode(): NONE_GPS unsupported on iOS');
                 return MGLUserTrackingMode.None;
 
-            case "TRACKING":
+            case 'TRACKING':
                 return MGLUserTrackingMode.Follow;
 
-            case "TRACKING_COMPASS":
+            case 'TRACKING_COMPASS':
                 return MGLUserTrackingMode.FollowWithHeading;
 
-            case "TRACKING_GPS":
+            case 'TRACKING_GPS':
                 // a reasonable approximation.
                 return MGLUserTrackingMode.Follow;
 
-            case "TRACKING_GPS_NORTH":
+            case 'TRACKING_GPS_NORTH':
                 return MGLUserTrackingMode.FollowWithCourse;
 
             default:
@@ -1501,13 +1501,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     _convertCameraMode(mode: MGLUserTrackingMode): UserLocationCameraMode {
         switch (mode) {
             case MGLUserTrackingMode.None:
-                return "NONE";
+                return 'NONE';
             case MGLUserTrackingMode.Follow:
-                return "TRACKING";
+                return 'TRACKING';
             case MGLUserTrackingMode.FollowWithHeading:
-                return "TRACKING_COMPASS";
+                return 'TRACKING_COMPASS';
             case MGLUserTrackingMode.FollowWithCourse:
-                return "TRACKING_GPS_NORTH";
+                return 'TRACKING_GPS_NORTH';
         }
     }
 
@@ -1635,7 +1635,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const result = [];
                 for (let i = 0; i < features.count; i++) {
                     const feature: MGLFeature = features.objectAtIndex(i);
-                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0);
+                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0 as any);
                     result.push(JSON.parse(NSString.alloc().initWithDataEncoding(featureJson, NSUTF8StringEncoding) as any));
                 }
 
@@ -1679,7 +1679,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const result = [];
                 for (let i = 0; i < features.count; i++) {
                     const feature: MGLFeature = features.objectAtIndex(i);
-                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0);
+                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0 as any);
                     result.push(JSON.parse(NSString.alloc().initWithDataEncoding(featureJson, NSUTF8StringEncoding) as any));
                 }
                 resolve(result);
@@ -1732,7 +1732,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }`;
             const geoDataStr = NSString.stringWithString(geoJSON);
             const geoData = geoDataStr.dataUsingEncoding(NSUTF8StringEncoding);
-            const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0);
+            const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0 as any);
             const geo = NSData.alloc().initWithBase64EncodedStringOptions(geoDataBase64Enc, null);
             const shape = MGLShape.shapeWithDataEncodingError(geo, NSUTF8StringEncoding);
             const source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(polygonID, shape, null);
@@ -1783,7 +1783,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             const geoJSON = `{"type": "FeatureCollection", "features": [{"type": "Feature","properties": {},"geometry": {"type": "LineString", "coordinates": ${JSON.stringify(coordinateArray)}}}]}`;
             const geoDataStr = NSString.stringWithString(geoJSON);
             const geoData = geoDataStr.dataUsingEncoding(NSUTF8StringEncoding);
-            const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0);
+            const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0 as any);
 
             const geo = NSData.alloc().initWithBase64EncodedStringOptions(geoDataBase64Enc, null);
             const shape = MGLShape.shapeWithDataEncodingError(geo, NSUTF8StringEncoding);
@@ -2472,6 +2472,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             if (options.cluster.properties) {
                                 const clusterProperties = {};
                                 for (const property of Object.keys(options.cluster.properties)) {
+                                    // eslint-disable-next-line prefer-const
                                     let [operator, operand] = options.cluster.properties[property];
                                     if (!Array.isArray(operator)) {
                                         operator = [operator];
@@ -2850,24 +2851,24 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return { x, y };
     }
 
-    projectBack(screenCoordinate: { x: number, y: number }): LatLng {
+    projectBack(screenCoordinate: { x: number; y: number }): LatLng {
         const theMap: MGLMapView = this._mapboxViewInstance;
         const cgPoint = {
             x: screenCoordinate.x,
             y: screenCoordinate.y
-        }
+        };
         const coordinate = theMap.convertPointToCoordinateFromView(cgPoint, theMap);
         return {
             lat: coordinate.latitude,
             lng: coordinate.longitude
-        }
+        };
     }
 
     getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode {
-        let theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+        const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
 
         if (!theMap) {
-            return "NONE";
+            return 'NONE';
         }
 
         return this._convertCameraMode(theMap.userTrackingMode);
