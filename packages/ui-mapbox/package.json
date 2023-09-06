@@ -52,6 +52,6 @@
     },
     "readmeFilename": "README.md",
     "dependencies": {
-        "@nativescript-community/perms": "^2.2.0"
+        "@nativescript-community/perms": "^2.3.0"
     }
 }
