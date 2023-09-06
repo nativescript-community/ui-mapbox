@@ -1,4 +1,5 @@
 {
+    "private": true,
     "name": "@nativescript-community/template-snippet",
     "version": "6.2.20",
     "dependencies": {
