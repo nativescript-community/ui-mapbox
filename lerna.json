@@ -1,6 +1,6 @@
 {
-  "version": "6.2.19",
-  "packages": [
+    "version": "6.2.19",
+    "packages": [
         "packages/*"
     ],
     "npmClient": "yarn",
@@ -8,9 +8,30 @@
     "command": {
         "publish": {
             "conventionalCommits": true,
+            "conventionalBlacklist": [
+                "chore"
+            ],
+            "changelogPreset": "angular",
+            "createRelease": "github",
+            "commitHooks": false,
+            "private": false,
             "ignoreChanges": [
-                "ignored-file",
-                "*.md"
+                "*.md",
+                "docs/**"
+            ]
+        },
+        "version": {
+            "conventionalCommits": true,
+            "conventionalBlacklist": [
+                "chore"
+            ],
+            "changelogPreset": "angular",
+            "createRelease": "github",
+            "commitHooks": false,
+            "private": false,
+            "ignoreChanges": [
+                "*.md",
+                "docs/**"
             ]
         },
         "bootstrap": {
@@ -18,5 +39,5 @@
                 "--no-package-lock"
             ]
         }
-    },
+    }
 }
