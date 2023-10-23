@@ -1,17 +1,17 @@
 <ActionBar>
     <NavigationButton android.systemIcon="ic_menu_back" (tap)="goBack()"></NavigationButton>
-    <Label text="Basic Map"></Label>
+    <Label text="Source with URL"></Label>
 </ActionBar>
 
 <StackLayout>
     <ContentView height="100%" width="100%">
         <Mapbox
             [accessToken]="accessToken"
-            mapStyle="traffic_day"
-            latitude="50.467735"
-            longitude="13.427718"
+            mapStyle="mapbox://styles/mapbox/satellite-v9"
+            latitude="138.043"
+            longitude="35.201]"
             hideCompass="true"
-            zoomLevel="18"
+            zoomLevel="7"
             showUserLocation="false"
             disableZoom="false"
             disableRotation="false"

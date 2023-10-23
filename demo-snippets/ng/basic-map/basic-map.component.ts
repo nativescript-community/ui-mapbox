@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { RouterExtensions } from '@nativescript/angular';
+import { MAPBOX_API_KEY } from '../common';
 
 @Component({
     selector: 'ns-basic-map',
     templateUrl: './basic-map.component.html'
 })
 export class BasicMapComponent implements OnInit {
-    constructor(private router: RouterExtensions) {}
+    constructor(@Inject(MAPBOX_API_KEY) public accessToken: string, private router: RouterExtensions) {}
 
     ngOnInit(): void {}
 
