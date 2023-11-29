@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.22](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.21...v6.2.22) (2023-11-29)
+
+### Bug Fixes
+
+* **android:** trying to handle all sdk versions ([bbfa0aa](https://github.com/nativescript-community/ui-mapbox/commit/bbfa0aa5c16750bbcd3c331be18b9a6bf35f4d49))
+
 ## [6.2.21](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.20...v6.2.21) (2023-11-17)
 
 ### Bug Fixes
