@@ -49,6 +49,26 @@ import {
 
 export * from './common';
 
+let libraryLoadedOverloaded = false;
+function overrideLibraryLoader() {
+    try {
+        if (true && !libraryLoadedOverloaded) {
+            @NativeClass
+            class LibraryLoader extends com.mapbox.mapboxsdk.LibraryLoader {
+                load(name) {
+                    java.lang.System.loadLibrary(name);
+                }
+            }
+            com.mapbox.mapboxsdk.LibraryLoader.setLibraryLoader(new LibraryLoader());
+            libraryLoadedOverloaded = true;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+overrideLibraryLoader();
+
 function _getLocation(loc: globalAndroid.location.Location) {
     if (loc === null) {
         return null;
@@ -285,7 +305,6 @@ export class MapboxView extends MapboxViewBase {
                     if (this.telemetry === false) {
                         try {
                             com.mapbox.mapboxsdk.Mapbox.getTelemetry().setUserTelemetryRequestState(false);
-                            console.error('telemtry disabled!');
                         } catch (err) {
                             console.error('telemtry', err);
                         }
@@ -1357,7 +1376,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         if (cached) {
                             markerOptions.setIcon(cached);
                         } else {
-                            console.log(`No icon found for this device density for icon ' ${marker.icon}'. Falling back to the default icon.`);
+                            console.warn(`No icon found for this device density for icon ' ${marker.icon}'. Falling back to the default icon.`);
                         }
                     } else if (marker.icon.startsWith('http')) {
                         if (marker.iconDownloaded !== null) {
@@ -1381,7 +1400,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     if (cached) {
                         markerOptions.setIcon(cached);
                     } else {
-                        console.log(`Marker icon not found, using the default instead. Requested path: '" + ${marker.iconPath}'.`);
+                        console.warn(`Marker icon not found, using the default instead. Requested path: '" + ${marker.iconPath}'.`);
                     }
                 }
                 marker.android = this._mapboxMapInstance.addMarker(markerOptions);
@@ -2244,7 +2263,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     },
 
                                     mapboxTileCountLimitExceeded: (limit) => {
-                                        console.log(`dl mapboxTileCountLimitExceeded: ${limit}`);
+                                        console.warn(`dl mapboxTileCountLimitExceeded: ${limit}`);
                                     }
                                 })
                             );
@@ -2971,34 +2990,33 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return renderMode;
     }
 
-    _convertCameraMode( mode: any ): UserLocationCameraMode {
-
+    _convertCameraMode(mode: any): UserLocationCameraMode {
         const modeRef = com.mapbox.mapboxsdk.location.modes.CameraMode;
 
         switch (mode) {
             case modeRef.NONE:
-                return "NONE";
+                return 'NONE';
 
             case modeRef.NONE_COMPASS:
-                return "NONE_COMPASS";
+                return 'NONE_COMPASS';
 
             case modeRef.NONE_GPS:
-                return "NONE_GPS";
+                return 'NONE_GPS';
 
             case modeRef.TRACKING:
-                return "TRACKING";
+                return 'TRACKING';
 
             case modeRef.TRACKING_COMPASS:
-                return "TRACKING_COMPASS";
+                return 'TRACKING_COMPASS';
 
             case modeRef.TRACKING_GPS:
-                return "TRACKING_GPS";
+                return 'TRACKING_GPS';
 
             case modeRef.TRACKING_GPS_NORTH:
-                return "TRACKING_GPS_NORTH";
+                return 'TRACKING_GPS_NORTH';
         }
 
-        return "NONE";
+        return 'NONE';
     }
 
     _fineLocationPermissionGranted() {
@@ -3399,7 +3417,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     resolve(marker);
                 },
                 (e) => {
-                    console.log(`Download failed for ' ${marker.icon}' with error: ${e}`);
+                    console.error(`Download failed for ' ${marker.icon}' with error: ${e}`);
                     resolve(marker);
                 }
             );
@@ -3427,22 +3445,22 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
         return { x: Utils.layout.toDeviceIndependentPixels(screenLocation.x), y: Utils.layout.toDeviceIndependentPixels(screenLocation.y) };
     }
-    projectBack(screenCoordinate: { x: number, y: number }): LatLng {
+    projectBack(screenCoordinate: { x: number; y: number }): LatLng {
         const pointf = new android.graphics.PointF(screenCoordinate.x, screenCoordinate.y);
         const coordinate = this._mapboxMapInstance.getProjection().fromScreenLocation(pointf);
         return {
             lat: coordinate.getLatitude(),
             lng: coordinate.getLongitude()
-        }
+        };
     }
 
     getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode {
         if (!this._mapboxMapInstance) {
-            return "NONE";
+            return 'NONE';
         }
 
         if (!this._locationComponent) {
-            return "NONE";
+            return 'NONE';
         }
 
         return this._convertCameraMode(this._locationComponent.getCameraMode());
