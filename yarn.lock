@@ -3442,7 +3442,7 @@ __metadata:
 
 "@nativescript-community/plugin-seed-tools@file:tools::locator=root-workspace-0b6124%40workspace%3A.":
   version: 1.0.0
-  resolution: "@nativescript-community/plugin-seed-tools@file:tools#tools::hash=d2504b&locator=root-workspace-0b6124%40workspace%3A."
+  resolution: "@nativescript-community/plugin-seed-tools@file:tools#tools::hash=42483b&locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
     "@angular/animations": "npm:~16.2.8"
     "@angular/common": "npm:~16.2.8"
@@ -3506,7 +3506,7 @@ __metadata:
     vue: "npm:~2.6.14"
     yargs: "npm:^17.7.2"
     zone.js: "npm:~0.14.0"
-  checksum: a3ac822e0f0d04a3c3becf8f962ec8d1f3eb29df991fd5aad1da2ffbfcbbe150f9bb62ae99f6b226fe8e912e30f3c28174f38d951f68b363aa0518c0883a0984
+  checksum: 3cb32948f66a100769618b8738767771fbf2fcb6e61b5092fb4125d4cb5b5a630c93786c7713e598271ca7c6a8bc79e04c8aaf099e056d2ed9fd5ebf1fb25acd
   languageName: node
   linkType: hard
 
@@ -3519,11 +3519,11 @@ __metadata:
   linkType: soft
 
 "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox::locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets":
-  version: 6.2.21
-  resolution: "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox#../packages/ui-mapbox::hash=30267f&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
+  version: 6.2.23
+  resolution: "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox#../packages/ui-mapbox::hash=1ff615&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
   dependencies:
     "@nativescript-community/perms": "npm:^2.3.0"
-  checksum: 31f02b793f6282fe700cc91c04e9878c2745e3ecbc5bff03998752bc950a5201c8b8100022fbc3a304d3238a49608e247f4016df4e8fa5f9ea30c7dd22833c55
+  checksum: d7ee4c968599d2b1dec6bce339bd3e99ee6b784002b1c3ded19bca3fd9a6027bb0ba873c9ed9734f1b1b0e977d6b9c8c3293339dbe15eedf86ec0327d6a3aa26
   languageName: node
   linkType: hard
 
@@ -10833,14 +10833,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-cache-semantics@npm:^4.0.0, http-cache-semantics@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "http-cache-semantics@npm:4.1.0"
-  checksum: c9c29508b27c1d81ba78fc1df45dc142dfc039a0871e596db0a2257f08c7e9de16be6a61c3a7c90f4cb0e7dfc1c0277ed8a1ea4bc700b07d4e91ff403ca46d9e
-  languageName: node
-  linkType: hard
-
-"http-cache-semantics@npm:^4.1.1":
+"http-cache-semantics@npm:^4.0.0, http-cache-semantics@npm:^4.1.0, http-cache-semantics@npm:^4.1.1":
   version: 4.1.1
   resolution: "http-cache-semantics@npm:4.1.1"
   checksum: 362d5ed66b12ceb9c0a328fb31200b590ab1b02f4a254a697dc796850cc4385603e75f53ec59f768b2dad3bfa1464bd229f7de278d2899a0e3beffc634b6683f
