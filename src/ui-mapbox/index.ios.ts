@@ -18,7 +18,6 @@ import {
     MapboxApi,
     MapboxCommon,
     MapboxMarker,
-    MapboxTraceCategory,
     MapboxViewBase,
     OfflineRegion,
     QueryRenderedFeaturesOptions,
@@ -1216,8 +1215,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
+    async addImage(imageId: string, imagePath: string, nativeMap?: any): Promise<void> {
+        return new Promise(async (resolve, reject) => {
             const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
 
             if (!theMap) {
@@ -1225,15 +1224,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 return;
             }
 
-            if (!image.startsWith('res://')) {
-                const appPath = knownFolders.currentApp().path;
-                image = appPath + '/' + image.replace('~/', '');
-            }
-
-            const img = ImageSource.fromFileOrResourceSync(image);
-
             try {
-                theMap.style.setImageForName(img.ios, imageId);
+                const imageSource = await this.fetchImageSource(imagePath);
+                theMap.style.setImageForName(imageSource.ios, imageId);
                 resolve();
             } catch (ex) {
                 reject('Error during addImage: ' + ex);

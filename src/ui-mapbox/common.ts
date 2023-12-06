@@ -1,4 +1,4 @@
-import { Color, ContentView, ImageSource, Property, Trace, booleanConverter } from '@nativescript/core';
+import { Color, ContentView, ImageSource, Property, Trace, Utils, booleanConverter } from '@nativescript/core';
 
 export * from './geo.utils';
 export * from './expression/expression-parser';
@@ -712,7 +712,7 @@ export interface MapboxApi {
 
     getImage(imageId: string, nativeMap?: any): Promise<ImageSource>;
 
-    addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
+    addImage(imageId: string, imagePath: string, nativeMap?: any): Promise<void>;
 
     removeImage(imageId: string, nativeMap?: any): Promise<void>;
     project(data: LatLng): { x: number; y: number };
@@ -772,6 +772,17 @@ export abstract class MapboxCommon implements MapboxCommonApi {
 
     async hasFineLocationPermission() {
         return true;
+    }
+
+    protected async fetchImageSource(imagePath: string): Promise<ImageSource> {
+        if (Utils.isDataURI(imagePath)) {
+            const [, base64] = imagePath.split(';base64,');
+            return ImageSource.fromBase64Sync(base64);
+        }
+        if (Utils.isFileOrResourcePath(imagePath)) {
+            return ImageSource.fromFileOrResourceSync(imagePath);
+        }
+        return ImageSource.fromUrl(imagePath);
     }
 }
 
@@ -872,7 +883,7 @@ export interface MapboxViewApi {
 
     getImage(imageId: string, nativeMap?: any): Promise<ImageSource>;
 
-    addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
+    addImage(imageId: string, imagePath: string, nativeMap?: any): Promise<void>;
 
     removeImage(imageId: string, nativeMap?: any): Promise<void>;
 
@@ -1060,8 +1071,8 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     getImage(imageId: string): Promise<ImageSource> {
         return this.mapbox.getImage(imageId, this.getNativeMapView());
     }
-    addImage(imageId: string, image: string): Promise<void> {
-        return this.mapbox.addImage(imageId, image, this.getNativeMapView());
+    addImage(imageId: string, imagePath: string): Promise<void> {
+        return this.mapbox.addImage(imageId, imagePath, this.getNativeMapView());
     }
     removeImage(imageId: string): Promise<void> {
         return this.mapbox.removeImage(imageId, this.getNativeMapView());
