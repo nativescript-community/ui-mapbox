@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.24](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.23...v6.2.24) (2023-12-07)
+
+### Features
+
+* support adding images from HTTP and base64 data URLs ([6886f2a](https://github.com/nativescript-community/ui-mapbox/commit/6886f2aa76defb173d6ade9c5a9cd91d705b6e1c))
+
 ## [6.2.23](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.22...v6.2.23) (2023-11-29)
 
 ### Bug Fixes
