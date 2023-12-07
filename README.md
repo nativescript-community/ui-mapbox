@@ -800,6 +800,34 @@ Remove a layer added with addLayer() by id.
   mapbox.removeLayer( id );
 ```
 
+### addImage
+Add an image with `addImage` by providing an id and image path.
+
+The image path can be either:
+1. a resource path, which will be loaded using [`fromFileOrResourceSync`](https://docs.nativescript.org/api/class/ImageSource#fromfileorresourcesync)
+
+```js
+mapbox.addImage('my-resource', 'res://my-resource');
+```
+
+2. a local path, which will be loaded using [`fromFileOrResourceSync`](https://docs.nativescript.org/api/class/ImageSource#fromfileorresourcesync)
+
+```js
+mapbox.addImage('my-local-image', '~/my-local-image.png');
+```
+
+3. a base64 data URL, which will be loaded using [`fromBase64Sync`](https://docs.nativescript.org/api/class/ImageSource#frombase64sync)
+
+```js
+mapbox.addImage('my-base64-image', 'data:image/gif;base64,R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=');
+```
+
+4. an HTTP URL, which will be loaded using [`fromUrl`](https://docs.nativescript.org/api/class/ImageSource#fromurl)
+
+```js
+mapbox.addImage('my-web-image', 'https://picsum.photos/200');
+```
+
 ### queryRenderedFeatures
 https://docs.mapbox.com/mapbox-gl-js/api/map/#map#queryrenderedfeatures
 Returns an array of GeoJSON Feature objects representing visible features that satisfy the query parameters.

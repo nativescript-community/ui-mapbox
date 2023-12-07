@@ -5,7 +5,7 @@
  */
 
 import { request } from '@nativescript-community/perms';
-import { AndroidApplication, Application, Color, File, Http, Image, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
+import { AndroidApplication, Application, Color, File, Http, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import { ExpressionParser } from './expression/expression-parser';
 import { Layer, LayerFactory } from './layers/layer-factory';
 import {
@@ -27,7 +27,6 @@ import {
     MapboxApi,
     MapboxCommon,
     MapboxMarker,
-    MapboxTraceCategory,
     MapboxViewBase,
     OfflineRegion,
     QueryRenderedFeaturesOptions,
@@ -1223,8 +1222,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
+    async addImage(imageId: string, imagePath: string, nativeMap?: any): Promise<void> {
+        return new Promise(async (resolve, reject) => {
             const theMap = nativeMap || this._mapboxMapInstance;
 
             if (!theMap) {
@@ -1232,14 +1231,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 return;
             }
 
-            if (!image.startsWith('res://')) {
-                image = path.join(knownFolders.currentApp().path, image.replace('~/', ''));
-            }
-
-            const img = ImageSource.fromFileOrResourceSync(image);
-
             try {
-                theMap.getStyle().addImage(imageId, img.android);
+                const imageSource = await this.fetchImageSource(imagePath);
+                theMap.getStyle().addImage(imageId, imageSource.android);
                 resolve();
             } catch (ex) {
                 reject('Error during addImage: ' + ex);
