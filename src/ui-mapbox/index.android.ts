@@ -17,6 +17,7 @@ import {
     AnimateCameraOptions,
     CLog,
     CLogTypes,
+    ControlPosition,
     DeleteOfflineRegionOptions,
     DownloadOfflineRegionOptions,
     Feature,
@@ -126,7 +127,7 @@ export class MapboxView extends MapboxViewBase {
 
     private nativeMapView: any; // com.mapbox.mapboxsdk.maps.MapView
 
-    private settings: any = null;
+    private settings: ShowOptions = null;
 
     // whether or not the view has already been initialized.
     // see initNativeView()
@@ -144,7 +145,7 @@ export class MapboxView extends MapboxViewBase {
     /**
      * programmatically include settings
      */
-    setConfig(settings: any) {
+    setConfig(settings: ShowOptions) {
         // zoom level is not applied unless center is set
 
         if (settings.zoomLevel && !settings.center) {
@@ -170,7 +171,7 @@ export class MapboxView extends MapboxViewBase {
      *
      * @see Mapbox
      */
-    public getMapboxApi(): any {
+    public getMapboxApi() {
         return this.mapbox;
     }
 
@@ -2900,15 +2901,18 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @link https://docs.mapbox.com/android/api/map-sdk/7.1.2/com/mapbox/mapboxsdk/maps/MapboxMapOptions.html
      */
 
-    _getMapboxMapOptions(settings) {
+    _getMapboxMapOptions(settings: ShowOptions) {
         const mapboxMapOptions = new com.mapbox.mapboxsdk.maps.MapboxMapOptions()
             .compassEnabled(!settings.hideCompass)
+            .compassGravity(Mapbox.mapPositionToGravity(settings.compassPosition))
             .rotateGesturesEnabled(!settings.disableRotation)
             .scrollGesturesEnabled(!settings.disableScroll)
             .tiltGesturesEnabled(!settings.disableTilt)
             .zoomGesturesEnabled(!settings.disableZoom)
             .attributionEnabled(!settings.hideAttribution)
-            .logoEnabled(!settings.hideLogo);
+            .attributionGravity(Mapbox.mapPositionToGravity(settings.attributionPosition))
+            .logoEnabled(!settings.hideLogo)
+            .logoGravity(Mapbox.mapPositionToGravity(settings.logoPosition));
 
         // zoomlevel is not applied unless center is set
         if (settings.zoomLevel && !settings.center) {
@@ -2927,6 +2931,19 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         return mapboxMapOptions;
+    }
+
+    private static mapPositionToGravity(position: ControlPosition) {
+        switch (position) {
+            case ControlPosition.TOP_LEFT:
+                return android.view.Gravity.TOP | android.view.Gravity.START;
+            case ControlPosition.TOP_RIGHT:
+                return android.view.Gravity.TOP | android.view.Gravity.END;
+            case ControlPosition.BOTTOM_LEFT:
+                return android.view.Gravity.BOTTOM | android.view.Gravity.START;
+            case ControlPosition.BOTTOM_RIGHT:
+                return android.view.Gravity.BOTTOM | android.view.Gravity.END;
+        }
     }
 
     /**

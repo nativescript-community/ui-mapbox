@@ -427,18 +427,24 @@ export interface ListOfflineRegionsOptions {
 
 // ------------------------------------------------------------
 
+export enum ControlPosition {
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT
+}
+
 /**
  * The options object passed into the show function.
  */
-
 export interface ShowOptions {
     accessToken: string;
     /**
      * default 'streets'
      */
-    style?: MapStyle;
+    style?: string | MapStyle;
     margins?: ShowOptionsMargins;
-    center?: LatLng;
+    center?: Partial<LatLng>;
     /**
      * default 0 (which is almost the entire planet)
      */
@@ -452,13 +458,25 @@ export interface ShowOptions {
      */
     hideLogo?: boolean;
     /**
+     * default BOTTOM_LEFT
+     */
+    logoPosition?: ControlPosition;
+    /**
      * default true
      */
     hideAttribution?: boolean;
     /**
+     * default BOTTOM_LEFT
+     */
+    attributionPosition?: ControlPosition;
+    /**
      * default false
      */
     hideCompass?: boolean;
+    /**
+     * default TOP_RIGHT
+     */
+    compassPosition?: ControlPosition;
     /**
      * default false
      */
@@ -479,52 +497,46 @@ export interface ShowOptions {
      * Immediately add markers to the map
      */
     markers?: MapboxMarker[];
-
     /**
      * callback on location permission granted
      *
      * Android Only
      */
-
     onLocationPermissionGranted?: any;
-
     /**
      * callback on location permission denied
      *
      * Android Only
      */
-
     onLocationPermissionDenied?: any;
-
     /**
      * callback on Map Ready
      */
-
     onMapReady?: any;
-
     /**
      * callback on scroll event
      */
-
     onScrollEvent?: any;
-
     /**
      * callback on move begin event
      */
-
     onMoveBeginEvent?: any;
-
     /**
      * Android context
      */
-
     context?: any;
-
     /**
      * Android parent View
      */
-
     parentView?: any;
+    /**
+     * On Android by default there is a 200ms delay before showing the map to work around a race condition.
+     */
+    delay?: number;
+    /**
+     * See https://docs.mapbox.com/archive/android/maps/api/9.0.0/com/mapbox/mapboxsdk/location/LocationComponentOptions.html
+     */
+    locationComponentOptions: any;
 }
 
 // ------------------------------------------------------------
@@ -724,9 +736,8 @@ export interface MapboxApi {
 
 export abstract class MapboxCommon implements MapboxCommonApi {
     constructor(public view?: MapboxViewCommonBase) {}
-    public static defaults = {
+    public static defaults: Partial<ShowOptions> = {
         style: MapStyle.STREETS.toString(),
-        mapStyle: MapStyle.STREETS.toString(),
         margins: {
             left: 0,
             right: 0,
@@ -737,8 +748,11 @@ export abstract class MapboxCommon implements MapboxCommonApi {
         showUserLocation: false, // true requires adding `NSLocationWhenInUseUsageDescription` or `NSLocationAlwaysUsageDescription` in the .plist
         locationComponentOptions: {},
         hideLogo: false, // required for the 'starter' plan
+        logoPosition: ControlPosition.BOTTOM_LEFT, // The default position mimics constructor of MapboxMapOptions
         hideAttribution: true,
+        attributionPosition: ControlPosition.BOTTOM_LEFT, // The default position mimics constructor of MapboxMapOptions
         hideCompass: false,
+        compassPosition: ControlPosition.TOP_RIGHT, // The default position mimics constructor of MapboxMapOptions
         disableRotation: false,
         disableScroll: false,
         disableZoom: false,
@@ -1152,12 +1166,24 @@ export const hideLogoProperty = new Property<MapboxViewCommonBase, boolean>({
 });
 hideLogoProperty.register(MapboxViewCommonBase);
 
+export const logoPositionProperty = new Property<MapboxViewCommonBase, ControlPosition>({
+    name: 'logoPosition',
+    defaultValue: MapboxCommon.defaults.logoPosition
+});
+logoPositionProperty.register(MapboxViewCommonBase);
+
 export const hideAttributionProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'hideAttribution',
     defaultValue: MapboxCommon.defaults.hideAttribution,
     valueConverter: booleanConverter
 });
 hideAttributionProperty.register(MapboxViewCommonBase);
+
+export const attributionPositionProperty = new Property<MapboxViewCommonBase, ControlPosition>({
+    name: 'attributionPosition',
+    defaultValue: MapboxCommon.defaults.attributionPosition
+});
+attributionPositionProperty.register(MapboxViewCommonBase);
 
 export const telemetryProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'telemetry',
@@ -1172,6 +1198,12 @@ export const hideCompassProperty = new Property<MapboxViewCommonBase, boolean>({
     valueConverter: booleanConverter
 });
 hideCompassProperty.register(MapboxViewCommonBase);
+
+export const compassPositionProperty = new Property<MapboxViewCommonBase, ControlPosition>({
+    name: 'compassPosition',
+    defaultValue: MapboxCommon.defaults.compassPosition
+});
+compassPositionProperty.register(MapboxViewCommonBase);
 
 export const disableZoomProperty = new Property<MapboxViewCommonBase, boolean>({
     name: 'disableZoom',
@@ -1229,7 +1261,7 @@ export abstract class MapboxViewBase extends MapboxViewCommonBase {
     public static locationPermissionGrantedEvent: string = 'locationPermissionGranted';
     public static locationPermissionDeniedEvent: string = 'locationPermissionDenied';
 
-    protected config: any = {};
+    protected config: Partial<ShowOptions> = {};
 
     [zoomLevelProperty.setNative](value: number) {
         this.config.zoomLevel = +value;
@@ -1237,7 +1269,6 @@ export abstract class MapboxViewBase extends MapboxViewCommonBase {
 
     [mapStyleProperty.setNative](value: string) {
         this.config.style = value;
-        this.config.mapStyle = value;
     }
 
     [accessTokenProperty.setNative](value: string) {
@@ -1270,12 +1301,24 @@ export abstract class MapboxViewBase extends MapboxViewCommonBase {
         this.config.hideLogo = value;
     }
 
+    [logoPositionProperty.setNative](value: ControlPosition) {
+        this.config.logoPosition = value;
+    }
+
     [hideAttributionProperty.setNative](value: boolean) {
         this.config.hideAttribution = value;
     }
 
+    [attributionPositionProperty.setNative](value: ControlPosition) {
+        this.config.attributionPosition = value;
+    }
+
     [hideCompassProperty.setNative](value: boolean) {
         this.config.hideCompass = value;
+    }
+
+    [compassPositionProperty.setNative](value: ControlPosition) {
+        this.config.compassPosition = value;
     }
 
     [disableZoomProperty.setNative](value: boolean) {
