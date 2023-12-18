@@ -8,6 +8,7 @@ import {
     AnimateCameraOptions,
     CLog,
     CLogTypes,
+    ControlPosition,
     DeleteOfflineRegionOptions,
     DownloadOfflineRegionOptions,
     Feature,
@@ -517,10 +518,13 @@ export * from './common';
 let _markers = [];
 const _markerIconDownloadCache = [];
 
-const _setMapboxMapOptions = (mapView: MGLMapView, settings) => {
+const _setMapboxMapOptions = (mapView: MGLMapView, settings: ShowOptions) => {
     mapView.logoView.hidden = settings.hideLogo;
+    mapView.logoViewPosition = _mapControlPositionToOrnamentPosition(settings.logoPosition);
     mapView.attributionButton.hidden = settings.hideAttribution;
+    mapView.attributionButtonPosition = _mapControlPositionToOrnamentPosition(settings.attributionPosition);
     mapView.compassView.hidden = settings.hideCompass;
+    mapView.compassViewPosition = _mapControlPositionToOrnamentPosition(settings.compassPosition);
     mapView.rotateEnabled = !settings.disableRotation;
     mapView.scrollEnabled = !settings.disableScroll;
     mapView.zoomEnabled = !settings.disableZoom;
@@ -536,6 +540,19 @@ const _setMapboxMapOptions = (mapView: MGLMapView, settings) => {
     mapView.showsUserLocation = settings.showUserLocation;
 
     mapView.autoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+};
+
+const _mapControlPositionToOrnamentPosition = (position: ControlPosition) => {
+    switch (position) {
+        case ControlPosition.TOP_LEFT:
+            return MGLOrnamentPosition.TopLeft;
+        case ControlPosition.TOP_RIGHT:
+            return MGLOrnamentPosition.TopRight;
+        case ControlPosition.BOTTOM_LEFT:
+            return MGLOrnamentPosition.BottomLeft;
+        case ControlPosition.BOTTOM_RIGHT:
+            return MGLOrnamentPosition.BottomRight;
+    }
 };
 
 const _getMapStyle = (input: any): NSURL => {
