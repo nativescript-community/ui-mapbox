@@ -266,11 +266,8 @@ All currently supported options for your XML based map are (__don't__ use other 
 |`zoomLevel`|0|0-20
 |`showUserLocation `|false|Requires location permissions on Android which you can remove from `AndroidManifest.xml` if you don't need them
 |`hideCompass `|false|Don't show the compass in the top right corner during rotation of the map
-|`compassPosition`|ControlPosition.TOP_RIGHT|Corner in which to position the compass
 |`hideLogo`|false|Mapbox requires `false` if you're on a free plan
-|`logoPosition`|ControlPosition.BOTTOM_LEFT|Corner in which to position the Mapbox logo
 |`hideAttribution `|true|Mapbox requires `false` if you're on a free plan
-|`attributionPosition`|ControlPosition.BOTTOM_LEFT|Corner in which to position the attribution link
 |`disableZoom`|false|Don't allow the user to zoom in or out (pinch and double-tap)
 |`disableRotation`|false|Don't allow the user to rotate the map (two finger gesture)
 |`disableScroll`|false|Don't allow the user to move the center of the map (one finger drag)
