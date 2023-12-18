@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.26](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.25...v6.2.26) (2023-12-18)
+
+### Features
+
+* extend options to position controls that overlay the map ([ffdeae9](https://github.com/nativescript-community/ui-mapbox/commit/ffdeae937ddde42ea4c5f94661e9832300ef6e10))
+
 ## [6.2.25](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.24...v6.2.25) (2023-12-07)
 
 **Note:** Version bump only for package ui-mapbox
