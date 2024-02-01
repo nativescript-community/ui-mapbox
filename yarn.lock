@@ -3442,7 +3442,7 @@ __metadata:
 
 "@nativescript-community/plugin-seed-tools@file:tools::locator=root-workspace-0b6124%40workspace%3A.":
   version: 1.0.0
-  resolution: "@nativescript-community/plugin-seed-tools@file:tools#tools::hash=d2504b&locator=root-workspace-0b6124%40workspace%3A."
+  resolution: "@nativescript-community/plugin-seed-tools@file:tools#tools::hash=42483b&locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
     "@angular/animations": "npm:~16.2.8"
     "@angular/common": "npm:~16.2.8"
@@ -3506,7 +3506,7 @@ __metadata:
     vue: "npm:~2.6.14"
     yargs: "npm:^17.7.2"
     zone.js: "npm:~0.14.0"
-  checksum: a3ac822e0f0d04a3c3becf8f962ec8d1f3eb29df991fd5aad1da2ffbfcbbe150f9bb62ae99f6b226fe8e912e30f3c28174f38d951f68b363aa0518c0883a0984
+  checksum: 3cb32948f66a100769618b8738767771fbf2fcb6e61b5092fb4125d4cb5b5a630c93786c7713e598271ca7c6a8bc79e04c8aaf099e056d2ed9fd5ebf1fb25acd
   languageName: node
   linkType: hard
 
@@ -3519,11 +3519,11 @@ __metadata:
   linkType: soft
 
 "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox::locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets":
-  version: 6.2.21
-  resolution: "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox#../packages/ui-mapbox::hash=30267f&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
+  version: 6.2.23
+  resolution: "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox#../packages/ui-mapbox::hash=1ff615&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
   dependencies:
     "@nativescript-community/perms": "npm:^2.3.0"
-  checksum: 31f02b793f6282fe700cc91c04e9878c2745e3ecbc5bff03998752bc950a5201c8b8100022fbc3a304d3238a49608e247f4016df4e8fa5f9ea30c7dd22833c55
+  checksum: d7ee4c968599d2b1dec6bce339bd3e99ee6b784002b1c3ded19bca3fd9a6027bb0ba873c9ed9734f1b1b0e977d6b9c8c3293339dbe15eedf86ec0327d6a3aa26
   languageName: node
   linkType: hard
 
@@ -19429,7 +19429,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.76.1":
+"webpack@npm:5.76.1, webpack@npm:^5.30.0 <= 5.50.0 || ^5.51.2":
   version: 5.76.1
   resolution: "webpack@npm:5.76.1"
   dependencies:
@@ -19463,43 +19463,6 @@ __metadata:
   bin:
     webpack: bin/webpack.js
   checksum: 68010fc44a4a774f8e436725faac7786f3c309c0356e718529822af90298ed68e14434b28f34d27b41409b2f8e6915005d62ca029d8cb1c3b29bd12214358cca
-  languageName: node
-  linkType: hard
-
-"webpack@npm:^5.30.0 <= 5.50.0 || ^5.51.2":
-  version: 5.75.0
-  resolution: "webpack@npm:5.75.0"
-  dependencies:
-    "@types/eslint-scope": "npm:^3.7.3"
-    "@types/estree": "npm:^0.0.51"
-    "@webassemblyjs/ast": "npm:1.11.1"
-    "@webassemblyjs/wasm-edit": "npm:1.11.1"
-    "@webassemblyjs/wasm-parser": "npm:1.11.1"
-    acorn: "npm:^8.7.1"
-    acorn-import-assertions: "npm:^1.7.6"
-    browserslist: "npm:^4.14.5"
-    chrome-trace-event: "npm:^1.0.2"
-    enhanced-resolve: "npm:^5.10.0"
-    es-module-lexer: "npm:^0.9.0"
-    eslint-scope: "npm:5.1.1"
-    events: "npm:^3.2.0"
-    glob-to-regexp: "npm:^0.4.1"
-    graceful-fs: "npm:^4.2.9"
-    json-parse-even-better-errors: "npm:^2.3.1"
-    loader-runner: "npm:^4.2.0"
-    mime-types: "npm:^2.1.27"
-    neo-async: "npm:^2.6.2"
-    schema-utils: "npm:^3.1.0"
-    tapable: "npm:^2.1.1"
-    terser-webpack-plugin: "npm:^5.1.3"
-    watchpack: "npm:^2.4.0"
-    webpack-sources: "npm:^3.2.3"
-  peerDependenciesMeta:
-    webpack-cli:
-      optional: true
-  bin:
-    webpack: bin/webpack.js
-  checksum: 7f3674750226a988ad6e048a9fe7ee01aea3904a4d70cd651f76fdd786f0a905848b979d6337e864af8b2b8679dc01683a05177cb9bcbbfff91ced4c7808b19b
   languageName: node
   linkType: hard
 
