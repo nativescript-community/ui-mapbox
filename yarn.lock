@@ -510,7 +510,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/generator@npm:^7.19.3, @babel/generator@npm:^7.22.15":
+"@babel/generator@npm:^7.19.3":
   version: 7.22.15
   resolution: "@babel/generator@npm:7.22.15"
   dependencies:
@@ -717,15 +717,6 @@ __metadata:
     "@babel/template": "npm:^7.22.15"
     "@babel/types": "npm:^7.23.0"
   checksum: 7b2ae024cd7a09f19817daf99e0153b3bf2bc4ab344e197e8d13623d5e36117ed0b110914bc248faa64e8ccd3e97971ec7b41cc6fd6163a2b980220c58dcdf6d
-  languageName: node
-  linkType: hard
-
-"@babel/helper-hoist-variables@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/helper-hoist-variables@npm:7.18.6"
-  dependencies:
-    "@babel/types": "npm:^7.18.6"
-  checksum: fd9c35bb435fda802bf9ff7b6f2df06308a21277c6dec2120a35b09f9de68f68a33972e2c15505c1a1a04b36ec64c9ace97d4a9e26d6097b76b4396b7c5fa20f
   languageName: node
   linkType: hard
 
@@ -2083,61 +2074,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.19.3, @babel/traverse@npm:^7.20.12, @babel/traverse@npm:^7.22.15":
-  version: 7.22.15
-  resolution: "@babel/traverse@npm:7.22.15"
-  dependencies:
-    "@babel/code-frame": "npm:^7.22.13"
-    "@babel/generator": "npm:^7.22.15"
-    "@babel/helper-environment-visitor": "npm:^7.22.5"
-    "@babel/helper-function-name": "npm:^7.22.5"
-    "@babel/helper-hoist-variables": "npm:^7.22.5"
-    "@babel/helper-split-export-declaration": "npm:^7.22.6"
-    "@babel/parser": "npm:^7.22.15"
-    "@babel/types": "npm:^7.22.15"
-    debug: "npm:^4.1.0"
-    globals: "npm:^11.1.0"
-  checksum: dfdf808c8645a7a63761b5319080fc41546f37eb455ff5289a07c1298505e7d5cf6fa62c337c75c5d103e0e60c28e00367ed25b0e5f6353bbe677ffe33aaf2dc
-  languageName: node
-  linkType: hard
-
-"@babel/traverse@npm:^7.20.10, @babel/traverse@npm:^7.20.7":
-  version: 7.20.10
-  resolution: "@babel/traverse@npm:7.20.10"
-  dependencies:
-    "@babel/code-frame": "npm:^7.18.6"
-    "@babel/generator": "npm:^7.20.7"
-    "@babel/helper-environment-visitor": "npm:^7.18.9"
-    "@babel/helper-function-name": "npm:^7.19.0"
-    "@babel/helper-hoist-variables": "npm:^7.18.6"
-    "@babel/helper-split-export-declaration": "npm:^7.18.6"
-    "@babel/parser": "npm:^7.20.7"
-    "@babel/types": "npm:^7.20.7"
-    debug: "npm:^4.1.0"
-    globals: "npm:^11.1.0"
-  checksum: 4483610ca77512e947040d8e665a19915eff60351e05958a2f492a87d0dc1f0a8d55e6c9aeec0ee7c5b0e16ac9eefd89ae1c7f5f666ed07a4c00588ff8c0d90b
-  languageName: node
-  linkType: hard
-
-"@babel/traverse@npm:^7.20.5":
-  version: 7.20.12
-  resolution: "@babel/traverse@npm:7.20.12"
-  dependencies:
-    "@babel/code-frame": "npm:^7.18.6"
-    "@babel/generator": "npm:^7.20.7"
-    "@babel/helper-environment-visitor": "npm:^7.18.9"
-    "@babel/helper-function-name": "npm:^7.19.0"
-    "@babel/helper-hoist-variables": "npm:^7.18.6"
-    "@babel/helper-split-export-declaration": "npm:^7.18.6"
-    "@babel/parser": "npm:^7.20.7"
-    "@babel/types": "npm:^7.20.7"
-    debug: "npm:^4.1.0"
-    globals: "npm:^11.1.0"
-  checksum: 69cd161d17e812bc4ffde3cece3ec1fd8269cd581bd9e2ed7c6773791fcc9b81d99059cf982eac5098a112de330f8cf7c01b24f01cb4d23350dc1687d5db3c21
-  languageName: node
-  linkType: hard
-
-"@babel/traverse@npm:^7.23.2, @babel/traverse@npm:^7.23.5":
+"@babel/traverse@npm:^7.19.3, @babel/traverse@npm:^7.20.10, @babel/traverse@npm:^7.20.12, @babel/traverse@npm:^7.20.5, @babel/traverse@npm:^7.20.7, @babel/traverse@npm:^7.22.15, @babel/traverse@npm:^7.23.2, @babel/traverse@npm:^7.23.5":
   version: 7.23.5
   resolution: "@babel/traverse@npm:7.23.5"
   dependencies:
@@ -3442,7 +3379,7 @@ __metadata:
 
 "@nativescript-community/plugin-seed-tools@file:tools::locator=root-workspace-0b6124%40workspace%3A.":
   version: 1.0.0
-  resolution: "@nativescript-community/plugin-seed-tools@file:tools#tools::hash=d2504b&locator=root-workspace-0b6124%40workspace%3A."
+  resolution: "@nativescript-community/plugin-seed-tools@file:tools#tools::hash=42483b&locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
     "@angular/animations": "npm:~16.2.8"
     "@angular/common": "npm:~16.2.8"
@@ -3506,7 +3443,7 @@ __metadata:
     vue: "npm:~2.6.14"
     yargs: "npm:^17.7.2"
     zone.js: "npm:~0.14.0"
-  checksum: a3ac822e0f0d04a3c3becf8f962ec8d1f3eb29df991fd5aad1da2ffbfcbbe150f9bb62ae99f6b226fe8e912e30f3c28174f38d951f68b363aa0518c0883a0984
+  checksum: 3cb32948f66a100769618b8738767771fbf2fcb6e61b5092fb4125d4cb5b5a630c93786c7713e598271ca7c6a8bc79e04c8aaf099e056d2ed9fd5ebf1fb25acd
   languageName: node
   linkType: hard
 
@@ -3519,11 +3456,11 @@ __metadata:
   linkType: soft
 
 "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox::locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets":
-  version: 6.2.21
-  resolution: "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox#../packages/ui-mapbox::hash=30267f&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
+  version: 6.2.23
+  resolution: "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox#../packages/ui-mapbox::hash=1ff615&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
   dependencies:
     "@nativescript-community/perms": "npm:^2.3.0"
-  checksum: 31f02b793f6282fe700cc91c04e9878c2745e3ecbc5bff03998752bc950a5201c8b8100022fbc3a304d3238a49608e247f4016df4e8fa5f9ea30c7dd22833c55
+  checksum: d7ee4c968599d2b1dec6bce339bd3e99ee6b784002b1c3ded19bca3fd9a6027bb0ba873c9ed9734f1b1b0e977d6b9c8c3293339dbe15eedf86ec0327d6a3aa26
   languageName: node
   linkType: hard
 
