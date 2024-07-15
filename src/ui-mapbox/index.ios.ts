@@ -1842,10 +1842,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     const padding = options.padding || 0;
                     // support defined padding
                     const insets: UIEdgeInsets = {
-                        top: padding,
-                        left: padding,
-                        bottom: padding,
-                        right: padding
+                        top: padding.top ? padding.top : padding,
+                        left: padding.left ? padding.left : padding,
+                        bottom: padding.bottom ? padding.bottom : padding,
+                        right: padding.right ? padding.right : padding
                     };
                     const bounds: MGLCoordinateBounds = {
                         sw: CLLocationCoordinate2DMake(options.bounds.south, options.bounds.west),
@@ -2155,7 +2155,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 // support defined padding
                 const padding: UIEdgeInsets =
-                    options.padding !== undefined ? { top: options.padding, left: options.padding, bottom: options.padding, right: options.padding } : { top: 25, left: 25, bottom: 25, right: 25 };
+                    options.padding !== undefined ? { top: options.padding.top || options.padding, left: options.padding.left || options.padding, bottom: options.padding.bottom || options.padding, right: options.padding.right || options.padding } : { top: 25, left: 25, bottom: 25, right: 25 };
 
                 theMap.setVisibleCoordinateBoundsEdgePaddingAnimated(bounds, padding, animated);
                 resolve();
