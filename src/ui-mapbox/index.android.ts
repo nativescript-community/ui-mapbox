@@ -1793,7 +1793,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.north, options.bounds.east))
                         .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.south, options.bounds.west))
                         .build();
-                    this._mapboxMapInstance.animateCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding), durationMs, null);
+                    this._mapboxMapInstance.animateCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding.left || padding, padding.top || padding, padding.right || padding, padding.bottom || padding), durationMs, null);
                 } else {
                     const target = options.target;
                     if (target === undefined) {
@@ -2152,9 +2152,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     durationMs = animated ? 1000 : 0;
 
                 if (animated) {
-                    this._mapboxMapInstance.easeCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding), durationMs);
+                    this._mapboxMapInstance.easeCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding.left || padding, padding.top || padding, padding.right || padding, padding.bottom || padding), durationMs);
                 } else {
-                    this._mapboxMapInstance.moveCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding));
+                    this._mapboxMapInstance.moveCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding.left || padding, padding.top || padding, padding.right || padding, padding.bottom || padding));
                 }
 
                 setTimeout(() => {
