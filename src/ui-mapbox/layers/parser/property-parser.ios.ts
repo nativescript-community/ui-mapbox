@@ -95,7 +95,7 @@ export class PropertyParser {
             }
         } else {
             const expressionObj = (nValue as any).mgl_jsonExpressionObject;
-            const data = NSJSONSerialization.dataWithJSONObjectOptionsError(expressionObj, 0);
+            const data = NSJSONSerialization.dataWithJSONObjectOptionsError(expressionObj, 0 as any);
             const expression: any = NSString.alloc().initWithDataEncoding(data, NSUTF8StringEncoding);
 
             return JSON.parse(expression);
