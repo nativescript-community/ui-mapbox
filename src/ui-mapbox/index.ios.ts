@@ -1850,15 +1850,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 let cam: MGLMapCamera;
                 if (options.bounds) {
                     const padding = options.padding || 0;
-                    
+
                     // ensure padding is an object and assign default values
-                    const {
-                        top = 0,
-                        left = 0,
-                        bottom = 0,
-                        right = 0
-                    } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
-                    
+                    const { top = 0, left = 0, bottom = 0, right = 0 } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
+
                     // support defined padding
                     const insets: UIEdgeInsets = { top, left, bottom, right };
                     const bounds: MGLCoordinateBounds = {
@@ -2171,24 +2166,28 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const defaultPadding = 25;
 
                 // check if padding is defined and whether it's an object or a single value
-                const padding = options.padding !== undefined ? 
-                    (typeof options.padding === 'object' ? {
-                        top: options.padding.top !== undefined ? options.padding.top : 0,
-                        left: options.padding.left !== undefined ? options.padding.left : 0,
-                        bottom: options.padding.bottom !== undefined ? options.padding.bottom : 0,
-                        right: options.padding.right !== undefined ? options.padding.right : 0
-                    } : {
-                        top: options.padding,
-                        left: options.padding,
-                        bottom: options.padding,
-                        right: options.padding
-                    }) : {
-                        top: defaultPadding,
-                        left: defaultPadding,
-                        bottom: defaultPadding,
-                        right: defaultPadding
-                    };
-                
+                const padding =
+                    options.padding !== undefined
+                        ? typeof options.padding === 'object'
+                            ? {
+                                  top: options.padding.top ?? 0,
+                                  left: options.padding.left ?? 0,
+                                  bottom: options.padding.bottom ?? 0,
+                                  right: options.padding.right ?? 0
+                              }
+                            : {
+                                  top: options.padding,
+                                  left: options.padding,
+                                  bottom: options.padding,
+                                  right: options.padding
+                              }
+                        : {
+                              top: defaultPadding,
+                              left: defaultPadding,
+                              bottom: defaultPadding,
+                              right: defaultPadding
+                          };
+
                 theMap.setVisibleCoordinateBoundsEdgePaddingAnimated(bounds, padding, animated);
                 resolve();
             } catch (ex) {

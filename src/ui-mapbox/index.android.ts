@@ -1802,7 +1802,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             try {
                 const durationMs = options.duration ? options.duration : 10000;
                 if (options.bounds) {
-
                     const padding = options.padding || 0;
                     const defaultPadding = 0;
 
@@ -1813,12 +1812,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         bottom = defaultPadding,
                         right = defaultPadding
                     } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
-                    
+
                     const bounds = new com.mapbox.mapboxsdk.geometry.LatLngBounds.Builder()
                         .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.north, options.bounds.east))
                         .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.south, options.bounds.west))
                         .build();
-                    
+
                     this._mapboxMapInstance.animateCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, left, top, right, bottom), durationMs, null);
                 } else {
                     const target = options.target;
@@ -2174,7 +2173,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     .build();
 
                 const defaultPadding = 25;
-                const padding = options.padding !== undefined ? options.padding : defaultPadding;
+                const padding = options.padding ?? defaultPadding;
                 const animated = options.animated === undefined || options.animated;
                 const durationMs = animated ? 1000 : 0;
 
@@ -2187,7 +2186,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
 
                 const cameraUpdate = com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, left, top, right, bottom);
-                
+
                 if (animated) {
                     this._mapboxMapInstance.easeCamera(cameraUpdate, durationMs);
                 } else {

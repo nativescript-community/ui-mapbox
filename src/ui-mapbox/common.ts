@@ -223,7 +223,7 @@ export interface SetViewportOptions {
     /**
      * Optional padding.
      */
-    padding?: number;
+    padding?: number | { top?: number; left?: number; right?: number; bottom?: number };
 }
 
 // ------------------------------------------------------------
@@ -265,9 +265,9 @@ export interface AddGeoJsonClusteredOptions {
 
 // ------------------------------------------------------------
 
-export type LayerType = "fill" | "line" | "symbol" | "circle" | "heatmap" | "fill-extrusion" | "raster" | "hillshade" | "background" | "sky"
+export type LayerType = 'fill' | 'line' | 'symbol' | 'circle' | 'heatmap' | 'fill-extrusion' | 'raster' | 'hillshade' | 'background' | 'sky';
 
-export type SupportedLayerType = LayerType & ("line" | "circle" | "fill" | "symbol" | "raster")
+export type SupportedLayerType = LayerType & ('line' | 'circle' | 'fill' | 'symbol' | 'raster');
 
 // ------------------------------------------------------------
 
@@ -354,7 +354,7 @@ export interface GeoJSONSource extends Source {
     cluster?: {
         radius;
         maxZoom;
-        properties?: { [property: string]: [any, any] } ;
+        properties?: { [property: string]: [any, any] };
     };
 }
 
@@ -729,7 +729,7 @@ export interface MapboxApi {
     removeImage(imageId: string, nativeMap?: any): Promise<void>;
     project(data: LatLng): { x: number; y: number };
 
-    projectBack(point: { x: number, y: number }): LatLng;
+    projectBack(point: { x: number; y: number }): LatLng;
 }
 
 // ------------------------------------------------------------
@@ -920,7 +920,7 @@ export interface MapboxViewApi {
         y: number;
     };
 
-    projectBack(screenCoordinate: { x: number, y: number }): LatLng;
+    projectBack(screenCoordinate: { x: number; y: number }): LatLng;
 }
 
 // ----------------------------------------------------------------------------------------
@@ -1115,7 +1115,7 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     project(data: LatLng) {
         return this.mapbox && this.mapbox.project(data);
     }
-    projectBack(screenCoordinate: { x: number, y: number }): LatLng {
+    projectBack(screenCoordinate: { x: number; y: number }): LatLng {
         return this.mapbox && this.mapbox.projectBack(screenCoordinate);
     }
 }
