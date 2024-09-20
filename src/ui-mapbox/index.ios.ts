@@ -1921,8 +1921,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 for (let i = 0; i < theMap.gestureRecognizers.count; i++) {
                     const recognizer = theMap.gestureRecognizers.objectAtIndex(i);
                     if (recognizer instanceof UITapGestureRecognizer) {
-                        recognizer.addTargetAction(theMap['mapTapHandler'], 'tap');
-                        break;
+                        tapGestureRecognizer.requireGestureRecognizerToFail(recognizer);
                     }
                 }
 
