@@ -7,40 +7,40 @@ function toCamelCase(s) {
 const styleExtras = {
     // padding
     iconTextFitPadding: {
-      iosType: 'edgeinsets',
+        iosType: 'edgeinsets'
     },
-  
+
     // offsets
     iconOffset: {
-      iosType: 'vector',
+        iosType: 'vector'
     },
     textOffset: {
-      iosType: 'vector',
+        iosType: 'vector'
     },
     lineOffset: {
-      iosType: 'vector',
+        iosType: 'vector'
     },
-  
+
     // translates
     fillTranslate: {
-      iosType: 'vector',
+        iosType: 'vector'
     },
     lineTranslate: {
-      iosType: 'vector',
+        iosType: 'vector'
     },
     iconTranslate: {
-      iosType: 'vector',
+        iosType: 'vector'
     },
     textTranslate: {
-      iosType: 'vector',
+        iosType: 'vector'
     },
     circleTranslate: {
-      iosType: 'vector',
+        iosType: 'vector'
     },
     fillExtrusionTranslate: {
-      iosType: 'vector',
-    },
-  };
+        iosType: 'vector'
+    }
+};
 
 const keysMap = {
     'circle-pitch-scale': 'circleScaleAlignment',
@@ -80,19 +80,18 @@ const keysMap = {
     'raster-brightness-max': 'minimumRasterBrightness'
 };
 function transformValue(key, value, _styleType) {
-
     if (_styleType === 'color' || key.indexOf('-color') !== -1) {
         const color = value instanceof Color ? value : new Color(value);
         return color.ios;
     } else if (_styleType === 'vector') {
         const vector = CGVectorMake(value[0], value[1]);
         return (NSExpression as any).expressionWithMGLJSONObject(NSValue.valueWithCGVector(vector));
-    } else if (_styleType  === "edgeinsets"){
+    } else if (_styleType === 'edgeinsets') {
         const edgeInsets = new UIEdgeInsets({
             top: value[0],
             left: value[1],
             bottom: value[2],
-            right: value[3],
+            right: value[3]
         });
         return (NSExpression as any).expressionWithMGLJSONObject(NSValue.valueWithUIEdgeInsets(edgeInsets));
     } else {
@@ -109,7 +108,6 @@ function transformValue(key, value, _styleType) {
                 return value;
         }
     }
-   
 }
 export class PropertyParser {
     static parsePropertiesForLayer(propertiesObject) {
