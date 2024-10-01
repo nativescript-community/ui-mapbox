@@ -1,8 +1,8 @@
 {
     "private": true,
     "name": "@nativescript-community/template-snippet",
-    "version": "6.2.20",
+    "version": "0.0.1",
     "dependencies": {
-        "@nativescript-community/ui-mapbox": "file:../packages/ui-mapbox"
+        "@nativescript-community/ui-mapbox": "*"
     }
 }
