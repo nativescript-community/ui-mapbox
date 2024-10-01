@@ -4,6 +4,44 @@ function toCamelCase(s) {
     return s.replace(/([-_][a-z])/gi, ($1) => $1.toUpperCase().replace('-', '').replace('_', ''));
 }
 
+const styleExtras = {
+    // padding
+    iconTextFitPadding: {
+      iosType: 'edgeinsets',
+    },
+  
+    // offsets
+    iconOffset: {
+      iosType: 'vector',
+    },
+    textOffset: {
+      iosType: 'vector',
+    },
+    lineOffset: {
+      iosType: 'vector',
+    },
+  
+    // translates
+    fillTranslate: {
+      iosType: 'vector',
+    },
+    lineTranslate: {
+      iosType: 'vector',
+    },
+    iconTranslate: {
+      iosType: 'vector',
+    },
+    textTranslate: {
+      iosType: 'vector',
+    },
+    circleTranslate: {
+      iosType: 'vector',
+    },
+    fillExtrusionTranslate: {
+      iosType: 'vector',
+    },
+  };
+
 const keysMap = {
     'circle-pitch-scale': 'circleScaleAlignment',
     'circle-translate': 'circleTranslation',
@@ -41,23 +79,37 @@ const keysMap = {
     'raster-brightness-min': 'maximumRasterBrightness',
     'raster-brightness-max': 'minimumRasterBrightness'
 };
-function transformValue(key, value) {
-    if (key.indexOf('-color') !== -1 && !Array.isArray(value)) {
+function transformValue(key, value, _styleType) {
+
+    if (_styleType === 'color' || key.indexOf('-color') !== -1) {
         const color = value instanceof Color ? value : new Color(value);
         return color.ios;
-    }
-    switch (key) {
-        case 'raster-resampling':
-            if (value === 'linear') {
-                return MGLRasterResamplingMode.Linear;
-            } else if (value === 'nearest') {
-                return MGLRasterResamplingMode.Nearest;
-            } else {
+    } else if (_styleType === 'vector') {
+        const vector = CGVectorMake(value[0], value[1]);
+        return (NSExpression as any).expressionWithMGLJSONObject(NSValue.valueWithCGVector(vector));
+    } else if (_styleType  === "edgeinsets"){
+        const edgeInsets = new UIEdgeInsets({
+            top: value[0],
+            left: value[1],
+            bottom: value[2],
+            right: value[3],
+        });
+        return (NSExpression as any).expressionWithMGLJSONObject(NSValue.valueWithUIEdgeInsets(edgeInsets));
+    } else {
+        switch (key) {
+            case 'raster-resampling':
+                if (value === 'linear') {
+                    return MGLRasterResamplingMode.Linear;
+                } else if (value === 'nearest') {
+                    return MGLRasterResamplingMode.Nearest;
+                } else {
+                    return value;
+                }
+            default:
                 return value;
-            }
-        default:
-            return value;
+        }
     }
+   
 }
 export class PropertyParser {
     static parsePropertiesForLayer(propertiesObject) {
@@ -67,7 +119,7 @@ export class PropertyParser {
             Object.keys(propertiesObject).forEach((k) => {
                 const actualKey = keysMap[k] || toCamelCase(k);
                 const value = propertiesObject[k];
-                const rValue = transformValue(k, value);
+                const rValue = transformValue(k, value, styleExtras[k]?.iosType);
                 if (Array.isArray(value)) {
                     nProperties[actualKey] = (NSExpression as any).expressionWithMGLJSONObject(rValue);
                 } else {
