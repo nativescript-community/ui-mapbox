@@ -10,6 +10,31 @@
 You either need your own tile server such as the one provided by [openmaptiles.org](https://openmaptiles.org) or a Mapbox API access token (they have a 🆓 Starter plan!), so [sign up with Mapbox](https://www.mapbox.com/signup/).
 Once you've registered go to your Account > Apps > New token. The 'Default Secret Token' is what you'll need.
 
+### Android
+
+Mapbox now requires (version > 8.6.6) an api key to download the sdk
+
+If you want to use newer version than the default 8.6.6 you need to add this to your `app.gradle`
+```gradle
+allprojects {
+  repositories {
+       maven {
+        url 'https://api.mapbox.com/downloads/v2/releases/maven'
+        authentication {
+            basic(BasicAuthentication)
+        }
+        credentials {
+            // Do not change the username below.
+            // This should always be `mapbox` (not your username). 
+            username = 'mapbox'
+            // Use the secret token you stored in gradle.properties as the password
+            password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
+        }
+    }
+  }
+}
+```
+
 ## Installation
 Run the following command from the root of your project:
 

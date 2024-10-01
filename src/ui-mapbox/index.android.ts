@@ -5,7 +5,7 @@
  */
 
 import { request } from '@nativescript-community/perms';
-import { AndroidApplication, Application, Color, File, Http, Image, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
+import { AndroidApplication, Application, Color, File, Http, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import { ExpressionParser } from './expression/expression-parser';
 import { Layer, LayerFactory } from './layers/layer-factory';
 import {
@@ -17,6 +17,7 @@ import {
     AnimateCameraOptions,
     CLog,
     CLogTypes,
+    ControlPosition,
     DeleteOfflineRegionOptions,
     DownloadOfflineRegionOptions,
     Feature,
@@ -27,7 +28,6 @@ import {
     MapboxApi,
     MapboxCommon,
     MapboxMarker,
-    MapboxTraceCategory,
     MapboxViewBase,
     OfflineRegion,
     QueryRenderedFeaturesOptions,
@@ -48,6 +48,26 @@ import {
 // Export the enums for devs not using TS
 
 export * from './common';
+
+let libraryLoadedOverloaded = false;
+function overrideLibraryLoader() {
+    try {
+        if (true && !libraryLoadedOverloaded) {
+            @NativeClass
+            class LibraryLoader extends com.mapbox.mapboxsdk.LibraryLoader {
+                load(name) {
+                    java.lang.System.loadLibrary(name);
+                }
+            }
+            com.mapbox.mapboxsdk.LibraryLoader.setLibraryLoader(new LibraryLoader());
+            libraryLoadedOverloaded = true;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+overrideLibraryLoader();
 
 function _getLocation(loc: globalAndroid.location.Location) {
     if (loc === null) {
@@ -107,7 +127,7 @@ export class MapboxView extends MapboxViewBase {
 
     private nativeMapView: any; // com.mapbox.mapboxsdk.maps.MapView
 
-    private settings: any = null;
+    private settings: ShowOptions = null;
 
     // whether or not the view has already been initialized.
     // see initNativeView()
@@ -125,7 +145,7 @@ export class MapboxView extends MapboxViewBase {
     /**
      * programmatically include settings
      */
-    setConfig(settings: any) {
+    setConfig(settings: ShowOptions) {
         // zoom level is not applied unless center is set
 
         if (settings.zoomLevel && !settings.center) {
@@ -151,7 +171,7 @@ export class MapboxView extends MapboxViewBase {
      *
      * @see Mapbox
      */
-    public getMapboxApi(): any {
+    public getMapboxApi() {
         return this.mapbox;
     }
 
@@ -285,7 +305,6 @@ export class MapboxView extends MapboxViewBase {
                     if (this.telemetry === false) {
                         try {
                             com.mapbox.mapboxsdk.Mapbox.getTelemetry().setUserTelemetryRequestState(false);
-                            console.error('telemtry disabled!');
                         } catch (err) {
                             console.error('telemtry', err);
                         }
@@ -1204,8 +1223,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
+    async addImage(imageId: string, imagePath: string, nativeMap?: any): Promise<void> {
+        return new Promise(async (resolve, reject) => {
             const theMap = nativeMap || this._mapboxMapInstance;
 
             if (!theMap) {
@@ -1213,14 +1232,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 return;
             }
 
-            if (!image.startsWith('res://')) {
-                image = path.join(knownFolders.currentApp().path, image.replace('~/', ''));
-            }
-
-            const img = ImageSource.fromFileOrResourceSync(image);
-
             try {
-                theMap.getStyle().addImage(imageId, img.android);
+                const imageSource = await this.fetchImageSource(imagePath);
+                theMap.getStyle().addImage(imageId, imageSource.android);
                 resolve();
             } catch (ex) {
                 reject('Error during addImage: ' + ex);
@@ -1357,7 +1371,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         if (cached) {
                             markerOptions.setIcon(cached);
                         } else {
-                            console.log(`No icon found for this device density for icon ' ${marker.icon}'. Falling back to the default icon.`);
+                            console.warn(`No icon found for this device density for icon ' ${marker.icon}'. Falling back to the default icon.`);
                         }
                     } else if (marker.icon.startsWith('http')) {
                         if (marker.iconDownloaded !== null) {
@@ -1381,7 +1395,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     if (cached) {
                         markerOptions.setIcon(cached);
                     } else {
-                        console.log(`Marker icon not found, using the default instead. Requested path: '" + ${marker.iconPath}'.`);
+                        console.warn(`Marker icon not found, using the default instead. Requested path: '" + ${marker.iconPath}'.`);
                     }
                 }
                 marker.android = this._mapboxMapInstance.addMarker(markerOptions);
@@ -1789,11 +1803,22 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const durationMs = options.duration ? options.duration : 10000;
                 if (options.bounds) {
                     const padding = options.padding || 0;
+                    const defaultPadding = 0;
+
+                    // ensure padding is an object and assign default values
+                    const {
+                        top = defaultPadding,
+                        left = defaultPadding,
+                        bottom = defaultPadding,
+                        right = defaultPadding
+                    } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
+
                     const bounds = new com.mapbox.mapboxsdk.geometry.LatLngBounds.Builder()
                         .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.north, options.bounds.east))
                         .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.south, options.bounds.west))
                         .build();
-                    this._mapboxMapInstance.animateCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding), durationMs, null);
+
+                    this._mapboxMapInstance.animateCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, left, top, right, bottom), durationMs, null);
                 } else {
                     const target = options.target;
                     if (target === undefined) {
@@ -2147,14 +2172,25 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     .include(new com.mapbox.mapboxsdk.geometry.LatLng(options.bounds.south, options.bounds.west))
                     .build();
 
-                const padding = options.padding !== undefined ? options.padding : 25,
-                    animated = options.animated === undefined || options.animated,
-                    durationMs = animated ? 1000 : 0;
+                const defaultPadding = 25;
+                const padding = options.padding ?? defaultPadding;
+                const animated = options.animated === undefined || options.animated;
+                const durationMs = animated ? 1000 : 0;
+
+                // ensure padding is an object and assign default values
+                const {
+                    top = defaultPadding,
+                    left = defaultPadding,
+                    bottom = defaultPadding,
+                    right = defaultPadding
+                } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
+
+                const cameraUpdate = com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, left, top, right, bottom);
 
                 if (animated) {
-                    this._mapboxMapInstance.easeCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding), durationMs);
+                    this._mapboxMapInstance.easeCamera(cameraUpdate, durationMs);
                 } else {
-                    this._mapboxMapInstance.moveCamera(com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, padding));
+                    this._mapboxMapInstance.moveCamera(cameraUpdate);
                 }
 
                 setTimeout(() => {
@@ -2244,7 +2280,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     },
 
                                     mapboxTileCountLimitExceeded: (limit) => {
-                                        console.log(`dl mapboxTileCountLimitExceeded: ${limit}`);
+                                        console.warn(`dl mapboxTileCountLimitExceeded: ${limit}`);
                                     }
                                 })
                             );
@@ -2887,15 +2923,18 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @link https://docs.mapbox.com/android/api/map-sdk/7.1.2/com/mapbox/mapboxsdk/maps/MapboxMapOptions.html
      */
 
-    _getMapboxMapOptions(settings) {
+    _getMapboxMapOptions(settings: ShowOptions) {
         const mapboxMapOptions = new com.mapbox.mapboxsdk.maps.MapboxMapOptions()
             .compassEnabled(!settings.hideCompass)
+            .compassGravity(Mapbox.mapPositionToGravity(settings.compassPosition))
             .rotateGesturesEnabled(!settings.disableRotation)
             .scrollGesturesEnabled(!settings.disableScroll)
             .tiltGesturesEnabled(!settings.disableTilt)
             .zoomGesturesEnabled(!settings.disableZoom)
             .attributionEnabled(!settings.hideAttribution)
-            .logoEnabled(!settings.hideLogo);
+            .attributionGravity(Mapbox.mapPositionToGravity(settings.attributionPosition))
+            .logoEnabled(!settings.hideLogo)
+            .logoGravity(Mapbox.mapPositionToGravity(settings.logoPosition));
 
         // zoomlevel is not applied unless center is set
         if (settings.zoomLevel && !settings.center) {
@@ -2914,6 +2953,19 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         return mapboxMapOptions;
+    }
+
+    private static mapPositionToGravity(position: ControlPosition) {
+        switch (position) {
+            case ControlPosition.TOP_LEFT:
+                return android.view.Gravity.TOP | android.view.Gravity.START;
+            case ControlPosition.TOP_RIGHT:
+                return android.view.Gravity.TOP | android.view.Gravity.END;
+            case ControlPosition.BOTTOM_LEFT:
+                return android.view.Gravity.BOTTOM | android.view.Gravity.START;
+            case ControlPosition.BOTTOM_RIGHT:
+                return android.view.Gravity.BOTTOM | android.view.Gravity.END;
+        }
     }
 
     /**
@@ -2971,34 +3023,33 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return renderMode;
     }
 
-    _convertCameraMode( mode: any ): UserLocationCameraMode {
-
+    _convertCameraMode(mode: any): UserLocationCameraMode {
         const modeRef = com.mapbox.mapboxsdk.location.modes.CameraMode;
 
         switch (mode) {
             case modeRef.NONE:
-                return "NONE";
+                return 'NONE';
 
             case modeRef.NONE_COMPASS:
-                return "NONE_COMPASS";
+                return 'NONE_COMPASS';
 
             case modeRef.NONE_GPS:
-                return "NONE_GPS";
+                return 'NONE_GPS';
 
             case modeRef.TRACKING:
-                return "TRACKING";
+                return 'TRACKING';
 
             case modeRef.TRACKING_COMPASS:
-                return "TRACKING_COMPASS";
+                return 'TRACKING_COMPASS';
 
             case modeRef.TRACKING_GPS:
-                return "TRACKING_GPS";
+                return 'TRACKING_GPS';
 
             case modeRef.TRACKING_GPS_NORTH:
-                return "TRACKING_GPS_NORTH";
+                return 'TRACKING_GPS_NORTH';
         }
 
-        return "NONE";
+        return 'NONE';
     }
 
     _fineLocationPermissionGranted() {
@@ -3399,7 +3450,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     resolve(marker);
                 },
                 (e) => {
-                    console.log(`Download failed for ' ${marker.icon}' with error: ${e}`);
+                    console.error(`Download failed for ' ${marker.icon}' with error: ${e}`);
                     resolve(marker);
                 }
             );
@@ -3427,22 +3478,22 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         const screenLocation = this._mapboxMapInstance.getProjection().toScreenLocation(mapboxPoint);
         return { x: Utils.layout.toDeviceIndependentPixels(screenLocation.x), y: Utils.layout.toDeviceIndependentPixels(screenLocation.y) };
     }
-    projectBack(screenCoordinate: { x: number, y: number }): LatLng {
+    projectBack(screenCoordinate: { x: number; y: number }): LatLng {
         const pointf = new android.graphics.PointF(screenCoordinate.x, screenCoordinate.y);
         const coordinate = this._mapboxMapInstance.getProjection().fromScreenLocation(pointf);
         return {
             lat: coordinate.getLatitude(),
             lng: coordinate.getLongitude()
-        }
+        };
     }
 
     getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode {
         if (!this._mapboxMapInstance) {
-            return "NONE";
+            return 'NONE';
         }
 
         if (!this._locationComponent) {
-            return "NONE";
+            return 'NONE';
         }
 
         return this._convertCameraMode(this._locationComponent.getCameraMode());

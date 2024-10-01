@@ -8,6 +8,7 @@ import {
     AnimateCameraOptions,
     CLog,
     CLogTypes,
+    ControlPosition,
     DeleteOfflineRegionOptions,
     DownloadOfflineRegionOptions,
     Feature,
@@ -18,7 +19,6 @@ import {
     MapboxApi,
     MapboxCommon,
     MapboxMarker,
-    MapboxTraceCategory,
     MapboxViewBase,
     OfflineRegion,
     QueryRenderedFeaturesOptions,
@@ -518,10 +518,13 @@ export * from './common';
 let _markers = [];
 const _markerIconDownloadCache = [];
 
-const _setMapboxMapOptions = (mapView: MGLMapView, settings) => {
+const _setMapboxMapOptions = (mapView: MGLMapView, settings: ShowOptions) => {
     mapView.logoView.hidden = settings.hideLogo;
+    mapView.logoViewPosition = _mapControlPositionToOrnamentPosition(settings.logoPosition);
     mapView.attributionButton.hidden = settings.hideAttribution;
+    mapView.attributionButtonPosition = _mapControlPositionToOrnamentPosition(settings.attributionPosition);
     mapView.compassView.hidden = settings.hideCompass;
+    mapView.compassViewPosition = _mapControlPositionToOrnamentPosition(settings.compassPosition);
     mapView.rotateEnabled = !settings.disableRotation;
     mapView.scrollEnabled = !settings.disableScroll;
     mapView.zoomEnabled = !settings.disableZoom;
@@ -537,6 +540,19 @@ const _setMapboxMapOptions = (mapView: MGLMapView, settings) => {
     mapView.showsUserLocation = settings.showUserLocation;
 
     mapView.autoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
+};
+
+const _mapControlPositionToOrnamentPosition = (position: ControlPosition) => {
+    switch (position) {
+        case ControlPosition.TOP_LEFT:
+            return MGLOrnamentPosition.TopLeft;
+        case ControlPosition.TOP_RIGHT:
+            return MGLOrnamentPosition.TopRight;
+        case ControlPosition.BOTTOM_LEFT:
+            return MGLOrnamentPosition.BottomLeft;
+        case ControlPosition.BOTTOM_RIGHT:
+            return MGLOrnamentPosition.BottomRight;
+    }
 };
 
 const _getMapStyle = (input: any): NSURL => {
@@ -1216,8 +1232,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    async addImage(imageId: string, image: string, nativeMap?: any): Promise<void> {
-        return new Promise((resolve, reject) => {
+    async addImage(imageId: string, imagePath: string, nativeMap?: any): Promise<void> {
+        return new Promise(async (resolve, reject) => {
             const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
 
             if (!theMap) {
@@ -1225,15 +1241,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 return;
             }
 
-            if (!image.startsWith('res://')) {
-                const appPath = knownFolders.currentApp().path;
-                image = appPath + '/' + image.replace('~/', '');
-            }
-
-            const img = ImageSource.fromFileOrResourceSync(image);
-
             try {
-                theMap.style.setImageForName(img.ios, imageId);
+                const imageSource = await this.fetchImageSource(imagePath);
+                theMap.style.setImageForName(imageSource.ios, imageId);
                 resolve();
             } catch (ex) {
                 reject('Error during addImage: ' + ex);
@@ -1451,29 +1461,29 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @todo come up with a reasonable set of cross platform defaults.
      */
     _stringToCameraMode(mode: UserLocationCameraMode): any {
-        switch(mode) {
-            case "NONE":
+        switch (mode) {
+            case 'NONE':
                 return MGLUserTrackingMode.None;
 
-            case "NONE_COMPASS":
-                console.log("MapboxView::_stringToCameraMode(): NONE_COMPASS unsupported on iOS");
+            case 'NONE_COMPASS':
+                console.log('MapboxView::_stringToCameraMode(): NONE_COMPASS unsupported on iOS');
                 return MGLUserTrackingMode.None;
 
-            case "NONE_GPS":
-                console.log("MapboxView::_stringToCameraMode(): NONE_GPS unsupported on iOS");
+            case 'NONE_GPS':
+                console.log('MapboxView::_stringToCameraMode(): NONE_GPS unsupported on iOS');
                 return MGLUserTrackingMode.None;
 
-            case "TRACKING":
+            case 'TRACKING':
                 return MGLUserTrackingMode.Follow;
 
-            case "TRACKING_COMPASS":
+            case 'TRACKING_COMPASS':
                 return MGLUserTrackingMode.FollowWithHeading;
 
-            case "TRACKING_GPS":
+            case 'TRACKING_GPS':
                 // a reasonable approximation.
                 return MGLUserTrackingMode.Follow;
 
-            case "TRACKING_GPS_NORTH":
+            case 'TRACKING_GPS_NORTH':
                 return MGLUserTrackingMode.FollowWithCourse;
 
             default:
@@ -1501,13 +1511,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     _convertCameraMode(mode: MGLUserTrackingMode): UserLocationCameraMode {
         switch (mode) {
             case MGLUserTrackingMode.None:
-                return "NONE";
+                return 'NONE';
             case MGLUserTrackingMode.Follow:
-                return "TRACKING";
+                return 'TRACKING';
             case MGLUserTrackingMode.FollowWithHeading:
-                return "TRACKING_COMPASS";
+                return 'TRACKING_COMPASS';
             case MGLUserTrackingMode.FollowWithCourse:
-                return "TRACKING_GPS_NORTH";
+                return 'TRACKING_GPS_NORTH';
         }
     }
 
@@ -1635,7 +1645,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const result = [];
                 for (let i = 0; i < features.count; i++) {
                     const feature: MGLFeature = features.objectAtIndex(i);
-                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0);
+                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0 as any);
                     result.push(JSON.parse(NSString.alloc().initWithDataEncoding(featureJson, NSUTF8StringEncoding) as any));
                 }
 
@@ -1679,7 +1689,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 const result = [];
                 for (let i = 0; i < features.count; i++) {
                     const feature: MGLFeature = features.objectAtIndex(i);
-                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0);
+                    const featureJson = NSJSONSerialization.dataWithJSONObjectOptionsError(feature.geoJSONDictionary(), 0 as any);
                     result.push(JSON.parse(NSString.alloc().initWithDataEncoding(featureJson, NSUTF8StringEncoding) as any));
                 }
                 resolve(result);
@@ -1732,7 +1742,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }`;
             const geoDataStr = NSString.stringWithString(geoJSON);
             const geoData = geoDataStr.dataUsingEncoding(NSUTF8StringEncoding);
-            const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0);
+            const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0 as any);
             const geo = NSData.alloc().initWithBase64EncodedStringOptions(geoDataBase64Enc, null);
             const shape = MGLShape.shapeWithDataEncodingError(geo, NSUTF8StringEncoding);
             const source = MGLShapeSource.alloc().initWithIdentifierShapeOptions(polygonID, shape, null);
@@ -1783,7 +1793,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             const geoJSON = `{"type": "FeatureCollection", "features": [{"type": "Feature","properties": {},"geometry": {"type": "LineString", "coordinates": ${JSON.stringify(coordinateArray)}}}]}`;
             const geoDataStr = NSString.stringWithString(geoJSON);
             const geoData = geoDataStr.dataUsingEncoding(NSUTF8StringEncoding);
-            const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0);
+            const geoDataBase64Enc = geoData.base64EncodedStringWithOptions(0 as any);
 
             const geo = NSData.alloc().initWithBase64EncodedStringOptions(geoDataBase64Enc, null);
             const shape = MGLShape.shapeWithDataEncodingError(geo, NSUTF8StringEncoding);
@@ -1840,13 +1850,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 let cam: MGLMapCamera;
                 if (options.bounds) {
                     const padding = options.padding || 0;
+
+                    // ensure padding is an object and assign default values
+                    const { top = 0, left = 0, bottom = 0, right = 0 } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
+
                     // support defined padding
-                    const insets: UIEdgeInsets = {
-                        top: padding,
-                        left: padding,
-                        bottom: padding,
-                        right: padding
-                    };
+                    const insets: UIEdgeInsets = { top, left, bottom, right };
                     const bounds: MGLCoordinateBounds = {
                         sw: CLLocationCoordinate2DMake(options.bounds.south, options.bounds.west),
                         ne: CLLocationCoordinate2DMake(options.bounds.north, options.bounds.east)
@@ -1907,20 +1916,16 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                // adding the tap handler to the map object so it's not garbage collected.
                 theMap['mapTapHandler'] = MapTapHandlerImpl.initWithOwnerAndListenerForMap(new WeakRef(this), listener, theMap);
                 const tapGestureRecognizer = UITapGestureRecognizer.alloc().initWithTargetAction(theMap['mapTapHandler'], 'tap');
-
-                // cancel the default tap handler
                 for (let i = 0; i < theMap.gestureRecognizers.count; i++) {
-                    const recognizer: UIGestureRecognizer = theMap.gestureRecognizers.objectAtIndex(i);
+                    const recognizer = theMap.gestureRecognizers.objectAtIndex(i);
                     if (recognizer instanceof UITapGestureRecognizer) {
                         tapGestureRecognizer.requireGestureRecognizerToFail(recognizer);
                     }
                 }
 
                 theMap.addGestureRecognizer(tapGestureRecognizer);
-
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -2156,9 +2161,31 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const animated = options.animated === undefined || options.animated;
 
-                // support defined padding
-                const padding: UIEdgeInsets =
-                    options.padding !== undefined ? { top: options.padding, left: options.padding, bottom: options.padding, right: options.padding } : { top: 25, left: 25, bottom: 25, right: 25 };
+                // define default padding
+                const defaultPadding = 25;
+
+                // check if padding is defined and whether it's an object or a single value
+                const padding =
+                    options.padding !== undefined
+                        ? typeof options.padding === 'object'
+                            ? {
+                                  top: options.padding.top ?? 0,
+                                  left: options.padding.left ?? 0,
+                                  bottom: options.padding.bottom ?? 0,
+                                  right: options.padding.right ?? 0
+                              }
+                            : {
+                                  top: options.padding,
+                                  left: options.padding,
+                                  bottom: options.padding,
+                                  right: options.padding
+                              }
+                        : {
+                              top: defaultPadding,
+                              left: defaultPadding,
+                              bottom: defaultPadding,
+                              right: defaultPadding
+                          };
 
                 theMap.setVisibleCoordinateBoundsEdgePaddingAnimated(bounds, padding, animated);
                 resolve();
@@ -2475,6 +2502,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                             if (options.cluster.properties) {
                                 const clusterProperties = {};
                                 for (const property of Object.keys(options.cluster.properties)) {
+                                    // eslint-disable-next-line prefer-const
                                     let [operator, operand] = options.cluster.properties[property];
                                     if (!Array.isArray(operator)) {
                                         operator = [operator];
@@ -2853,24 +2881,24 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return { x, y };
     }
 
-    projectBack(screenCoordinate: { x: number, y: number }): LatLng {
+    projectBack(screenCoordinate: { x: number; y: number }): LatLng {
         const theMap: MGLMapView = this._mapboxViewInstance;
         const cgPoint = {
             x: screenCoordinate.x,
             y: screenCoordinate.y
-        }
+        };
         const coordinate = theMap.convertPointToCoordinateFromView(cgPoint, theMap);
         return {
             lat: coordinate.latitude,
             lng: coordinate.longitude
-        }
+        };
     }
 
     getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode {
-        let theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
+        const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
 
         if (!theMap) {
-            return "NONE";
+            return 'NONE';
         }
 
         return this._convertCameraMode(theMap.userTrackingMode);

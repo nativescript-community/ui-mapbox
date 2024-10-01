@@ -1,5 +1,4 @@
 {
-    "name": "@nativescript-community/ui-mapbox",
     "version": "1.0.0",
     "description": "A Nativescript plugin for Mapbox Native Maps.",
     "scripts": {
@@ -7,18 +6,20 @@
         "sync": "node ./tools/sync.js",
         "build": "lerna run build",
         "build.all": "npm run build",
-        "clean": "rimraf 'packages/**/*.d.ts' 'packages/**/*.js' 'packages/**/*.js.map' 'packages/**/*.metadata.json' 'packages/**/*.ngsummary.json' 'packages/**/*.mjs' 'packages/**/*.mjs.map' 'packages/**/node_modules' 'packages/**/angular/package.json' 'package-lock.json' 'pnpm-lock.yaml' 'node_modules'",
+        "clean": "rimraf 'packages/**/*.d.ts' 'packages/**/*.js' 'packages/**/*.js.map' 'packages/**/*.metada' 'packages/**/angular/ng-package.json'",
         "commitmsg": "commitlint -e $GIT_PARAMS",
-        "demo.ng.android": "cd ./demo-ng && ns run android --no-hmr",
+        "demo.ng.android": "cd ./demo-ng && ns run android --no-hmr --env.watchNodeModules",
         "demo.ng.clean": "cd ./demo-ng && ns clean",
-        "demo.ng.ios": "cd ./demo-ng && ns run ios --no-hmr",
-        "publish": "npm run setup && npm run build.all && lerna publish --create-release=github --force-publish",
+        "demo.ng.ios": "cd ./demo-ng && ns run ios --no-hmr --env.watchNodeModules",
+        "publish": "npm run setup && npm run clean && npm run build.all && npm run readme && npm run doc && npm run commit_readme_doc_changes && lerna publish",
         "postinstall": "npm run setup",
-        "readme": "node ./tools/readme.js",
+        "readme": "lerna run readme && node ./tools/readme.js",
         "start": "./node_modules/.bin/ntl -A -s 15 -o",
         "submodules": "git submodule update --init",
         "update": "node ./tools/update.js",
-        "doc": "node tools/builddoc.mjs && git add docs/* && git commit -m \"chore:doc\""
+        "doc": "node tools/builddoc.js",
+        "fullclean": "npm run clean && rimraf 'packages/**/node_modules' 'demo-*/hooks' 'demo-*/node_modules' 'package-lock.json' 'pnpm-lock.yaml' 'node_modules'",
+        "commit_readme_doc_changes": "git add docs/** *.md ; git commit -m \"readme/doc\" ; echo \"commit readme doc done\""
     },
     "repository": {
         "type": "git",
@@ -31,7 +32,7 @@
     "homepage": "https://github.com/nativescript-community/ui-mapbox",
     "readmeFilename": "README.md",
     "dependencies": {
-        "@nativescript-community/perms": "^2.2.0",
+        "@nativescript-community/perms": "^2.3.0",
         "@nativescript-community/plugin-seed-tools": "file:tools"
     },
     "ntl": {
@@ -45,13 +46,16 @@
         }
     },
     "dependenciesMeta": {
-        "@nativescript-community/plugin-seed-tools": {
-            "injected": true
-        }
+        "@nativescript-community/plugin-seed-tools": {}
     },
     "engines": {
         "npm": "please use yarn or pnpm",
-        "yarn": ">= 1.19.1",
-        "pnpm": ">= 7.0.0"
-    }
+        "yarn": ">=1.19.1",
+        "pnpm": ">=7.0.0",
+        "node": "^14.20.0 || ^16.13.0 || >=18.10.0"
+    },
+    "workspaces": [
+        "packages/*",
+        "demo*"
+    ]
 }

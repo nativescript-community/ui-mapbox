@@ -43,7 +43,7 @@ export declare class Mapbox extends MapboxCommon implements MapboxApi {
     onDestroy(nativeMap?: any): Promise<void>;
     setMapStyle(style: string | MapStyle, nativeMap?: any): Promise<void>;
     getImage(imageId: string, nativeMap?: any): Promise<ImageSource>;
-    addImage(imageId: string, image: string, nativeMap?: any): Promise<void>;
+    addImage(imageId: string, imagePath: string, nativeMap?: any): Promise<void>;
     removeImage(imageId: string, nativeMap?: any): Promise<void>;
     addMarkers(markers: MapboxMarker[], nativeMap?: any): Promise<void>;
     removeMarkers(ids?: any, nativeMap?: any): Promise<void>;

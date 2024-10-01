@@ -38,6 +38,7 @@
 ## Table of Contents
 
 * [Prerequisites](#prerequisites)
+	* [Android](#android)
 * [Installation](#installation)
 * [Configuration](#configuration)
 * [Issues](#issues)
@@ -91,9 +92,15 @@
 	* [hasFineLocationPermission / requestFineLocationPermission](#hasfinelocationpermission--requestfinelocationpermission)
 * [Using marker images from the internet](#using-marker-images-from-the-internet)
 * [Demos and Development](#demos-and-development)
-	* [Setup](#setup)
+	* [Repo Setup](#repo-setup)
 	* [Build](#build)
 	* [Demos](#demos)
+* [Contributing](#contributing)
+	* [Update repo ](#update-repo-)
+	* [Update readme ](#update-readme-)
+	* [Update doc ](#update-doc-)
+	* [Publish](#publish)
+	* [modifying submodules](#modifying-submodules)
 * [Questions](#questions)
 
 
@@ -103,6 +110,31 @@
 
 You either need your own tile server such as the one provided by [openmaptiles.org](https://openmaptiles.org) or a Mapbox API access token (they have a 🆓 Starter plan!), so [sign up with Mapbox](https://www.mapbox.com/signup/).
 Once you've registered go to your Account > Apps > New token. The 'Default Secret Token' is what you'll need.
+
+### Android
+
+Mapbox now requires (version > 8.6.6) an api key to download the sdk
+
+If you want to use newer version than the default 8.6.6 you need to add this to your `app.gradle`
+```gradle
+allprojects {
+  repositories {
+       maven {
+        url 'https://api.mapbox.com/downloads/v2/releases/maven'
+        authentication {
+            basic(BasicAuthentication)
+        }
+        credentials {
+            // Do not change the username below.
+            // This should always be `mapbox` (not your username). 
+            username = 'mapbox'
+            // Use the secret token you stored in gradle.properties as the password
+            password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
+        }
+    }
+  }
+}
+```
 
 
 [](#installation)
@@ -1054,18 +1086,18 @@ the domain. Google for iOS ATS for detailed options, but for a quick test you ca
 ## Demos and Development
 
 
-### Setup
+### Repo Setup
 
-To run the demos, you must clone this repo **recursively**.
+The repo uses submodules. If you did not clone with ` --recursive` then you need to call
+```
+git submodule update --init
+```
 
-```
-git clone https://github.com/@nativescript-community/ui-mapbox.git --recursive
-```
+The package manager used to install and link dependencies must be `pnpm` or `yarn`. `npm` wont work.
 
-**Install Dependencies:**
-```bash
-npm i # or 'yarn install' or 'pnpm install'
-```
+To develop and test:
+if you use `yarn` then run `yarn`
+if you use `pnpm` then run `pnpm i`
 
 **Interactive Menu:**
 
@@ -1074,10 +1106,9 @@ To start the interactive menu, run `npm start` (or `yarn start` or `pnpm start`)
 ### Build
 
 ```bash
-npm run build
-
-npm run build.angular # or for Angular
+npm run build.all
 ```
+WARNING: it seems `yarn build.all` wont always work (not finding binaries in `node_modules/.bin`) which is why the doc explicitly uses `npm run`
 
 ### Demos
 
@@ -1086,6 +1117,61 @@ npm run demo.[ng|react|svelte|vue].[ios|android]
 
 npm run demo.svelte.ios # Example
 ```
+
+Demo setup is a bit special in the sense that if you want to modify/add demos you dont work directly in `demo-[ng|react|svelte|vue]`
+Instead you work in `demo-snippets/[ng|react|svelte|vue]`
+You can start from the `install.ts` of each flavor to see how to register new demos 
+
+
+[](#contributing)
+
+## Contributing
+
+### Update repo 
+
+You can update the repo files quite easily
+
+First update the submodules
+
+```bash
+npm run update
+```
+
+Then commit the changes
+Then update common files
+
+```bash
+npm run sync
+```
+Then you can run `yarn|pnpm`, commit changed files if any
+
+### Update readme 
+```bash
+npm run readme
+```
+
+### Update doc 
+```bash
+npm run doc
+```
+
+### Publish
+
+The publishing is completely handled by `lerna` (you can add `-- --bump major` to force a major release)
+Simply run 
+```shell
+npm run publish
+```
+
+### modifying submodules
+
+The repo uses https:// for submodules which means you won't be able to push directly into the submodules.
+One easy solution is t modify `~/.gitconfig` and add
+```
+[url "ssh://git@github.com/"]
+	pushInsteadOf = https://github.com/
+```
+
 
 [](#questions)
 
