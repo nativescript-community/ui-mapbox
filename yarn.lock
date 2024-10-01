@@ -3396,7 +3396,7 @@ __metadata:
 
 "@nativescript-community/plugin-seed-tools@file:tools::locator=root-workspace-0b6124%40workspace%3A.":
   version: 1.0.0
-  resolution: "@nativescript-community/plugin-seed-tools@file:tools#tools::hash=87cff1&locator=root-workspace-0b6124%40workspace%3A."
+  resolution: "@nativescript-community/plugin-seed-tools@file:tools#tools::hash=98a970&locator=root-workspace-0b6124%40workspace%3A."
   dependencies:
     "@angular/animations": "npm:~17.3.8"
     "@angular/common": "npm:~17.3.8"
@@ -3461,7 +3461,7 @@ __metadata:
     vue: "npm:^2.7.16"
     yargs: "npm:^17.7.2"
     zone.js: "npm:~0.14.5"
-  checksum: e9fef29d0410abf4221bc4fa423c5020d0d59f72ec023d03a38435e9bf802930fa56a027d10b2ccf1acc41d94ef7efbf2d8dedb03e3877e3c5acfcf0cc9a2097
+  checksum: 0d5f025fbc4912f778cd6b681490d84dbb2ddd36573f1235736019aed899b467d83130145ae9e5e5a366304eb3467c9be5a78e6f221fde60d75b1ce2cdfb86c1
   languageName: node
   linkType: hard
 
@@ -3474,11 +3474,11 @@ __metadata:
   linkType: soft
 
 "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox::locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets":
-  version: 6.2.27
-  resolution: "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox#../packages/ui-mapbox::hash=93d935&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
+  version: 6.2.29
+  resolution: "@nativescript-community/ui-mapbox@file:../packages/ui-mapbox#../packages/ui-mapbox::hash=d65e16&locator=%40nativescript-community%2Ftemplate-snippet%40workspace%3Ademo-snippets"
   dependencies:
     "@nativescript-community/perms": "npm:^2.3.0"
-  checksum: dfda707d272b69802456bd4d4ddeb7f29033380ec52aa1ebbf88bdb79eb4796aa62e8cd72aa6ffd28f58c7847b1da52a55aa593747ec5f0e55a30d60d15cbfa1
+  checksum: ae63f9eb66e973b9138e4000ba66b3e752b52145f1542a60f6cd7b68494e5fc4870672615ff78fea8eaf50ae0738d5aff39df3e6483b9782070550f6a2aef0db
   languageName: node
   linkType: hard
 
@@ -18300,7 +18300,7 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A~5.4.5#optional!builtin<compat/typescript>":
   version: 5.4.5
-  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=29ae49"
+  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=e012d7"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
