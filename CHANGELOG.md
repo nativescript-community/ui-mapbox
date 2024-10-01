@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.30](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.29...v6.2.30) (2024-10-01)
+
+### Bug Fixes
+
+* **ios:** more style property handle ([cef5cd4](https://github.com/nativescript-community/ui-mapbox/commit/cef5cd430f31ab6f256c57dde4012341bd2a5c33))
+* **ios:** updated Mapbox to 6.4.2 with bitcode disabled ([6bc7eb5](https://github.com/nativescript-community/ui-mapbox/commit/6bc7eb55ef8444a9c02c787f95ef757de3e13efc))
+
 ## [6.2.29](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.28...v6.2.29) (2024-09-21)
 
 **Note:** Version bump only for package ui-mapbox
