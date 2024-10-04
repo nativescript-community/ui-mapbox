@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.31](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.30...v6.2.31) (2024-10-04)
+
+### Bug Fixes
+
+* **ios:** regression fix in layer parser ([be4c030](https://github.com/nativescript-community/ui-mapbox/commit/be4c03013355e70556d8b65819d231b26664aedf))
+
 ## [6.2.30](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.29...v6.2.30) (2024-10-01)
 
 ### Bug Fixes
