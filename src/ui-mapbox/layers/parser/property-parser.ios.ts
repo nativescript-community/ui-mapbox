@@ -80,7 +80,7 @@ const keysMap = {
     'raster-brightness-max': 'minimumRasterBrightness'
 };
 function transformValue(key, value, _styleType) {
-    if (_styleType === 'color' || key.indexOf('-color') !== -1) {
+    if (_styleType === 'color') {
         const color = value instanceof Color ? value : new Color(value);
         return color.ios;
     } else if (_styleType === 'vector') {
