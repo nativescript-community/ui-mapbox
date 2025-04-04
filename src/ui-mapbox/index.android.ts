@@ -2567,8 +2567,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                         const geoJsonSource = new com.mapbox.mapboxsdk.style.sources.GeoJsonSource(id, geojsonOptions);
                         if (options.data) {
-                            const geoJsonString = JSON.stringify(options.data);
-                            geoJsonSource.setGeoJson(geoJsonString);
+                            if (typeof options.data === 'string') {
+                                geoJsonSource.setUri(options.data);
+                            } else {
+                                const geoJsonString = JSON.stringify(options.data);
+                                geoJsonSource.setGeoJson(geoJsonString);
+                            }
                         }
 
                         source = geoJsonSource;
