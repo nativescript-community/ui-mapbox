@@ -33,7 +33,7 @@
     "readmeFilename": "README.md",
     "dependencies": {
         "@nativescript-community/perms": "^2.3.0",
-        "@nativescript-community/plugin-seed-tools": "file:tools"
+        "@nativescript-community/plugin-seed-tools": "portal:tools"
     },
     "ntl": {
         "descriptions": {
@@ -57,5 +57,6 @@
     "workspaces": [
         "packages/*",
         "demo*"
-    ]
+    ],
+    "packageManager": "yarn@4.10.2"
 }
