@@ -18,9 +18,9 @@ function transformValue(key, value) {
         const color = value instanceof Color ? value : new Color(value);
         nValue = color.android;
     } else if (typeof value === 'number') {
-        nValue = new java.lang.Float(value);
+        nValue = java.lang.Float.valueOf(value);
     } else if (typeof value === 'boolean') {
-        nValue = new java.lang.Boolean(value);
+        nValue = java.lang.Boolean.valueOf(value);
     }
     return nValue;
 }

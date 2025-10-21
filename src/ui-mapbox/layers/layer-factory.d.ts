@@ -1,4 +1,4 @@
-import { LayerCommon, LayerType } from "../common"
+import { LayerCommon, LayerType } from '../common';
 
 declare class LayerFactory {
     static createLayer(style, source): Promise<LayerCommon>;

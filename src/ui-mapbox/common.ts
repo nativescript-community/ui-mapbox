@@ -167,7 +167,7 @@ export interface MapboxMarker extends LatLng {
     /**
      * internally used to know if the marker image is already downloaded
      */
-    iconDownloaded?: boolean
+    iconDownloaded?: boolean;
 }
 
 // ------------------------------------------------------------
