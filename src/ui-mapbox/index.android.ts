@@ -194,7 +194,7 @@ export class MapboxView extends MapboxViewBase {
      *
      * @todo check this.
      */
-    public createNativeView(): Object {
+    public createNativeView(): object {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'createNativeView(): top');
         }
@@ -447,7 +447,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     private iconFactory;
 
-    private _markers = [];
+    private _markers: MapboxMarker[] = [];
     private _polylines = [];
     private _polygons = [];
 
@@ -1320,7 +1320,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             this.onMarkerClickListener = new com.mapbox.mapboxsdk.maps.MapboxMap.OnMarkerClickListener({
                 onMarkerClick: (marker) => {
                     const cachedMarker = this._getClickedMarkerDetails(marker);
-                    if (cachedMarker && cachedMarker.onTap) {
+                    if (cachedMarker?.onTap) {
                         cachedMarker.onTap(cachedMarker);
                     }
                     return false;
@@ -1348,13 +1348,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         // if any markers need to be downloaded from the web they need to be available synchronously, so fetch them first before looping
 
         this._downloadMarkerImages(markers).then((updatedMarkers) => {
-            for (const m in updatedMarkers) {
-                const marker: any = updatedMarkers[m];
+            updatedMarkers.forEach((marker) => {
                 this._markers.push(marker);
                 const markerOptions = new com.mapbox.mapboxsdk.annotations.MarkerOptions();
                 markerOptions.setTitle(marker.title);
                 markerOptions.setSnippet(marker.subtitle);
-                markerOptions.setPosition(new com.mapbox.mapboxsdk.geometry.LatLng(parseFloat(marker.lat), parseFloat(marker.lng)));
+                markerOptions.setPosition(new com.mapbox.mapboxsdk.geometry.LatLng(marker.lat, marker.lng));
 
                 if (marker.icon) {
                     // for markers from url see UrlMarker in https://github.com/mapbox/mapbox-gl-native/issues/5370
@@ -1405,8 +1404,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 marker.update = (newSettings: MapboxMarker) => {
-                    for (const m in this._markers) {
-                        const _marker: MapboxMarker = this._markers[m];
+                    this._markers.forEach((_marker) => {
                         if (marker.id === _marker.id) {
                             if (newSettings.onTap !== undefined) {
                                 _marker.onTap = newSettings.onTap;
@@ -1431,9 +1429,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 this._mapboxMapInstance.selectMarker(_marker.android);
                             }
                         }
-                    }
+                    });
                 };
-            }
+            });
         });
     }
 
@@ -1447,14 +1445,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             return;
         }
 
-        for (const m in this._markers) {
-            const marker = this._markers[m];
+        this._markers.forEach((marker) => {
             if (!ids || (marker && marker.id && ids.indexOf(marker.id) > -1)) {
                 if (marker && marker.android) {
                     this._mapboxMapInstance.removeAnnotation(marker.android);
                 }
             }
-        }
+        });
         // remove markers from cache
         if (ids) {
             this._markers = this._markers.filter((marker) => ids.indexOf(marker.id) === -1);
@@ -1698,10 +1695,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
 
                 const polygonOptions = new com.mapbox.mapboxsdk.annotations.PolygonOptions();
-                for (const p in points) {
-                    const point = points[p];
+                points.forEach((point) => {
                     polygonOptions.add(new com.mapbox.mapboxsdk.geometry.LatLng(point.lat, point.lng));
-                }
+                });
 
                 polygonOptions.fillColor(Mapbox.getAndroidColor(options.fillColor));
                 polygonOptions.alpha(options.fillOpacity === undefined ? 1 : options.fillOpacity);
@@ -1741,10 +1737,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 polylineOptions.width(options.width || 5); // default 5
                 polylineOptions.color(Mapbox.getAndroidColor(options.color));
                 polylineOptions.alpha(options.opacity === undefined ? 1 : options.opacity);
-                for (const p in points) {
-                    const point = points[p];
+                points.forEach((point) => {
                     polylineOptions.add(new com.mapbox.mapboxsdk.geometry.LatLng(point.lat, point.lng));
-                }
+                });
                 this._polylines.push({
                     id: options.id || new Date().getTime(),
                     android: this._mapboxMapInstance.addPolyline(polylineOptions)
@@ -1762,12 +1757,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     removePolygons(ids?: any[], nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                for (const p in this._polygons) {
-                    const polygon = this._polygons[p];
+                this._polygons.forEach((polygon) => {
                     if (!ids || (polygon.id && ids.indexOf(polygon.id) > -1)) {
                         this._mapboxMapInstance.removePolygon(polygon.android);
                     }
-                }
+                });
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -1781,12 +1775,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     removePolylines(ids?: any[], nativeMap?): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                for (const p in this._polylines) {
-                    const polyline = this._polylines[p];
+                this._polylines.forEach((polyline) => {
                     if (!ids || (polyline.id && ids.indexOf(polyline.id) > -1)) {
                         this._mapboxMapInstance.removePolyline(polyline.android);
                     }
-                }
+                });
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -1807,10 +1800,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                     // ensure padding is an object and assign default values
                     const {
-                        top = defaultPadding,
-                        left = defaultPadding,
                         bottom = defaultPadding,
-                        right = defaultPadding
+                        left = defaultPadding,
+                        right = defaultPadding,
+                        top = defaultPadding
                     } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
 
                     const bounds = new com.mapbox.mapboxsdk.geometry.LatLngBounds.Builder()
@@ -2179,10 +2172,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 // ensure padding is an object and assign default values
                 const {
-                    top = defaultPadding,
-                    left = defaultPadding,
                     bottom = defaultPadding,
-                    right = defaultPadding
+                    left = defaultPadding,
+                    right = defaultPadding,
+                    top = defaultPadding
                 } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
 
                 const cameraUpdate = com.mapbox.mapboxsdk.camera.CameraUpdateFactory.newLatLngBounds(bounds, left, top, right, bottom);
@@ -2601,7 +2594,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         source = new com.mapbox.mapboxsdk.style.sources.RasterSource(id, tileSet, options.tileSize || 256);
                         break;
                     default:
-                        reject('Invalid source type: ' + options['type']);
+                        reject('Invalid source type: ' + (options as any)['type']);
                         return;
                 }
 
@@ -2871,15 +2864,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     }
 
     private static getAndroidColor(color: string | Color): any {
-        let androidColor;
-
-        if (color && Color.isValid(color)) {
-            androidColor = new Color('' + color).android;
+        const temp = color instanceof Color ? color : new Color(color);
+        if (Color.isValid(temp)) {
+            return temp.android;
         } else {
-            androidColor = new Color('#000').android;
+            return android.graphics.Color.BLACK;
         }
-
-        return androidColor;
     }
 
     _getMapStyle(input: any): any {
@@ -3417,8 +3407,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     }
 
     _getClickedMarkerDetails(clicked) {
-        for (const m in this._markers) {
-            const cached = this._markers[m];
+        for (let index = 0; index < this._markers.length; index++) {
+            const cached = this._markers[index];
             if (
                 // eslint-disable-next-line eqeqeq
                 cached.lat == clicked.getPosition().getLatitude() &&
@@ -3434,8 +3424,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
     }
 
-    _downloadImage(marker) {
-        return new Promise((resolve, reject) => {
+    _downloadImage(marker: MapboxMarker) {
+        return new Promise<MapboxMarker>((resolve, reject) => {
             // to cache..
             if (this._markerIconDownloadCache[marker.icon]) {
                 marker.iconDownloaded = this._markerIconDownloadCache[marker.icon];
@@ -3457,9 +3447,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    _downloadMarkerImages(markers) {
+    _downloadMarkerImages(markers: MapboxMarker[]) {
         const iterations = [];
-        const result = [];
+        const result: MapboxMarker[] = [];
         for (let i = 0; i < markers.length; i++) {
             const marker = markers[i];
             if (marker.icon && marker.icon.startsWith('http')) {

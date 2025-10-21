@@ -57,8 +57,8 @@ export interface QuerySourceFeaturesOptions {
 export interface Feature {
     id?: any;
     type: string;
-    geometry: Object;
-    properties: Object;
+    geometry: object;
+    properties: object;
 }
 
 // ------------------------------------------------------------
@@ -163,6 +163,11 @@ export interface MapboxMarker extends LatLng {
     update?: (newSettings: MapboxMarker) => void;
     ios?: any;
     android?: any;
+
+    /**
+     * internally used to know if the marker image is already downloaded
+     */
+    iconDownloaded?: boolean
 }
 
 // ------------------------------------------------------------

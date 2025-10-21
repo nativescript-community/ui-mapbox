@@ -193,7 +193,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
 
     mapViewDidFailLoadingMapWithError(mapView: MGLMapView, error: NSError): void {
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'mapViewDidFailLoadingMapWithError: ' + error);
+            CLog(CLogTypes.info, 'mapViewDidFailLoadingMapWithError: ' + error.localizedDescription);
         }
     }
 
@@ -296,8 +296,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
     }
 
     private getTappedMarkerDetails(tapped): any {
-        for (const m in _markers) {
-            const cached = _markers[m];
+        _markers.forEach((cached) => {
             // don't compare lat/lng types as they're not the same (same for (sub)title, they may be null vs undefined)
             if (
                 // eslint-disable-next-line eqeqeq
@@ -311,7 +310,7 @@ class MGLMapViewDelegateImpl extends NSObject implements MGLMapViewDelegate {
             ) {
                 return cached;
             }
-        }
+        });
     }
 
     mapViewRegionIsChangingWithReason(mapView: MGLMapView, reason: MGLCameraChangeReason) {
@@ -515,7 +514,7 @@ class MapSwipeHandlerImpl extends NSObject {
 // Export the enums for devs not using TS
 export * from './common';
 
-let _markers = [];
+let _markers: MapboxMarker[] = [];
 const _markerIconDownloadCache = [];
 
 const _setMapboxMapOptions = (mapView: MGLMapView, settings: ShowOptions) => {
@@ -650,7 +649,7 @@ export class MapboxView extends MapboxViewBase {
         return this.nativeMapView;
     }
 
-    public createNativeView(): Object {
+    public createNativeView(): object {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'createNativeView(): top');
         }
@@ -1399,13 +1398,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return new Promise((resolve, reject) => {
             try {
                 const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
-
                 const cam = theMap.camera;
-
                 cam.pitch = options.tilt;
-
                 const durationMs = options.duration ? options.duration : 5000;
-
                 theMap.setCameraWithDurationAnimationTimingFunction(cam, durationMs / 1000, CAMediaTimingFunction.functionWithName(kCAMediaTimingFunctionEaseInEaseOut));
 
                 setTimeout(() => {
@@ -1852,7 +1847,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     const padding = options.padding || 0;
 
                     // ensure padding is an object and assign default values
-                    const { top = 0, left = 0, bottom = 0, right = 0 } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
+                    const { bottom = 0, left = 0, right = 0, top = 0 } = typeof padding === 'object' ? padding : { top: padding, left: padding, bottom: padding, right: padding };
 
                     // support defined padding
                     const insets: UIEdgeInsets = { top, left, bottom, right };
@@ -2294,7 +2289,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     const userInfo = NSKeyedUnarchiver.unarchiveObjectWithData(pack.context);
                     regions.push({
                         name: userInfo.objectForKey('name'),
-                        style: '' + region.styleURL,
+                        style: region.styleURL.absoluteString,
                         minZoom: region.minimumZoomLevel,
                         maxZoom: region.maximumZoomLevel,
                         bounds: {
@@ -2551,7 +2546,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         break;
                     }
                     default:
-                        reject('Invalid source type: ' + options['type']);
+                        reject('Invalid source type: ' + (options as any)['type']);
                         return;
                 }
 
