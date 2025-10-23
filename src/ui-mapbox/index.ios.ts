@@ -625,6 +625,8 @@ export class MapboxView extends MapboxViewBase {
     private nativeMapView: MGLMapView = null;
     private delegate: MGLMapViewDelegateImpl = null;
 
+    mapbox: Mapbox;
+
     private settings: any = null;
 
     private initialized: boolean = false;
@@ -1286,7 +1288,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.addMarkers: ' + ex);
+                    CLog(CLogTypes.error, 'Error in mapbox.addMarkers: ' + ex);
                 }
                 reject(ex);
             }
@@ -2087,7 +2089,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return Promise.reject("'setOnFlingListener' is not supported on iOS");
     }
 
-    async setOnCameraMoveListener(listener: (reason, animated?) => void, nativeMap?: any): Promise<void> {
+    async setOnCameraChangeListener(listener: (reason, animated?) => void, nativeMap?: any): Promise<void> {
         const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
         if (theMap) {
             (theMap.delegate as MGLMapViewDelegateImpl).setCameraChangedListener(listener);
@@ -2100,7 +2102,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return Promise.reject("'setOnCameraMoveCancelListener' not currently supported on iOS");
     }
 
-    async setOnCameraIdleListener(listener: () => void, nativeMap?: any): Promise<void> {
+    async setOnMapIdleListener(listener: () => void, nativeMap?: any): Promise<void> {
         const theMap: MGLMapView = nativeMap || this._mapboxViewInstance;
         if (theMap) {
             (theMap.delegate as MGLMapViewDelegateImpl).setCameraIdledListener(listener);

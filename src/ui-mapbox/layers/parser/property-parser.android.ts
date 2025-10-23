@@ -1,50 +1,51 @@
 import { Color } from '@nativescript/core';
 
-function toCamelCase(s) {
+export function toCamelCase(s) {
     return s.replace(/([-_][a-z])/gi, ($1) => $1.toUpperCase().replace('-', '').replace('_', ''));
 }
 
-function toPascalCase(s) {
+export function toPascalCase(s) {
     return s.replace(/(^[a-z]|[-_][a-z])/gi, ($1) => $1.toUpperCase().replace('-', '').replace('_', ''));
 }
 
-const Expression = com.mapbox.mapboxsdk.style.expressions.Expression;
-function transformValue(key, value) {
+const Expression = com.mapbox.maps.extension.style.expressions.generated.Expression;
+export function transformValue(key, value) {
     let nValue = value;
     if (Array.isArray(value)) {
-        nValue = Expression.Converter.convert(JSON.stringify(value));
+        nValue = Expression.fromRaw(JSON.stringify(value));
     }
     if (key.indexOf('-color') !== -1 && !Array.isArray(value)) {
         const color = value instanceof Color ? value : new Color(value);
         nValue = color.android;
-    } else if (typeof value === 'number') {
-        nValue = java.lang.Float.valueOf(value);
-    } else if (typeof value === 'boolean') {
-        nValue = java.lang.Boolean.valueOf(value);
+    } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        nValue = Expression.literal(value as any);
+    } else if (Array.isArray(value)) {
+        // assume it's a JSON-style expression
+        nValue = Expression.fromRaw(JSON.stringify(value));
     }
     return nValue;
 }
 export class PropertyParser {
-    static parsePropertiesForLayer(propertiesObject) {
-        const nProperties = [];
+    // static parsePropertiesForLayer(propertiesObject) {
+    //     const nProperties = [];
 
-        const PropertyFactory = com.mapbox.mapboxsdk.style.layers.PropertyFactory;
-        if (propertiesObject) {
-            Object.keys(propertiesObject).forEach((k) => {
-                const actualKey = toCamelCase(k);
-                const value = propertiesObject[k];
-                const nValue = transformValue(k, value);
-                nProperties.push(PropertyFactory[actualKey](nValue));
-            });
-        }
+    //     const PropertyFactory = com.mapbox.maps.extension.style.layers.PropertyFactory;
+    //     if (propertiesObject) {
+    //         Object.keys(propertiesObject).forEach((k) => {
+    //             const actualKey = toCamelCase(k);
+    //             const value = propertiesObject[k];
+    //             const nValue = transformValue(k, value);
+    //             nProperties.push(PropertyFactory[actualKey](nValue));
+    //         });
+    //     }
 
-        return nProperties;
-    }
+    //     return nProperties;
+    // }
 
     static propertyValueFromLayer(layer, key: string): any {
         const getterMethodName = `get${toPascalCase(key)}`;
 
-        let nValue: com.mapbox.mapboxsdk.style.layers.PropertyValue<any>;
+        let nValue: com.mapbox.maps.extension.style.layers.properties.PropertyValue<any>;
         try {
             nValue = layer[getterMethodName]();
         } catch (e) {
@@ -52,12 +53,12 @@ export class PropertyParser {
             return null;
         }
 
-        if (!nValue || nValue.isNull()) {
+        if (nValue === null || nValue === undefined) {
             return null;
         }
 
         if (nValue.isExpression()) {
-            return JSON.parse(nValue.getExpression().toString());
+            return JSON.parse(nValue.toString());
         } else if (!!nValue.getColorInt()) {
             return new Color(nValue.getColorInt().intValue());
         } else {

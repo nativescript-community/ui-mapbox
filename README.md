@@ -1038,7 +1038,7 @@ To help you manage offline regions there's a `listOfflineRegions` function you c
     accessToken: accessToken
   }).then(
     function(regions) {
-      console.log(JSON.stringify(JSON.stringify(regions));
+      console.log(JSON.stringify(JSON.stringify(regions)));
     },
     function(error) {
       console.log("Error while listing offline regions: " + error);

@@ -2,6 +2,7 @@ import { LayerCommon, LayerType } from '../common';
 
 declare class LayerFactory {
     static createLayer(style, source): Promise<LayerCommon>;
+    static applyLayerProperties(layer: any, properties: Record<string, any>);
 }
 
 export declare class Layer implements LayerCommon {

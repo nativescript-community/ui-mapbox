@@ -167,7 +167,7 @@ export interface MapboxMarker extends LatLng {
     /**
      * internally used to know if the marker image is already downloaded
      */
-    iconDownloaded?: boolean;
+    downloadedIcon?: ImageSource;
 }
 
 // ------------------------------------------------------------
@@ -188,6 +188,8 @@ export interface SetTiltOptions {
      * default 5000 (milliseconds)
      */
     duration: number;
+
+    animated?: boolean;
 }
 
 // ------------------------------------------------------------
@@ -371,7 +373,7 @@ export type UserLocationCameraMode = 'NONE' | 'NONE_COMPASS' | 'NONE_GPS' | 'TRA
 
 export interface TrackUserOptions {
     cameraMode: UserLocationCameraMode;
-    renderMode?: string;
+    renderMode?: 'NORMAL' | 'COMPASS' | 'GPS';
     /**
      * iOS only, as Android is always animated. Default true (because of Android).
      */
@@ -387,8 +389,8 @@ export interface AddExtrusionOptions {}
 export interface OfflineRegion {
     name: string;
     bounds: Bounds;
-    minZoom: number;
-    maxZoom: number;
+    minZoom?: number;
+    maxZoom?: number;
     style: MapStyle;
     metadata?: any;
     pixelRatio?: any;
@@ -418,6 +420,9 @@ export interface DownloadOfflineRegionOptions extends OfflineRegion {
      * Set this, in case no map has been show yet (and thus, no accessToken has been passed in yet).
      */
     accessToken?: string;
+    regionId?: string;
+    minZoom?: number;
+    maxZoom?: number;
 }
 
 // ------------------------------------------------------------
@@ -613,13 +618,13 @@ export interface MapboxApi {
 
     onStart(nativeMap?: any): Promise<any>;
 
-    onResume(nativeMap?: any): Promise<any>;
+    // onResume(nativeMap?: any): Promise<any>;
 
-    onPause(nativeMap?: any): Promise<any>;
+    // onPause(nativeMap?: any): Promise<any>;
 
     onStop(nativeMap?: any): Promise<any>;
 
-    onLowMemory(nativeMap?: any): Promise<any>;
+    // onLowMemory(nativeMap?: any): Promise<any>;
 
     onDestroy(nativeMap?: any): Promise<any>;
 
@@ -649,13 +654,13 @@ export interface MapboxApi {
 
     hideUserLocationMarker(nativeMap?: any): void;
 
-    changeUserLocationMarkerMode(renderModeString, cameraModeString: UserLocationCameraMode, nativeMap?: any): void;
+    // changeUserLocationMarkerMode(renderModeString, cameraModeString: UserLocationCameraMode, nativeMap?: any): void;
 
     forceUserLocationUpdate(location: any, nativeMap?: any): void;
 
     trackUser(options: TrackUserOptions, nativeMap?: any): Promise<void>;
 
-    getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode;
+    // getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode;
 
     addSource(id: string, options: AddSourceOptions, nativeMapView?: any): Promise<any>;
 
@@ -701,11 +706,11 @@ export interface MapboxApi {
 
     setOnFlingListener(listener: () => void, nativeMap?: any): Promise<any>;
 
-    setOnCameraMoveListener(listener: (reason, animated?: boolean) => void, nativeMap?: any): Promise<any>;
+    setOnCameraChangeListener(listener: (reason, animated?: boolean) => void, nativeMap?: any): Promise<any>;
 
     setOnCameraMoveCancelListener(listener: () => void, nativeMap?: any): Promise<any>;
 
-    setOnCameraIdleListener(listener: () => void, nativeMap?: any): Promise<any>;
+    setOnMapIdleListener(listener: () => void, nativeMap?: any): Promise<any>;
 
     requestFineLocationPermission(): Promise<any>;
 
@@ -742,7 +747,7 @@ export interface MapboxApi {
 export abstract class MapboxCommon implements MapboxCommonApi {
     constructor(public view?: MapboxViewCommonBase) {}
     public static defaults: Partial<ShowOptions> = {
-        style: MapStyle.STREETS.toString(),
+        style: MapStyle.STREETS,
         margins: {
             left: 0,
             right: 0,
@@ -836,7 +841,7 @@ export interface MapboxViewApi {
 
     setOnFlingListener(listener: () => void): Promise<any>;
 
-    setOnCameraMoveListener(listener: (reason, animated?: boolean) => void): Promise<any>;
+    setOnCameraChangeListener(listener: (reason, animated?: boolean) => void): Promise<any>;
 
     setOnCameraMoveCancelListener(listener: () => void): Promise<any>;
 
@@ -864,13 +869,13 @@ export interface MapboxViewApi {
 
     trackUser(options: TrackUserOptions): Promise<any>;
 
-    getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode;
+    // getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode;
 
     showUserLocationMarker(options): void;
 
     hideUserLocationMarker(options): void;
 
-    changeUserLocationMarkerMode(renderModeString, cameraModeString: UserLocationCameraMode): void;
+    // changeUserLocationMarkerMode(renderModeString, cameraModeString: UserLocationCameraMode): void;
 
     forceUserLocationUpdate(location): void;
 
@@ -910,13 +915,13 @@ export interface MapboxViewApi {
 
     onStart(): Promise<any>;
 
-    onResume(): Promise<any>;
+    // onResume(): Promise<any>;
 
-    onPause(): Promise<any>;
+    // onPause(): Promise<any>;
 
     onStop(): Promise<any>;
 
-    onLowMemory(): Promise<any>;
+    // onLowMemory(): Promise<any>;
 
     onDestroy(): Promise<any>;
 
@@ -985,14 +990,14 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     setOnFlingListener(listener: () => void, nativeMap?: any): Promise<any> {
         return this.mapbox.setOnFlingListener(listener, this.getNativeMapView());
     }
-    setOnCameraMoveListener(listener: (reason, animated?: boolean) => void, nativeMap?: any): Promise<any> {
-        return this.mapbox.setOnCameraMoveListener(listener, this.getNativeMapView());
+    setOnCameraChangeListener(listener: (reason, animated?: boolean) => void, nativeMap?: any): Promise<any> {
+        return this.mapbox.setOnCameraChangeListener(listener, this.getNativeMapView());
     }
     setOnCameraMoveCancelListener(listener: () => void, nativeMap?: any): Promise<any> {
         return this.mapbox.setOnCameraMoveCancelListener(listener, this.getNativeMapView());
     }
     setOnCameraIdleListener(listener: () => void, nativeMap?: any): Promise<any> {
-        return this.mapbox.setOnCameraIdleListener(listener, this.getNativeMapView());
+        return this.mapbox.setOnMapIdleListener(listener, this.getNativeMapView());
     }
     getViewport(): Promise<Viewport> {
         return this.mapbox.getViewport(this.getNativeMapView());
@@ -1030,18 +1035,18 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     hideUserLocationMarker(): void {
         this.mapbox.hideUserLocationMarker(this.getNativeMapView());
     }
-    changeUserLocationMarkerMode(renderModeString, cameraModeString: UserLocationCameraMode): void {
-        this.mapbox.changeUserLocationMarkerMode(renderModeString, cameraModeString, this.getNativeMapView());
-    }
+    // changeUserLocationMarkerMode(renderModeString, cameraModeString: UserLocationCameraMode): void {
+    //     this.mapbox.changeUserLocationMarkerMode(renderModeString, cameraModeString, this.getNativeMapView());
+    // }
     forceUserLocationUpdate(location): void {
         this.mapbox.forceUserLocationUpdate(location, this.getNativeMapView());
     }
     trackUser(options: TrackUserOptions): Promise<any> {
         return this.mapbox.trackUser(options, this.getNativeMapView());
     }
-    getUserLocationCameraMode(): UserLocationCameraMode {
-        return this.mapbox.getUserLocationCameraMode(this.getNativeMapView());
-    }
+    // getUserLocationCameraMode(): UserLocationCameraMode {
+    //     return this.mapbox.getUserLocationCameraMode(this.getNativeMapView());
+    // }
     addSource(id: string, options: AddSourceOptions): Promise<any> {
         return this.mapbox.addSource(id, options, this.getNativeMapView());
     }
@@ -1097,31 +1102,40 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
         return this.mapbox.removeImage(imageId, this.getNativeMapView());
     }
     destroy(): Promise<any> {
-        return this.mapbox && this.mapbox.destroy(this.getNativeMapView());
+        return this.mapbox?.destroy(this.getNativeMapView());
     }
     onStart(): Promise<any> {
-        return this.mapbox && this.mapbox.onStart(this.getNativeMapView());
+        return this.mapbox?.onStart(this.getNativeMapView());
     }
-    onResume(nativeMap?: any): Promise<any> {
-        return this.mapbox && this.mapbox.onResume(this.getNativeMapView());
-    }
-    onPause(nativeMap?: any): Promise<any> {
-        return this.mapbox && this.mapbox.onPause(this.getNativeMapView());
-    }
+    // onResume(nativeMap?: any): Promise<any> {
+    //     return this.mapbox && this.mapbox.onResume(this.getNativeMapView());
+    // }
+    // onPause(nativeMap?: any): Promise<any> {
+    //     return this.mapbox && this.mapbox.onPause(this.getNativeMapView());
+    // }
     onStop(nativeMap?: any): Promise<any> {
-        return this.mapbox && this.mapbox.onStop(this.getNativeMapView());
+        return this.mapbox?.onStop(this.getNativeMapView());
     }
-    onLowMemory(nativeMap?: any): Promise<any> {
-        return this.mapbox.onLowMemory(this.getNativeMapView());
-    }
+    // onLowMemory(nativeMap?: any): Promise<any> {
+    //     return this.mapbox.onLowMemory(this.getNativeMapView());
+    // }
     onDestroy(nativeMap?: any): Promise<any> {
-        return this.mapbox && this.mapbox.onDestroy(this.getNativeMapView());
+        return this.mapbox?.onDestroy(this.getNativeMapView());
     }
     project(data: LatLng) {
-        return this.mapbox && this.mapbox.project(data);
+        return this.mapbox.project(data);
     }
     projectBack(screenCoordinate: { x: number; y: number }): LatLng {
-        return this.mapbox && this.mapbox.projectBack(screenCoordinate);
+        return this.mapbox.projectBack(screenCoordinate);
+    }
+    downloadOfflineRegion(options: DownloadOfflineRegionOptions): Promise<any> {
+        return this.mapbox.downloadOfflineRegion(options);
+    }
+    listOfflineRegions(options?: ListOfflineRegionsOptions): Promise<OfflineRegion[]> {
+        return this.mapbox.listOfflineRegions(options);
+    }
+    deleteOfflineRegion(options: DeleteOfflineRegionOptions): Promise<any> {
+        return this.mapbox.deleteOfflineRegion(options);
     }
 }
 

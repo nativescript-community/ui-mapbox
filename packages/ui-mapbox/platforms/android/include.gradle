@@ -18,38 +18,30 @@ repositories {
 
 // see https://www.mapbox.com/android-sdk/
 dependencies {
-	def mapboxVersion =  project.hasProperty("mapboxVersion") ? project.mapboxVersion : "9.7.1"
-	def mapboxServicesVersion =  project.hasProperty("mapboxServicesVersion") ? project.mapboxServicesVersion : "5.6.0"
+	def mapboxVersion =  project.hasProperty("mapboxVersion") ? project.mapboxVersion : "11.15.3"
+	def mapboxServicesVersion =  project.hasProperty("mapboxServicesVersion") ? project.mapboxServicesVersion : "7.8.0"
 	def mapboxPluginsVersion =  project.hasProperty("mapboxPluginsVersion") ? project.mapboxPluginsVersion : "v9"
 	def mapboxAnnotationPluginVersion =  project.hasProperty("mapboxAnnotationPluginVersion") ? project.mapboxAnnotationPluginVersion : "0.9.0"
 	def okHttpVersion =  project.hasProperty("okHttpVersion") ? project.okHttpVersion : "4.9.0"
-    implementation ("com.mapbox.mapboxsdk:mapbox-android-sdk:$mapboxVersion") {
-        // transitive=false
-    }
-    if (project.hasProperty("mapboxTelemetryVersion")) {
-	    def mapboxTelemetryVersion =  project.hasProperty("mapboxTelemetryVersion") ? project.mapboxTelemetryVersion : "6.1.0"
-        implementation ("com.mapbox.mapboxsdk:mapbox-android-telemetry:$mapboxTelemetryVersion") 
-    }
-    // implementation ("com.mapbox.mapboxsdk:mapbox-android-telemetry:$mapboxTelemetryVersion") {
-    //     transitive=false
-    // }
-    implementation ("com.mapbox.mapboxsdk:mapbox-sdk-geojson:$mapboxServicesVersion"){
-        // transitive=false
-    }
-    // implementation ("com.mapbox.mapboxsdk:mapbox-android-gestures:$mapboxGesturesVersion"){
-    //     transitive=false
-    // }
-    // implementation ("com.mapbox.mapboxsdk:mapbox-sdk-services:$mapboxServicesVersion"){
-    //     transitive=false
-    // }
 
-    implementation ("com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-$mapboxPluginsVersion:$mapboxAnnotationPluginVersion")
-    // implementation ("com.mapbox.mapboxsdk:mapbox-android-plugin-annotation-$mapboxPluginsVersion:$mapboxAnnotationPluginVersion"){
-    // }
+    println "com.mapbox.maps:android:$mapboxVersion"
+
+    // Core Mapbox Maps SDK v11+
+    implementation "com.mapbox.maps:android:$mapboxVersion"
+
+    // GeoJSON / Annotations support (choose correct module name & version)
+    implementation "com.mapbox.mapboxsdk:mapbox-sdk-geojson:$mapboxServicesVersion"  // example version
+    // implementation "com.mapbox.plugin:maps-annotation:$mapboxVersion"  // plugin example
+
+    // Additional plugins: e.g., location component, gestures, etc.  
+    // implementation "com.mapbox.plugin:maps-locationcomponent:$mapboxVersion"
+    // implementation "com.mapbox.plugin:maps-gestures:$mapboxVersion"
 
     implementation "com.squareup.okhttp3:okhttp:$okHttpVersion"
 
-    println "com.mapbox.mapboxsdk:mapbox-android-sdk:$mapboxVersion"
+    // If you need Mapbox Search or Navigation SDKs, add here 
+    // implementation "com.mapbox.search:autofill:1.0.0-beta.39"
+    // implementation "com.mapbox.navigation:android:3.0.0"
 
 }
 

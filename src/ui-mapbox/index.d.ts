@@ -1,5 +1,36 @@
 import { ImageSource } from '@nativescript/core';
-import { AddExtrusionOptions, AddGeoJsonClusteredOptions, AddPolygonOptions, AddPolylineOptions, AddSourceOptions, AnimateCameraOptions, DeleteOfflineRegionOptions, DownloadOfflineRegionOptions, Feature, LatLng, LayerCommon, ListOfflineRegionsOptions, MapboxApi, MapboxCommon, MapboxMarker, MapboxViewBase, MapStyle, OfflineRegion, QueryRenderedFeaturesOptions, QuerySourceFeaturesOptions, SetCenterOptions, SetTiltOptions, SetViewportOptions, SetZoomLevelOptions, ShowOptions, TrackUserOptions, UpdateSourceOptions, UserLocation, UserLocationCameraMode, Viewport } from './common';
+import {
+    AddExtrusionOptions,
+    AddGeoJsonClusteredOptions,
+    AddPolygonOptions,
+    AddPolylineOptions,
+    AddSourceOptions,
+    AnimateCameraOptions,
+    DeleteOfflineRegionOptions,
+    DownloadOfflineRegionOptions,
+    Feature,
+    LatLng,
+    LayerCommon,
+    ListOfflineRegionsOptions,
+    MapStyle,
+    MapboxApi,
+    MapboxCommon,
+    MapboxMarker,
+    MapboxViewBase,
+    OfflineRegion,
+    QueryRenderedFeaturesOptions,
+    QuerySourceFeaturesOptions,
+    SetCenterOptions,
+    SetTiltOptions,
+    SetViewportOptions,
+    SetZoomLevelOptions,
+    ShowOptions,
+    TrackUserOptions,
+    UpdateSourceOptions,
+    UserLocation,
+    UserLocationCameraMode,
+    Viewport
+} from './common';
 
 // Export any shared classes, constants, etc.
 export * from './common';
@@ -13,7 +44,7 @@ export declare class MapboxView extends MapboxViewBase {
     private initCountHack;
     setConfig(settings: any): void;
     getNativeMapView(): any;
-    createNativeView(): Object;
+    createNativeView(): object;
     onLoaded(): void;
     initNativeView(): void;
     disposeNativeView(): Promise<void>;
@@ -58,7 +89,7 @@ export declare class Mapbox extends MapboxCommon implements MapboxApi {
     _stringToRenderMode(mode: any): any;
     showUserLocationMarker(options: any, nativeMap?: any): Promise<void>;
     hideUserLocationMarker(nativeMap?: any): Promise<void>;
-    changeUserLocationMarkerMode(renderModeString: any, cameraModeString: UserLocationCameraMode, nativeMap?: any): Promise<void>;
+    // changeUserLocationMarkerMode(renderModeString: any, cameraModeString: UserLocationCameraMode, nativeMap?: any): Promise<void>;
     forceUserLocationUpdate(location: any, nativeMap?: any): void;
     queryRenderedFeatures(options: QueryRenderedFeaturesOptions, nativeMap?: any): Promise<Feature[]>;
     querySourceFeatures(sourceId: string, options?: QuerySourceFeaturesOptions, nativeMap?: any): Promise<Feature[]>;
@@ -76,7 +107,7 @@ export declare class Mapbox extends MapboxCommon implements MapboxApi {
     setOnFlingListener(listener: () => void, nativeMap?: any): Promise<void>;
     setOnCameraMoveListener(listener: (reason: any, animated?: any) => void, nativeMap?: any): Promise<void>;
     setOnCameraMoveCancelListener(listener: () => void, nativeMap?: any): Promise<void>;
-    setOnCameraIdleListener(listener: () => void, nativeMap?: any): Promise<void>;
+    setOnMapIdleListener(listener: () => void, nativeMap?: any): Promise<void>;
     getViewport(nativeMap?: any): Promise<Viewport>;
     setViewport(options: SetViewportOptions, nativeMap?: any): Promise<void>;
     downloadOfflineRegion(options: DownloadOfflineRegionOptions): Promise<void>;
@@ -97,5 +128,5 @@ export declare class Mapbox extends MapboxCommon implements MapboxApi {
         x: number;
         y: number;
     };
-    projectBack(screenCoordinate: { x: number, y: number }): LatLng;
+    projectBack(screenCoordinate: { x: number; y: number }): LatLng;
 }

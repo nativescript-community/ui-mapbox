@@ -1,17 +1,19 @@
+const Expression = com.mapbox.maps.extension.style.expressions.generated.Expression;
+
 export class ExpressionParser {
-    static parseJson(json: any[]): com.mapbox.mapboxsdk.style.expressions.Expression {
-        const expression = com.mapbox.mapboxsdk.style.expressions.Expression.Converter.convert(JSON.stringify(json));
+    static parseJson(json: any[]): com.mapbox.maps.extension.style.expressions.generated.Expression {
+        const expression = Expression.fromRaw(JSON.stringify(json));
         return expression;
     }
-    static toJson(filter: com.mapbox.mapboxsdk.style.expressions.Expression): any[] {
+    static toJson(filter: com.mapbox.maps.extension.style.expressions.generated.Expression): any[] {
         if (!filter) {
             return null;
         }
 
-        if (!(filter instanceof com.mapbox.mapboxsdk.style.expressions.Expression)) {
+        if (!(filter instanceof com.mapbox.maps.extension.style.expressions.generated.Expression)) {
             throw new Error('Filter must be a Expression.');
         }
 
-        return JSON.parse(filter.toString());
+        return JSON.parse(filter.toJson());
     }
 }
