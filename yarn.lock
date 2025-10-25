@@ -3804,10 +3804,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nativescript-community/perms@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "@nativescript-community/perms@npm:2.3.0"
-  checksum: 10/cc2f26bf8148bc02045498070dd7d0756bb0e4835dfcb7dc931fad623cef4211d6028bb3e71b8d56398a807b70c64ff39ef569e815b86d668baa3eb1a08d4c06
+"@nativescript-community/perms@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "@nativescript-community/perms@npm:3.0.4"
+  checksum: 10/11e64f6fa79a115e920e9a00567effeef6cae84c4e48dd597b24bd0517f8c9bb9269e30bada3f569520670d75a07733e8c452d4955012b3b1701d7c0a2f48ca5
   languageName: node
   linkType: hard
 
@@ -3894,7 +3894,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nativescript-community/ui-mapbox@workspace:packages/ui-mapbox"
   dependencies:
-    "@nativescript-community/perms": "npm:^2.3.0"
+    "@nativescript-community/perms": "npm:^3.0.4"
   languageName: unknown
   linkType: soft
 
@@ -3954,6 +3954,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nativescript/ios@npm:8.8.2":
+  version: 8.8.2
+  resolution: "@nativescript/ios@npm:8.8.2"
+  checksum: 10/128faae63cb190214713d34d4bb11f0ce82975fb4140a82067f1f4bb784868cc253d64d429bea5261579e749bffe598a6ef2de9bb995df98f7f7cc4aa785d363
+  languageName: node
+  linkType: hard
+
 "@nativescript/ios@npm:8.9.4":
   version: 8.9.4
   resolution: "@nativescript/ios@npm:8.9.4"
@@ -3969,11 +3976,11 @@ __metadata:
     "@nativescript-community/template-snippet": "npm:*"
     "@nativescript/android": "npm:8.9.2"
     "@nativescript/core": "npm:8.9.9"
-    "@nativescript/ios": "npm:8.9.4"
+    "@nativescript/ios": "npm:8.8.2"
     "@nativescript/theme": "npm:3.1.0"
     "@nativescript/types": "npm:8.9.1"
     "@nativescript/webpack": "npm:5.0.24"
-    "@types/node": "npm:18.11.19"
+    "@types/node": "npm:24.7.0"
     nativescript-vue: "npm:2.9.3"
     nativescript-vue-template-compiler: "npm:2.9.3"
     typescript: "npm:5.9.3"
@@ -5510,13 +5517,6 @@ __metadata:
   version: 18.11.18
   resolution: "@types/node@npm:18.11.18"
   checksum: 10/da05cf3a0036ef05cd695ac4cb265948593acbe723ba818f0ca0ce466b13ba99e1aac3a363086d6b8c7ea8f30c9233478e0293ac878a6f4b1d5515b10c392257
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:18.11.19":
-  version: 18.11.19
-  resolution: "@types/node@npm:18.11.19"
-  checksum: 10/07e946d7573e66db30bdc9bac012cf4db4eac94a1ecdb1aafb59d3acd3f31c9518303ae310f363da932419fba307614f53dcddb6b0bdfbb189e6c0b8f68a5f63
   languageName: node
   linkType: hard
 
@@ -17366,7 +17366,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@nativescript-community/perms": "npm:^2.3.0"
+    "@nativescript-community/perms": "npm:^3.0.4"
     "@nativescript-community/plugin-seed-tools": "portal:tools"
   languageName: unknown
   linkType: soft

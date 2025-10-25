@@ -1,3 +1,4 @@
+import { check, request } from '@nativescript-community/perms';
 import { Color, ContentView, ImageSource, Property, Trace, Utils, booleanConverter } from '@nativescript/core';
 
 export * from './geo.utils';
@@ -132,7 +133,7 @@ export interface MapboxMarker extends LatLng {
     /**
      * Set this in case you want to later pass it to 'removeMarker'.
      */
-    id?: any;
+    id?: number;
     title?: string;
     subtitle?: string;
     /**
@@ -257,6 +258,10 @@ export interface MapboxCluster {
 // ------------------------------------------------------------
 
 export interface AddGeoJsonClusteredOptions {
+    id: any;
+    url: any;
+    pointColor: string;
+    pointRadius: number;
     /**
      * A unique identifier, like: "earthquakes"
      */
@@ -353,6 +358,7 @@ export interface VectorSource extends Source {
 // -------------------------------------------------------------
 
 export interface GeoJSONSource extends Source {
+    url: any;
     type: 'geojson';
     data?: any;
     minzoom?: number;
@@ -382,7 +388,14 @@ export interface TrackUserOptions {
 
 // ------------------------------------------------------------
 
-export interface AddExtrusionOptions {}
+export interface AddExtrusionOptions {
+    id?: string;
+    source?: string;
+    sourceLayer?: string;
+    minZoom?: any;
+    color?: string;
+    opacity?: any;
+}
 
 // ------------------------------------------------------------
 
@@ -414,6 +427,7 @@ export interface DownloadProgress {
 // ------------------------------------------------------------
 
 export interface DownloadOfflineRegionOptions extends OfflineRegion {
+    styleUrl: any;
     onProgress?: (data: DownloadProgress) => void;
     /**
      * Optional, used on Android only.
@@ -792,10 +806,16 @@ export abstract class MapboxCommon implements MapboxCommonApi {
         return result;
     }
 
-    async requestFineLocationPermission(): Promise<any> {}
+    async hasFineLocationPermission(): Promise<boolean> {
+        return (await check('location')) === 'authorized';
+    }
 
-    async hasFineLocationPermission() {
-        return true;
+    /**
+     * Request fine locaion permission
+     *
+     */
+    async requestFineLocationPermission() {
+        return request('location');
     }
 
     protected async fetchImageSource(imagePath: string): Promise<ImageSource> {

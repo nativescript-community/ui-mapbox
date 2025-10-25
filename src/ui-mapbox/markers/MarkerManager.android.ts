@@ -1,11 +1,13 @@
-import { Trace } from '@nativescript/core';
+import { Application, Color, Label, StackLayout, Trace, Utils } from '@nativescript/core';
 import { AndroidMarker } from './Marker.android';
 import { CLog, CLogTypes } from '../common';
+import { createInfoWindowView } from './Marker.common';
 
 /**
  * MarkerManager (Native Android Mapbox SDK version)
  */
 export class MarkerManager {
+    private static readonly MARKER_PADDING_PX = 10;
     private mapView: com.mapbox.maps.MapView;
     private map: com.mapbox.maps.MapboxMap;
     private pointAnnotationManager: com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
@@ -15,6 +17,7 @@ export class MarkerManager {
 
     private selectedMarker: AndroidMarker;
     private onInfoWindowTapped;
+    private _reusableCalloutView: StackLayout;
 
     private onMapClickListener: com.mapbox.maps.plugin.gestures.OnMapClickListener;
     private onPointClickListener: com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener;
@@ -80,7 +83,7 @@ export class MarkerManager {
         com.nativescript.mapbox.ViewAnnotationManager.addOnViewAnnotationUpdatedListener(this.mapView, listener);
     }
     updateMarker(marker: AndroidMarker) {
-        this.adjustViewAnnotationXOffset(marker);
+        // this.adjustViewAnnotationXOffset(marker);
         marker.update(this.pointAnnotationManager);
         com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(
             this.mapView,
@@ -93,7 +96,7 @@ export class MarkerManager {
             CLog(CLogTypes.log, 'MarkerManager addMarker: ' + JSON.stringify(marker));
         }
         marker.prepareAnnotationMarker(this.pointAnnotationManager, MarkerManager.LAYER_ID);
-        marker.prepareViewAnnotation(this.mapView, (e) => {
+        this.prepareViewAnnotation(marker, (e) => {
             // info Window tapped.
             if (!this.onInfoWindowTapped(marker)) {
                 this.deselectMarker(marker);
@@ -102,6 +105,76 @@ export class MarkerManager {
         this.markerList.add(marker);
         // this.selectMarker(marker);
         return marker;
+    }
+
+    /**
+     * Build a NativeScript view to use as info window.
+     * Then attach it to Mapbox via ViewAnnotationManager.
+     */
+    prepareViewAnnotation(marker: AndroidMarker, onInfoWindowClick) {
+        // --- Step 1: Create a NativeScript view tree
+        if (this._reusableCalloutView) {
+            const title = this._reusableCalloutView.getViewById<Label>('title');
+            title.text = marker?.title || '';
+            const subtitle = this._reusableCalloutView.getViewById<Label>('subtitle');
+            subtitle.text = marker?.snippet;
+            subtitle.visibility = marker?.snippet ? 'visible' : 'collapse';
+        } else {
+            this._reusableCalloutView = createInfoWindowView(marker.title, marker.snippet);
+        }
+
+        this._reusableCalloutView._setupAsRootView(Utils.android.getApplicationContext());
+        this._reusableCalloutView.parent = Application.getRootView();
+        this._reusableCalloutView._isAddedToNativeVisualTree = true;
+        this._reusableCalloutView.callLoaded();
+        const nativeView = this._reusableCalloutView.nativeViewProtected as android.view.View;
+
+        this._reusableCalloutView.removeEventListener('tap');
+        this._reusableCalloutView.on('tap', onInfoWindowClick);
+
+        const frameLayout = new android.widget.FrameLayout(this._reusableCalloutView._context);
+        const layoutParams = new android.widget.FrameLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        frameLayout.addView(nativeView);
+        frameLayout.setLayoutParams(layoutParams);
+        frameLayout.measure(
+            android.view.View.MeasureSpec.makeMeasureSpec(0, android.view.View.MeasureSpec.UNSPECIFIED),
+            android.view.View.MeasureSpec.makeMeasureSpec(0, android.view.View.MeasureSpec.UNSPECIFIED)
+        );
+        frameLayout.layout(0, 0, nativeView.getMeasuredWidth(), nativeView.getMeasuredHeight());
+        // frameLayout.setLayoutParams(new android.widget.FrameLayout.LayoutParams(nativeView.getMeasuredWidth(), nativeView.getMeasuredHeight()));
+        // --- Step 3: Prepare view annotation options
+
+        const ViewAnnotationAnchor = com.mapbox.maps.ViewAnnotationAnchor;
+        const ViewAnnotationAnchorConfigBuilder = com.mapbox.maps.ViewAnnotationAnchorConfig.Builder;
+        const offsetY = (marker.pointAnnotation.getIconImageBitmap()?.getHeight() ?? 0) + MarkerManager.MARKER_PADDING_PX;
+        const anchor = new ViewAnnotationAnchorConfigBuilder().anchor(ViewAnnotationAnchor.BOTTOM).offsetY(offsetY).build();
+        // marker.anchor = anchor;
+        const viewAnnotationOptions = new com.mapbox.maps.ViewAnnotationOptions.Builder()
+            .visible(java.lang.Boolean.valueOf(true))
+            // .allowOverlap(java.lang.Boolean.valueOf(true))
+            // .width(java.lang.Double.valueOf(frameLayout.getMeasuredWidth()))
+            // .height(java.lang.Double.valueOf(frameLayout.getMeasuredHeight()))
+            .allowOverlapWithPuck(java.lang.Boolean.valueOf(true))
+            .ignoreCameraPadding(java.lang.Boolean.valueOf(true))
+            // .priority(java.lang.Long.valueOf(0))
+            .selected(java.lang.Boolean.valueOf(true))
+            .annotatedFeature(com.mapbox.maps.AnnotatedFeature.valueOf(marker.pointAnnotation.getGeometry()))
+            // TODO: variableAnchors is broken for now
+            .variableAnchors(
+                java.util.Arrays.asList([
+                    anchor
+                    // new ViewAnnotationAnchorConfigBuilder().anchor(ViewAnnotationAnchor.BOTTOM_RIGHT).offsetY(offsetY).build(),
+                    // new ViewAnnotationAnchorConfigBuilder().anchor(ViewAnnotationAnchor.BOTTOM_LEFT).offsetY(offsetY).build()
+                ])
+            )
+            .build();
+        // --- Step 4: Add the view to Mapbox’s ViewAnnotationManager
+        com.nativescript.mapbox.ViewAnnotationManager.addViewAnnotation(this.mapView, frameLayout, viewAnnotationOptions);
+
+        // --- Step 5: Store references
+        marker.viewAnnotation = frameLayout;
+        marker.view = this._reusableCalloutView;
+        marker.prepared = true;
     }
 
     removeMarker(marker: AndroidMarker) {
@@ -123,7 +196,7 @@ export class MarkerManager {
             this.deselectMarker(this.selectedMarker);
         }
         this.selectedMarker = marker;
-        this.adjustViewAnnotationXOffset(marker);
+        // this.adjustViewAnnotationXOffset(marker);
         com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(
             this.mapView,
             marker.viewAnnotation,
@@ -141,10 +214,10 @@ export class MarkerManager {
         const View = android.view.View;
         const viewAnnotationOptionsBuilder = new com.mapbox.maps.ViewAnnotationOptions.Builder().selected(java.lang.Boolean.valueOf(false)).visible(java.lang.Boolean.valueOf(false));
 
-        if (marker.anchor) {
-            const anchorBuilder = marker.anchor.toBuilder().offsetX(0.0).build();
-            viewAnnotationOptionsBuilder.variableAnchors(java.util.Collections.singletonList(anchorBuilder));
-        }
+        // if (marker.anchor) {
+        //     const anchorBuilder = marker.anchor.toBuilder().offsetX(0.0).build();
+        //     viewAnnotationOptionsBuilder.variableAnchors(java.util.Collections.singletonList(anchorBuilder));
+        // }
 
         com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(this.mapView, marker.viewAnnotation, viewAnnotationOptionsBuilder.build());
 
@@ -162,31 +235,37 @@ export class MarkerManager {
 
         com.nativescript.mapbox.ViewAnnotationManager.removeOnViewAnnotationUpdatedListener(this.mapView, this.onViewAnnotationUpdatedListener);
         this.onViewAnnotationUpdatedListener = null;
+
+        if (this._reusableCalloutView) {
+            this._reusableCalloutView._tearDownUI();
+            this._reusableCalloutView = null;
+        }
         this.map = null;
         this.mapView = null;
     }
 
     updateOffsetX(marker: AndroidMarker, leftTop: any, width: number) {
+        return;
         // if (marker.preventNextUpdateOffsetX) {
         //     marker.preventNextUpdateOffsetX = false;
         //     return;
         // }
-        const mapSize = this.mapView.getMapboxMap().getSize();
-        let resultOffsetX = 0.0;
+        // const mapSize = this.mapView.getMapboxMap().getSize();
+        // let resultOffsetX = 0.0;
 
-        if (leftTop.getX() < 0 && leftTop.getX() + width > 0) {
-            resultOffsetX = Math.abs(leftTop.getX()) + MarkerManager.ADDITIONAL_EDGE_PADDING_PX;
-        } else if (leftTop.getX() + width > mapSize.getWidth() && leftTop.getX() < width) {
-            resultOffsetX = mapSize.getWidth() - leftTop.getX() - width - MarkerManager.ADDITIONAL_EDGE_PADDING_PX;
-        }
+        // if (leftTop.getX() < 0 && leftTop.getX() + width > 0) {
+        //     resultOffsetX = Math.abs(leftTop.getX()) + MarkerManager.ADDITIONAL_EDGE_PADDING_PX;
+        // } else if (leftTop.getX() + width > mapSize.getWidth() && leftTop.getX() < width) {
+        //     resultOffsetX = mapSize.getWidth() - leftTop.getX() - width - MarkerManager.ADDITIONAL_EDGE_PADDING_PX;
+        // }
 
-        const anchor = marker.anchor ? marker.anchor.toBuilder().offsetX(resultOffsetX).build() : null;
+        // const anchor = marker.anchor ? marker.anchor.toBuilder().offsetX(resultOffsetX).build() : null;
 
-        if (anchor) {
-            const options = new com.mapbox.maps.ViewAnnotationOptions.Builder().variableAnchors(java.util.Collections.singletonList(anchor)).build();
-            // marker.preventNextUpdateOffsetX = true;
-            com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(this.mapView, marker.viewAnnotation, options);
-        }
+        // if (anchor) {
+        //     const options = new com.mapbox.maps.ViewAnnotationOptions.Builder().variableAnchors(java.util.Collections.singletonList(anchor)).build();
+        //     // marker.preventNextUpdateOffsetX = true;
+        //     com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(this.mapView, marker.viewAnnotation, options);
+        // }
     }
 
     isSelected(marker: AndroidMarker): boolean {

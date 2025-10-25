@@ -53,7 +53,7 @@
     },
     "readmeFilename": "README.md",
     "dependencies": {
-        "@nativescript-community/perms": "^2.3.0"
+        "@nativescript-community/perms": "^3.0.4"
     },
     "gitHead": "89403ea15d2e03759bdf8d04087d58236efc971a"
 }

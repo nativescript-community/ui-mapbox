@@ -4,7 +4,7 @@
  * @todo FIXME: The gcFix() implementation currently assumes only one map visible at a time.
  */
 
-import { request } from '@nativescript-community/perms';
+import { check, request } from '@nativescript-community/perms';
 import { AndroidApplication, Application, Color, File, Http, ImageSource, Trace, Utils, knownFolders, path } from '@nativescript/core';
 import { ExpressionParser } from './expression/expression-parser';
 import { Layer, LayerFactory } from './layers/layer-factory';
@@ -1186,28 +1186,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return false;
     }
 
-    hasFineLocationPermission(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            try {
-                resolve(this._fineLocationPermissionGranted());
-            } catch (ex) {
-                if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'Error in mapbox.hasFineLocationPermission: ' + ex);
-                }
-                reject(ex);
-            }
-        });
-    }
-
-    /**
-     * Request fine locaion permission
-     *
-     * @link https://docs.mapbox.com/android/core/overview/#permissionsmanager
-     */
-    async requestFineLocationPermission() {
-        return request('location');
-    }
-
     /**
      * set the map style
      *
@@ -1754,7 +1732,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     const features = result.getValue();
                                     const jsFeatures = [];
                                     for (let i = 0; i < features.size(); i++) {
-                                        const feature = features.get(i) as com.mapbox.maps.QueriedRenderedFeature;
+                                        const feature = features.get(i) as com.mapbox.maps.QueriedSourceFeature;
                                         jsFeatures.push(JSON.parse(feature.getQueriedFeature().getFeature().toJson()));
                                     }
                                     resolve(jsFeatures);
@@ -2847,7 +2825,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         const layer = await LayerFactory.createLayer(style, source);
-        console.log('addLayer', layer.getNativeInstance());
         if (belowLayerId) {
             // TODO: missing extension typings
             //@ts-ignore

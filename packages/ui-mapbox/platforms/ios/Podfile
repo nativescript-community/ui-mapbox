@@ -1,2 +1,4 @@
 # see https://github.com/CocoaPods/CocoaPods/issues/11867 for why i use podspec
-pod 'Mapbox-iOS-SDK', :podspec => 'https://raw.githubusercontent.com/nativescript-community/mapbox-gl-native-ios/refs/heads/main/Mapbox-iOS-SDK.podspec'
+# pod 'Mapbox-iOS-SDK', :podspec => 'https://raw.githubusercontent.com/nativescript-community/mapbox-gl-native-ios/refs/heads/main/Mapbox-iOS-SDK.podspec'
+platform :ios, '14.0'
+pod 'MapboxMaps', '11.16.0'
