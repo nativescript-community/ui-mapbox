@@ -10,4 +10,5 @@ export function installPlugin() {
 export const demos = [{ name: 'Basic', path: 'Basic', component: Basic }];
 
 Trace.addCategories(MapboxTraceCategory);
+// Trace.addCategories(Trace.categories.Layout);
 Trace.enable();

@@ -20,7 +20,7 @@
                 <button text="marker" @tap="addMarker($event)" />
                 <button text="updateMarker" @tap="updateMarker($event)" />
                 <button text="camera" @tap="animateCamera($event)" />
-                <button text="location" @tap="trackUser($event)" @longPress="getUserLocation($event)" />
+                <button text="location" @tap="trackUser($event)" @longPress="stopTracking($event)" />
                 <button text="source" @tap="addSource($event)" />
                 <button text="polygon" @tap="addPolygon($event)" @longPress="removePolygon($event)" />
                 <button text="polyline" @tap="addPolyline($event)" @longPress="removePolyline($event)" />
@@ -112,7 +112,7 @@ export default {
                     return this.map.removeMarkers([1, 2]);
                 }
             });
-            this.map.setCenter({ ...this.firstMarker, animated: true });
+            this.map.setCenter({ ...this.firstMarker, animated: false });
         },
         animateCamera(event) {
             this.map.getTilt().then((tilt) => {
@@ -139,10 +139,13 @@ export default {
         },
         trackUser(event) {
             this.map.trackUser({
-                cameraMode: 'NONE',
+                cameraMode: 'TRACKING',
                 renderMode: 'COMPASS',
                 animated: true
             });
+        },
+        stopTracking(event) {
+            this.map.hideUserLocationMarker();
         },
         addSource(event) {
             this.map
@@ -182,6 +185,7 @@ export default {
                 })
                 .catch((error) => console.error(error, error.stack))
                 .then(() => {
+                    console.log('source added')
                     this.map
                         .addLayer({
                             id: 'test',
@@ -253,7 +257,7 @@ export default {
             this.map
                 .addPolyline({
                     id: 1, // optional, can be used in 'removePolylines'
-                    color: '#336699', // Set the color of the line (default black)
+                    color: '#336699ff', // Set the color of the line (default black)
                     width: 7, // Set the width of the line (default 5)
                     opacity: 0.6, //Transparency / alpha, ranging 0-1. Default fully opaque (1).
                     points: [
