@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.1](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.0...v7.0.1) (2025-10-28)
+
+### Bug Fixes
+
+* **android:** fixed map init from content view ([2a83615](https://github.com/nativescript-community/ui-mapbox/commit/2a836151e19b37c160b9e3772ff9675786c6eb6b))
+* **ios:** missing options and improvements ([3d4cedd](https://github.com/nativescript-community/ui-mapbox/commit/3d4cedd92761445ab7293668d2b22e8767f73cce))
+
 ## [7.0.0](https://github.com/nativescript-community/ui-mapbox/compare/v6.2.31...v7.0.0) (2025-10-25)
 
 ### Features
