@@ -143,10 +143,13 @@ export class MapboxView extends MapboxViewBase {
     private initCountHack = 50;
 
     setConfig(settings: any) {
-        if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'setConfig(): settings:', settings);
+        if (settings.zoomLevel && !settings.center) {
+            // Eiffel tower, Paris
+            settings.center = {
+                lat: 48.858093,
+                lng: 2.294694
+            };
         }
-
         this.settings = settings;
     }
     getNativeMapView(): any {
@@ -189,7 +192,7 @@ export class MapboxView extends MapboxViewBase {
 
     initMap(): void {
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'initMap() top with settings:', this.settings);
+            CLog(CLogTypes.info, 'initMap() top');
         }
 
         if (!this.settings && !this.config.accessToken) {
@@ -469,6 +472,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 // setTimeout(() => view.addSubview(nativeMap), 0);
                 view.addSubview(nativeMap);
                 this.setMapboxViewInstance(nativeMap);
+
+                if (settings.showUserLocation) {
+                    this.showUserLocationMarker({});
+                }
 
                 this.initEventHandlerShim(settings, this._mapboxViewInstance);
                 if (settings.onMapReady) {
@@ -1575,7 +1582,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     // ---------------- User location & tilt ----------------
 
-    showUserLocationMarker(show: boolean): Promise<void> {
+    showUserLocationMarker(options: Partial<TrackUserOptions>): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
                 const b = this.bridgeInstance;
@@ -1583,7 +1590,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     reject('No bridge available');
                     return;
                 }
-                b.showUserLocationMarker(show);
+                b.showUserLocationMarker(JSON.stringify(options));
                 resolve();
             } catch (ex) {
                 reject(ex);
@@ -1634,7 +1641,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'trackUser():', JSON.stringify(options));
                 }
-                const ok = b.trackUser(JSON.stringify(options));
+                const ok = b.showUserLocationMarker(JSON.stringify(options));
                 if (ok) {
                     resolve();
                 } else {

@@ -176,10 +176,11 @@ public class MapboxBridge: NSObject {
     @objc public func createMap(_ x: Double, _ y: Double, _ width: Double, _ height: Double, _ accessToken: String, _ styleURIString: String?, _ optionsJSON: String) -> UIView {
         MapboxOptions.accessToken = accessToken
         let styleURI = getMapStyleURI(styleURIString)
-        
+        let optionsOpt = MapboxBridge.parseJSONParameter(optionsJSON) as? [String: Any]
+
         var centerCoordinate = CLLocationCoordinate2D(latitude: 48.858093, longitude: 2.294694)
         var zoom = 0.0
-        if let options = MapboxBridge.parseJSONParameter(optionsJSON) as? [String: Any] {
+        if let options = optionsOpt {
             if let z = options["zoomLevel"] as? Double {
                 zoom = z
             }
@@ -202,6 +203,31 @@ public class MapboxBridge: NSObject {
         MapboxBridge.registerBridge(self, for: mv)
         
         addImage("default_pin", image: UIImage(named: "default_pin"))
+
+        if let options = optionsOpt {
+            if ((options["hideLogo"] as? Bool) == true) {
+                mv.ornaments.logoView.isHidden = true
+            }
+            if ((options["hideAttribution"] as? Bool) == true) {
+                mv.ornaments.attributionButton.isHidden = true
+            }
+            if ((options["hideCompass"] as? Bool) == true) {
+                mv.ornaments.compassView.isHidden = true
+            }
+            if ((options["disableRotation"] as? Bool) == true) {
+                mv.gestures.options.rotateEnabled = false
+            }
+            if ((options["disableScroll"] as? Bool) == true) {
+                mv.gestures.options.panEnabled = false
+            }
+            if ((options["disableZoom"] as? Bool) == true) {
+                mv.gestures.options.pinchZoomEnabled = false
+                mv.gestures.options.quickZoomEnabled = false
+            }
+            if ((options["disableTilt"] as? Bool) == true) {
+                mv.gestures.options.pitchEnabled = false
+            }
+        }
         
         // mapLoaded
         mv.mapboxMap.onMapLoaded.observeNext { _ in
@@ -1162,7 +1188,7 @@ public class MapboxBridge: NSObject {
     }
     
     
-    @objc public func trackUser(_ optionsJSON: String) -> Bool {
+    @objc public func showUserLocationMarker(_ optionsJSON: String) -> Bool {
         guard let mv = mapView else { return false }
         
         guard let data = optionsJSON.data(using: .utf8),

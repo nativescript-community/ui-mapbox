@@ -85,14 +85,13 @@ declare class MapboxBridge extends NSObject {
   deleteOfflineRegion(idOrName: string): void;
 
   // user location & tilt
-  showUserLocationMarker(show: boolean): void;
+  showUserLocationMarker(optionsJSON: string);
   hideUserLocationMarker(): void;
   forceUserLocationUpdate(): boolean;
   getTilt(): number | null;
   setTilt(tilt: number, animated: boolean): void;
   getUserLocation(): NSDictionary | null;
 
-  trackUser(optionsJSON: string): boolean;
   stopTrackingUser(): void;
 
   // added/updated methods
