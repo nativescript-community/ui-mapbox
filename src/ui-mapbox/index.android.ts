@@ -175,8 +175,10 @@ export class MapboxView extends MapboxViewBase {
      * programmatically include settings
      */
     setConfig(settings: ShowOptions) {
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'setConfig()');
+        }
         // zoom level is not applied unless center is set
-
         if (settings.zoomLevel && !settings.center) {
             // Eiffel tower, Paris
             settings.center = {
@@ -296,14 +298,15 @@ export class MapboxView extends MapboxViewBase {
      * @todo FIXME: this.nativeMapView is unused and never actually set to anything.
      */
     async initMap() {
+        const accessToken = this.config?.accessToken ?? this.settings?.accessToken
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, "MapboxView:initMap(): top - accessToken is '" + this.config.accessToken + "'", this.config);
+            CLog(CLogTypes.info, "MapboxView:initMap(): top - accessToken is '" + accessToken + "'", this.config);
         }
-        if (!this.config.accessToken) {
+        if (!accessToken) {
             throw new Error('missing accessToken');
         }
 
-        if (!this.nativeMapView && ((this.config && this.config.accessToken) || (this.settings && this.settings.accessToken))) {
+        if (!this.nativeMapView) {
             this.mapbox = new Mapbox(this);
             // the NativeScript contentview class extends from Observable to provide the notify method
             // which is the glue that joins this code with whatever callbacks are set in the Mapbox XML
@@ -1683,7 +1686,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 const features = result.getValue();
                                 const jsFeatures = [];
                                 for (let i = 0; i < features.size(); i++) {
-                                    const feature = features.get(i) as com.mapbox.maps.QueriedRenderedFeature;
+                                    const feature = features.get(i);
                                     jsFeatures.push(JSON.parse(feature.getQueriedFeature().getFeature().toJson()));
                                 }
                                 resolve(jsFeatures);
@@ -1732,7 +1735,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     const features = result.getValue();
                                     const jsFeatures = [];
                                     for (let i = 0; i < features.size(); i++) {
-                                        const feature = features.get(i) as com.mapbox.maps.QueriedSourceFeature;
+                                        const feature = features.get(i);
                                         jsFeatures.push(JSON.parse(feature.getQueriedFeature().getFeature().toJson()));
                                     }
                                     resolve(jsFeatures);
@@ -2423,7 +2426,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     const regions = [];
                                     if (offlineRegions !== null) {
                                         for (let i = 0; i < offlineRegions.size(); i++) {
-                                            const offlineRegion = offlineRegions.get(i) as com.mapbox.common.TileRegion;
+                                            const offlineRegion = offlineRegions.get(i);
                                             // const bounds = offlineRegionDefinition.getBounds();
                                             const { bounds, maxZoom, minZoom, name, regionId, styleUrl, ...metadata } = await this._getRegionMetadata(offlineRegion);
 
@@ -2476,7 +2479,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     let found = false;
                                     if (offlineRegions !== null) {
                                         for (let i = 0; i < offlineRegions.size(); i++) {
-                                            const offlineRegion = offlineRegions.get(i) as com.mapbox.common.TileRegion;
+                                            const offlineRegion = offlineRegions.get(i);
                                             const regionId = options.id ? offlineRegion.getId() : await this._getRegionName(offlineRegion);
                                             if (regionId === (options.id || options.name)) {
                                                 found = true;
@@ -2898,7 +2901,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 if (lineFeatures.size() === 0) {
                                     reject(new Error('no line string feature found'));
                                 } else {
-                                    const feature = (lineFeatures.get(0) as com.mapbox.maps.QueriedSourceFeature).getQueriedFeature().getFeature();
+                                    const feature = lineFeatures.get(0).getQueriedFeature().getFeature();
 
                                     const newPoints = new java.util.ArrayList<com.mapbox.geojson.Point>((feature.geometry() as com.mapbox.geojson.LineString).coordinates());
                                     newPoints.add(com.mapbox.geojson.Point.fromLngLat(lnglat[0], lnglat[1]));
@@ -3018,24 +3021,15 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             CLog(CLogTypes.info, 'trackUser(): top');
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 if (!this._mapboxMapInstance) {
                     reject('No map has been loaded');
                     return;
                 }
 
-                this.requestFineLocationPermission()
-                    .then(() => {
-                        // if (this._locationComponent) {
-                        //     this.changeUserLocationMarkerMode(options.renderMode || 'COMPASS', options.cameraMode || 'TRACKING');
-                        // } else {
-                        this.showUserLocationMarker(options as any);
-                        // }
-                    })
-                    .catch((err) => {
-                        console.error('Location permission denied. error:', err);
-                    });
+                await this.requestFineLocationPermission();
+                this.showUserLocationMarker(options, nativeMap);
 
                 resolve();
             } catch (ex) {
@@ -3280,11 +3274,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @todo at least with simulated data, the location is only updated once hence adding support for forceLocation method.
      */
     async showUserLocationMarker(
-        options: TrackUserOptions & {
-            accuracyColor;
-            accuracyRingColor;
-            pulsingColor;
-        },
+        options: Partial<
+            TrackUserOptions & {
+                accuracyColor?;
+                accuracyRingColor?;
+                pulsingColor?;
+            }
+        >,
         nativeMap?
     ) {
         try {
@@ -3348,88 +3344,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     }
                 })
             );
-
-            // if (typeof options.elevation != 'undefined') {
-            //     componentOptionsBuilder = componentOptionsBuilder.elevation(options.elevation);
-            // }
-
-            // if (typeof options.accuracyAlpha != 'undefined') {
-            //     componentOptionsBuilder = componentOptionsBuilder.accuracyAlpha(options.accuracyAlpha);
-            // }
-
-            // if (typeof options.foregroundTintColor != 'undefined') {
-            //     const foregroundTintColor = new java.lang.Integer(android.graphics.Color.parseColor(options.foregroundTintColor));
-            //     componentOptionsBuilder = componentOptionsBuilder.foregroundTintColor(foregroundTintColor);
-            // }
-
-            // if (typeof options.foregroundStaleTintColor != 'undefined') {
-            //     const foregroundStaleTintColor = new java.lang.Integer(android.graphics.Color.parseColor(options.foregroundStaleTintColor));
-            //     componentOptionsBuilder = componentOptionsBuilder.foregroundStaleTintColor(foregroundStaleTintColor);
-            // }
-
-            // if (typeof options.backgroundTintColor != 'undefined') {
-            //     const backgroundTintColor = new java.lang.Integer(android.graphics.Color.parseColor(options.backgroundTintColor));
-            //     componentOptionsBuilder = componentOptionsBuilder.backgroundTintColor(backgroundTintColor);
-            // }
-
-            // if (typeof options.bearingTintColor != 'undefined') {
-            //     const bearingTintColor = new java.lang.Integer(android.graphics.Color.parseColor(options.bearingTintColor));
-            //     componentOptionsBuilder = componentOptionsBuilder.bearingTintColor(bearingTintColor);
-            // }
-
-            // const componentOptions = componentOptionsBuilder.build();
-
-            // this._locationComponent = this._mapboxMapInstance.getLocationComponent();
-
-            // const activationOptionsBuilder = com.mapbox.maps.location.LocationComponentActivationOptions.builder(Utils.android.getApplicationContext(), this._mapboxMapInstance.getStyle());
-
-            // activationOptionsBuilder.locationComponentOptions(componentOptions);
-
-            // let useDefaultEngine = true;
-
-            // if (typeof options.useDefaultLocationEngine != 'undefined') {
-            //     useDefaultEngine = options.useDefaultLocationEngine;
-            // }
-            // activationOptionsBuilder.useDefaultLocationEngine(useDefaultEngine);
-
-            // const locationComponentActivationOptions = activationOptionsBuilder.build();
-
-            // this._locationComponent.activateLocationComponent(locationComponentActivationOptions);
-            // this._locationComponent.setLocationComponentEnabled(true);
-
-            // let cameraMode = this._stringToCameraMode('TRACKING');
-
-            // if (typeof options.cameraMode != 'undefined') {
-            //     cameraMode = this._stringToCameraMode(options.cameraMode);
-            // }
-
-            // this._locationComponent.setCameraMode(cameraMode);
-
-            // let renderMode = com.mapbox.maps.location.modes.RenderMode.COMPASS;
-
-            // if (typeof options.renderMode != 'undefined') {
-            //     renderMode = this._stringToRenderMode(options.renderMode);
-            // }
-
-            // this._locationComponent.setRenderMode(renderMode);
-
-            // if (Trace.isEnabled()) {
-            //     CLog(CLogTypes.info, 'showUserLocationMarker(): after renderMode');
-            // }
-
-            // if (typeof options.clickListener != 'undefined') {
-            //     this.onLocationClickListener = new com.mapbox.maps.location.OnLocationClickListener({
-            //         onLocationComponentClick: () => {
-            //             options.clickListener();
-            //         }
-            //     });
-
-            //     this._locationComponent.addOnLocationClickListener(this.onLocationClickListener);
-            // }
-
-            // if (typeof options.cameraTrackingChangedListener != 'undefined') {
-            //     this._locationComponent.addOnCameraTrackingChangedListener(options.cameraTrackingChangedListener);
-            // }
         } catch (ex) {
             if (Trace.isEnabled()) {
                 CLog(CLogTypes.info, 'Error in mapbox.showUserLocationMarker: ' + ex);
@@ -3488,7 +3402,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return new Promise((resolve, reject) => {
             try {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'showUserLocationMarker()');
+                    CLog(CLogTypes.info, 'changeUserLocationMarkerMode()');
                 }
 
                 if (!this._mapboxMapInstance) {
@@ -3617,7 +3531,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         const result: Layer[] = [];
 
                         for (let i = 0; i < layers.size(); i++) {
-                            const id = (layers.get(i) as com.mapbox.maps.StyleObjectInfo).getId();
+                            const id = layers.get(i).getId();
                             //TODO: fix declaration which is missing extension for this
                             //@ts-ignore
                             result.push(new Layer(style.getLayer(id)));
