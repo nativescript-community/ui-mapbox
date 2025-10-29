@@ -1372,7 +1372,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             CLog(CLogTypes.info, 'createCalloutView1():', marker.id, marker.title, !!this._reusableCalloutView);
         }
         this._reusableCalloutView.removeEventListener('tap');
-
+        (this._reusableCalloutView.nativeViewProtected as UIView)?.removeFromSuperview();
         return this._reusableCalloutView;
     }
 
