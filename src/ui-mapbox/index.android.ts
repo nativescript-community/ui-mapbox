@@ -298,7 +298,7 @@ export class MapboxView extends MapboxViewBase {
      * @todo FIXME: this.nativeMapView is unused and never actually set to anything.
      */
     async initMap() {
-        const accessToken = this.config?.accessToken ?? this.settings?.accessToken
+        const accessToken = this.config?.accessToken ?? this.settings?.accessToken;
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, "MapboxView:initMap(): top - accessToken is '" + accessToken + "'", this.config);
         }
@@ -636,6 +636,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                     this._mapboxMapInstance,
                                     this._mapboxViewInstance,
                                     (marker: AndroidMarker) => {
+                                        if (Trace.isEnabled()) {
+                                            CLog(CLogTypes.info, 'MarkerManager.onMarkerClicked():');
+                                        }
                                         const cachedMarker = this._getClickedMarkerDetails(marker);
                                         if (cachedMarker?.onTap) {
                                             const result = cachedMarker.onTap(cachedMarker);
@@ -1423,6 +1426,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 new AndroidMarker({
                     position: com.mapbox.geojson.Point.fromLngLat(marker.lng, marker.lat),
                     title: marker.title,
+                    id: marker.id,
                     snippet: marker.subtitle,
                     icon: icon?.android
                 })
@@ -1434,7 +1438,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
 
             marker.update = (newSettings: MapboxMarker) => {
-                console.log('update marker', Object.keys(newSettings), newSettings);
                 const theMarker = this._markers.find((m) => m.id === marker.id);
                 if (theMarker) {
                     if (newSettings.onTap) {
@@ -1474,7 +1477,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (!this._mapboxMapInstance) {
             return;
         }
-
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, '_removeMarkers: ', ids);
+        }
         this._markers.forEach((marker) => {
             if (!ids || (marker && marker.id && ids.indexOf(marker.id) > -1)) {
                 if (marker && marker.android) {
@@ -1774,7 +1779,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 }
                 const polygonOptions = new com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions();
                 const nPoints = java.util.Arrays.asList([java.util.Arrays.asList(points.map((p) => com.mapbox.geojson.Point.fromLngLat(p.lng, p.lat)))]);
-                console.log('add points', nPoints);
                 polygonOptions.withPoints(nPoints);
 
                 polygonOptions.withFillColor(Mapbox.getAndroidColor(options.fillColor));
@@ -1785,7 +1789,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     polygonOptions.withFillOutlineColor(Mapbox.getAndroidColor(options.strokeColor));
                 }
 
-                this._polylines[options.id || new Date().getTime()] = this.polygonManager.create(polygonOptions);
+                this._polygons[options.id || new Date().getTime()] = this.polygonManager.create(polygonOptions);
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -1972,10 +1976,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         if (Trace.isEnabled()) {
                             CLog(CLogTypes.info, 'Mapbox:setOnMapClickListener(): click event at point:', point);
                         }
-                        return this.checkForClickEvent({
-                            lat: point.latitude(),
-                            lng: point.longitude()
-                        });
+                        return (
+                            listener({
+                                lat: point.latitude(),
+                                lng: point.longitude()
+                            }) ?? true
+                        );
                     }
                 });
                 com.mapbox.maps.plugin.gestures.GesturesUtils.addOnMapClickListener(this._mapboxMapInstance, this.onMapClickListener);
@@ -2005,7 +2011,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         })
                 });
 
-                this._getGesturesPlugin().addOnMapLongClickListener(this.onMapLongClickListener);
+                com.mapbox.maps.plugin.gestures.GesturesUtils.addOnMapLongClickListener(this._mapboxMapInstance, this.onMapLongClickListener);
 
                 resolve();
             } catch (ex) {
@@ -2139,7 +2145,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 this.onFlingListener = new com.mapbox.maps.plugin.gestures.OnFlingListener({
                     onFling: () => listener()
                 });
-                this._getGesturesPlugin().addOnFlingListener(this.onFlingListener);
+                com.mapbox.maps.plugin.gestures.GesturesUtils.addOnFlingListener(this._mapboxMapInstance, this.onFlingListener);
 
                 resolve();
             } catch (ex) {
@@ -2348,7 +2354,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     bounds: options.bounds,
                     ...options.metadata
                 };
-                console.log('downloadRegion', regionId, new com.mapbox.bindgen.Value(JSON.stringify(info)));
                 const regionOptions = new com.mapbox.common.TileRegionLoadOptions.Builder()
                     .geometry(bbox)
                     .descriptors(java.util.Collections.singletonList(tilesetDescriptor))
@@ -3319,14 +3324,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     invoke: (settings: com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings.Builder) => {
                         settings.setEnabled(true);
                         settings.setPulsingEnabled(true);
-                        console.log(
-                            'setPuckBearingEnabled',
-                            options.cameraMode,
-                            options.renderMode,
-                            options.renderMode !== 'NORMAL',
-                            com.mapbox.maps.plugin.PuckBearing.HEADING,
-                            com.mapbox.maps.plugin.PuckBearing.COURSE
-                        );
+                        
                         settings.setLocationPuck(com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils.createDefault2DPuck(true));
 
                         settings.setPuckBearingEnabled(options.renderMode !== 'NORMAL');

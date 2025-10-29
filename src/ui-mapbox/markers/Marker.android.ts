@@ -9,20 +9,21 @@ export class AndroidMarker {
     icon: android.graphics.Bitmap;
     title?: string;
     snippet?: string;
+    id?: string | number;
 
     pointAnnotation: com.mapbox.maps.plugin.annotation.generated.PointAnnotation;
     viewAnnotation: android.view.View;
     view: StackLayout;
     anchor: com.mapbox.maps.ViewAnnotationAnchorConfig;
     layerId: string;
-    prepared = false;
 
-    constructor(opts: { position: com.mapbox.geojson.Point; icon: android.graphics.Bitmap; title?: string; snippet?: string }) {
+    constructor(opts: { id: string | number; position: com.mapbox.geojson.Point; icon: android.graphics.Bitmap; title?: string; snippet?: string }) {
         if (!opts.title && !opts.snippet) {
             throw new Error('Marker should have either title or snippet!');
         }
 
         this.position = opts.position;
+        this.id = opts.id;
         this.icon = opts.icon;
         this.title = opts.title;
         this.snippet = opts.snippet;
@@ -40,7 +41,7 @@ export class AndroidMarker {
         ) as com.mapbox.maps.plugin.annotation.generated.PointAnnotation;
         this.layerId = layerId;
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.log, 'MarkerManager prepareAnnotationMarker: ' + layerId);
+            CLog(CLogTypes.log, 'MarkerManager prepareAnnotationMarker: ' + layerId, this.id, this.pointAnnotation);
         }
     }
 

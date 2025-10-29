@@ -11,13 +11,14 @@ export class MarkerManager {
     private mapView: com.mapbox.maps.MapView;
     private map: com.mapbox.maps.MapboxMap;
     private pointAnnotationManager: com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
-    private markerList = new Set<AndroidMarker>();
+    private markerList: AndroidMarker[] = [];
     private static readonly LAYER_ID = 'annotation-layer';
     private static readonly ADDITIONAL_EDGE_PADDING_PX = 20.0;
 
     private selectedMarker: AndroidMarker;
     private onInfoWindowTapped;
     private _reusableCalloutView: StackLayout;
+    private _reusableCalloutNativeView: android.widget.FrameLayout;
 
     private onMapClickListener: com.mapbox.maps.plugin.gestures.OnMapClickListener;
     private onPointClickListener: com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener;
@@ -38,13 +39,26 @@ export class MarkerManager {
         // add click listeners
         this.onPointClickListener = new com.mapbox.maps.plugin.annotation.generated.OnPointAnnotationClickListener({
             onAnnotationClick: (annotation) => {
-                for (const marker of this.markerList) {
-                    if (marker.pointAnnotation === annotation) {
-                        if (onMarkerClick(marker)) {
-                            return true;
-                        }
-                        this.selectMarker(marker, true);
+                const index = this.markerList.findIndex((m) => m.pointAnnotation === annotation);
+
+                if (Trace.isEnabled()) {
+                    CLog(
+                        CLogTypes.info,
+                        'MarkerManager.onAnnotationClick():',
+                        annotation,
+                        index,
+                        this.markerList.map((m) => m.id)
+                    );
+                }
+                if (index !== -1) {
+                    const marker = this.markerList[index];
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, 'MarkerManager.onAnnotationClick(): found', annotation);
                     }
+                    if (onMarkerClick(marker)) {
+                        return true;
+                    }
+                    this.selectMarker(marker, true);
                 }
                 return true;
             }
@@ -53,18 +67,18 @@ export class MarkerManager {
         // Map click listener to deselect all markers
         this.onMapClickListener = new com.mapbox.maps.plugin.gestures.OnMapClickListener({
             onMapClick: (point) => {
-                if (this.selectedMarker) {
-                    this.deselectMarker(this.selectedMarker);
-                    return true;
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.log, 'MarkerManager onMapClick: ', !!this.selectedMarker);
                 }
-                return false;
+                return this.deselectMarker(this.selectedMarker);
             }
         });
         com.mapbox.maps.plugin.gestures.GesturesUtils.addOnMapClickListener(map, this.onMapClickListener);
     }
 
     deselectAll() {
-        this.markerList.forEach((marker: AndroidMarker) => this.deselectMarker(marker));
+        this.deselectMarker(this.selectedMarker);
+        // this.markerList.forEach((marker: AndroidMarker) => this.deselectMarker(marker));
     }
 
     adjustViewAnnotationXOffset(marker: AndroidMarker) {
@@ -85,25 +99,24 @@ export class MarkerManager {
     updateMarker(marker: AndroidMarker) {
         // this.adjustViewAnnotationXOffset(marker);
         marker.update(this.pointAnnotationManager);
-        com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(
-            this.mapView,
-            marker.viewAnnotation,
-            new com.mapbox.maps.ViewAnnotationOptions.Builder().annotatedFeature(com.mapbox.maps.AnnotatedFeature.valueOf(marker.pointAnnotation.getGeometry())).build()
-        );
+        if (marker.viewAnnotation) {
+            com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(
+                this.mapView,
+                marker.viewAnnotation,
+                new com.mapbox.maps.ViewAnnotationOptions.Builder().annotatedFeature(com.mapbox.maps.AnnotatedFeature.valueOf(marker.pointAnnotation.getGeometry())).build()
+            );
+        }
     }
     addMarker(marker: AndroidMarker) {
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.log, 'MarkerManager addMarker: ' + JSON.stringify(marker));
+            CLog(CLogTypes.log, 'MarkerManager addMarker: ', marker, !!this.selectedMarker);
         }
-        marker.prepareAnnotationMarker(this.pointAnnotationManager, MarkerManager.LAYER_ID);
-        this.prepareViewAnnotation(marker, (e) => {
-            // info Window tapped.
-            if (!this.onInfoWindowTapped(marker)) {
-                this.deselectMarker(marker);
-            }
-        });
-        this.markerList.add(marker);
-        // this.selectMarker(marker);
+        if (!marker.pointAnnotation || this.markerList.findIndex((m) => m.pointAnnotation === marker.pointAnnotation) === -1) {
+            marker.prepareAnnotationMarker(this.pointAnnotationManager, MarkerManager.LAYER_ID);
+            this.deselectMarker(this.selectedMarker);
+            this.markerList.push(marker);
+            // this.selectMarker(marker);
+        }
         return marker;
     }
 
@@ -113,6 +126,9 @@ export class MarkerManager {
      */
     prepareViewAnnotation(marker: AndroidMarker, onInfoWindowClick) {
         // --- Step 1: Create a NativeScript view tree
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'MarkerManager:prepareViewAnnotation():', this._reusableCalloutView);
+        }
         if (this._reusableCalloutView) {
             const title = this._reusableCalloutView.getViewById<Label>('title');
             title.text = marker?.title || '';
@@ -121,26 +137,35 @@ export class MarkerManager {
             subtitle.visibility = marker?.snippet ? 'visible' : 'collapse';
         } else {
             this._reusableCalloutView = createInfoWindowView(marker.title, marker.snippet);
+            this._reusableCalloutView._setupAsRootView(Utils.android.getApplicationContext());
+            this._reusableCalloutView.parent = Application.getRootView();
+            this._reusableCalloutView._isAddedToNativeVisualTree = true;
+            this._reusableCalloutView.callLoaded();
+        }
+        if (!this._reusableCalloutNativeView) {
+            const nativeView = this._reusableCalloutView.nativeViewProtected as android.view.View;
+            const frameLayout = new android.widget.FrameLayout(this._reusableCalloutView._context);
+            const layoutParams = new android.widget.FrameLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+            frameLayout.addView(nativeView);
+            frameLayout.setLayoutParams(layoutParams);
+            frameLayout.measure(
+                android.view.View.MeasureSpec.makeMeasureSpec(0, android.view.View.MeasureSpec.UNSPECIFIED),
+                android.view.View.MeasureSpec.makeMeasureSpec(0, android.view.View.MeasureSpec.UNSPECIFIED)
+            );
+            frameLayout.layout(0, 0, this._reusableCalloutView.getMeasuredWidth(), this._reusableCalloutView.getMeasuredHeight());
+            this._reusableCalloutNativeView = frameLayout;
         }
 
-        this._reusableCalloutView._setupAsRootView(Utils.android.getApplicationContext());
-        this._reusableCalloutView.parent = Application.getRootView();
-        this._reusableCalloutView._isAddedToNativeVisualTree = true;
-        this._reusableCalloutView.callLoaded();
-        const nativeView = this._reusableCalloutView.nativeViewProtected as android.view.View;
+        if (this._reusableCalloutNativeView.getParent()) {
+            if (Trace.isEnabled()) {
+                CLog(CLogTypes.info, 'MarkerManager:prepareViewAnnotation(): remove from parent', this._reusableCalloutNativeView.getParent());
+            }
+            (this._reusableCalloutNativeView.getParent() as android.view.ViewGroup).removeView(this._reusableCalloutNativeView);
+        }
 
         this._reusableCalloutView.removeEventListener('tap');
         this._reusableCalloutView.on('tap', onInfoWindowClick);
 
-        const frameLayout = new android.widget.FrameLayout(this._reusableCalloutView._context);
-        const layoutParams = new android.widget.FrameLayout.LayoutParams(android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-        frameLayout.addView(nativeView);
-        frameLayout.setLayoutParams(layoutParams);
-        frameLayout.measure(
-            android.view.View.MeasureSpec.makeMeasureSpec(0, android.view.View.MeasureSpec.UNSPECIFIED),
-            android.view.View.MeasureSpec.makeMeasureSpec(0, android.view.View.MeasureSpec.UNSPECIFIED)
-        );
-        frameLayout.layout(0, 0, nativeView.getMeasuredWidth(), nativeView.getMeasuredHeight());
         // frameLayout.setLayoutParams(new android.widget.FrameLayout.LayoutParams(nativeView.getMeasuredWidth(), nativeView.getMeasuredHeight()));
         // --- Step 3: Prepare view annotation options
 
@@ -169,19 +194,26 @@ export class MarkerManager {
             )
             .build();
         // --- Step 4: Add the view to Mapbox’s ViewAnnotationManager
-        com.nativescript.mapbox.ViewAnnotationManager.addViewAnnotation(this.mapView, frameLayout, viewAnnotationOptions);
+        com.nativescript.mapbox.ViewAnnotationManager.addViewAnnotation(this.mapView, this._reusableCalloutNativeView, viewAnnotationOptions);
 
         // --- Step 5: Store references
-        marker.viewAnnotation = frameLayout;
+        marker.viewAnnotation = this._reusableCalloutNativeView;
         marker.view = this._reusableCalloutView;
-        marker.prepared = true;
     }
 
     removeMarker(marker: AndroidMarker) {
-        if (!marker.prepared) return;
-
-        this.markerList.delete(marker);
-        com.nativescript.mapbox.ViewAnnotationManager.removeViewAnnotation(this.mapView, marker.viewAnnotation);
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, '_removeMarkers: ', marker.id, marker.pointAnnotation);
+        }
+        if (!marker.pointAnnotation) return;
+        const index = this.markerList.findIndex((m) => m.pointAnnotation === marker.pointAnnotation);
+        if (index !== -1) {
+            this.markerList.splice(index, 1);
+        }
+        if (marker.viewAnnotation) {
+            com.nativescript.mapbox.ViewAnnotationManager.removeViewAnnotation(this.mapView, marker.viewAnnotation);
+            marker.viewAnnotation = null;
+        }
         this.pointAnnotationManager.delete(marker.pointAnnotation);
         marker.destroy();
     }
@@ -196,32 +228,39 @@ export class MarkerManager {
             this.deselectMarker(this.selectedMarker);
         }
         this.selectedMarker = marker;
-        // this.adjustViewAnnotationXOffset(marker);
-        com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(
-            this.mapView,
-            marker.viewAnnotation,
-            new com.mapbox.maps.ViewAnnotationOptions.Builder().visible(java.lang.Boolean.valueOf(true)).selected(java.lang.Boolean.valueOf(true)).build()
-        );
 
-        marker.viewAnnotation.setVisibility(android.view.View.VISIBLE);
+        this.prepareViewAnnotation(marker, (e) => {
+            // info Window tapped.
+            if (!this.onInfoWindowTapped(marker)) {
+                this.deselectMarker(marker);
+            }
+        });
     }
 
     deselectMarker(marker: AndroidMarker) {
         if (!this.selectedMarker || marker.pointAnnotation !== this.selectedMarker.pointAnnotation) {
-            return;
+            return false;
+        }
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.log, 'MarkerManager deselectMarker: ', marker, !!this.selectedMarker);
         }
         this.selectedMarker = null;
-        const View = android.view.View;
-        const viewAnnotationOptionsBuilder = new com.mapbox.maps.ViewAnnotationOptions.Builder().selected(java.lang.Boolean.valueOf(false)).visible(java.lang.Boolean.valueOf(false));
+        // const View = android.view.View;
+        // const viewAnnotationOptionsBuilder = new com.mapbox.maps.ViewAnnotationOptions.Builder().selected(java.lang.Boolean.valueOf(false)).visible(java.lang.Boolean.valueOf(false));
 
         // if (marker.anchor) {
         //     const anchorBuilder = marker.anchor.toBuilder().offsetX(0.0).build();
         //     viewAnnotationOptionsBuilder.variableAnchors(java.util.Collections.singletonList(anchorBuilder));
         // }
+        if (marker.viewAnnotation) {
+            com.nativescript.mapbox.ViewAnnotationManager.removeViewAnnotation(this.mapView, marker.viewAnnotation);
+            marker.viewAnnotation = null;
+        }
 
-        com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(this.mapView, marker.viewAnnotation, viewAnnotationOptionsBuilder.build());
+        // com.nativescript.mapbox.ViewAnnotationManager.updateViewAnnotation(this.mapView, marker.viewAnnotation, viewAnnotationOptionsBuilder.build());
 
-        marker.viewAnnotation.setVisibility(View.INVISIBLE);
+        // marker.viewAnnotation.setVisibility(View.INVISIBLE);
+        return true;
     }
 
     destroy() {
