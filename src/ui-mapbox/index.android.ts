@@ -3068,7 +3068,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         } else if (input.startsWith('~/')) {
             return 'file://' + path.join(knownFolders.currentApp().path, input.replace('~/', ''));
         } else {
-            const key = Object.keys(MapStyle)[Object.values(MapStyle).indexOf(input)];
+            let key = Object.keys(MapStyle)[Object.values(MapStyle).indexOf(input)];
+            // on android STREETS is defined as MAPBOX_STREETS field
+            if (key === 'STREETS') {
+                key = 'MAPBOX_STREETS';
+            }
             // fix because MAPBOX_STREETS and others are not exposed by the
             const field = Style.class.getDeclaredField(key) || Style.class.getDeclaredField('MAPBOX_STREETS');
             field.setAccessible(true);
@@ -3324,7 +3328,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     invoke: (settings: com.mapbox.maps.plugin.locationcomponent.generated.LocationComponentSettings.Builder) => {
                         settings.setEnabled(true);
                         settings.setPulsingEnabled(true);
-                        
+
                         settings.setLocationPuck(com.mapbox.maps.plugin.locationcomponent.LocationComponentUtils.createDefault2DPuck(true));
 
                         settings.setPuckBearingEnabled(options.renderMode !== 'NORMAL');
