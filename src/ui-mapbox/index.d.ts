@@ -67,10 +67,7 @@ export declare class Mapbox extends MapboxCommon implements MapboxApi {
     unhide(): Promise<void>;
     destroy(nativeMap?: any): Promise<void>;
     onStart(nativeMap?: any): Promise<void>;
-    onResume(nativeMap?: any): Promise<void>;
-    onPause(nativeMap?: any): Promise<void>;
     onStop(nativeMap?: any): Promise<void>;
-    onLowMemory(nativeMap?: any): Promise<void>;
     onDestroy(nativeMap?: any): Promise<void>;
     setMapStyle(style: string | MapStyle, nativeMap?: any): Promise<void>;
     getImage(imageId: string, nativeMap?: any): Promise<ImageSource>;

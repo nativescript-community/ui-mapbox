@@ -242,7 +242,7 @@ export class MapboxView extends MapboxViewBase {
     public onLoaded() {
         super.onLoaded();
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'onLoaded()');
+            CLog(CLogTypes.info, 'onLoaded()', this);
         }
 
         if (!this.initialized) {
@@ -250,10 +250,16 @@ export class MapboxView extends MapboxViewBase {
             this.initialized = true;
         }
     }
+    public onUnloaded() {
+        super.onUnloaded();
+        if (Trace.isEnabled()) {
+            CLog(CLogTypes.info, 'onUnloaded()', this);
+        }
+    }
 
     public initNativeView(): void {
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'initNativeView(): top');
+            CLog(CLogTypes.info, 'initNativeView(): top', this);
         }
         this.nativeView.owner = this;
         // Application.android.on(AndroidApplication.activityStartedEvent, this.onStart, this);
@@ -274,15 +280,15 @@ export class MapboxView extends MapboxViewBase {
      * @link https://docs.nativescript.org/plugins/ui-plugin-custom
      */
     disposeNativeView() {
+        super.disposeNativeView();
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'disposeNativeView(): top');
+            CLog(CLogTypes.info, 'disposeNativeView(): top', this);
         }
 
         this.nativeView.owner = null;
 
         this.mapbox?.destroy();
         this.mapbox = null;
-        super.disposeNativeView();
     }
 
     /**
@@ -612,7 +618,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 logoPlugin.setPosition(Mapbox.mapPositionToGravity(settings.logoPosition));
 
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'show(): onMapReady() with instance:', this._mapboxMapInstance);
+                    CLog(CLogTypes.info, 'show(): onMapReady() with instance:', this._mapboxMapInstance, this._mapboxViewInstance);
                 }
 
                 // Android SDK 7.0.0 and on requires that the style be set separately after the map
@@ -807,16 +813,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
     }
 
-    /**
-     * destroy the map programmatically
-     *
-     * Destroy the map instance.
-     */
-    clear(nativeMap?: any) {
+    async destroy(nativeMap?: any) {
         this.clearEventListeners();
         this._markerIconDownloadCache = {};
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'destroy(): destroying mapbox view.');
+            CLog(CLogTypes.info, 'destroy(): destroying mapbox view.', this.view, this._mapboxViewInstance);
         }
 
         if (this.lineManager) {
@@ -860,7 +861,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             const viewGroup = this._mapboxViewInstance.getParent() as android.view.ViewGroup;
             if (viewGroup !== null) {
                 if (Trace.isEnabled()) {
-                    CLog(CLogTypes.info, 'destroy(): removing _mapboxViewInstance view.');
+                    CLog(CLogTypes.info, 'destroy(): removing _mapboxViewInstance view.', this._mapboxViewInstance);
                 }
                 viewGroup.removeView(this._mapboxViewInstance);
             }
@@ -876,9 +877,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             this._mapboxViewInstance = null;
             this._mapboxMapInstance = null;
         }
-    }
-    async destroy(nativeMap?: any) {
-        this.clear();
     }
 
     // private enableUserLocationPlugin() {
@@ -1016,34 +1014,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         this._mapboxViewInstance.onStart();
     }
 
-    // async onResume(nativeMapViewInstance?: any) {
-    //     if (Trace.isEnabled()) {
-    //         CLog(CLogTypes.info, 'onResume()');
-    //     }
-    //     this._mapboxViewInstance.onResume();
-    // }
-
-    // async onPause(nativeMapViewInstance?: any) {
-    //     if (Trace.isEnabled()) {
-    //         CLog(CLogTypes.info, 'onPause()');
-    //     }
-
-    //     this._mapboxViewInstance.onPause();
-    // }
-
     async onStop(nativeMap?: any) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'onStop()');
         }
         this._mapboxViewInstance.onStop();
     }
-
-    // async onLowMemory(nativeMap?: any) {
-    //     if (Trace.isEnabled()) {
-    //         CLog(CLogTypes.info, 'onLowMemory()');
-    //     }
-    //     this._mapboxViewInstance.onLowMemory();
-    // }
 
     async onDestroy(nativeMap?: any) {
         if (Trace.isEnabled()) {
