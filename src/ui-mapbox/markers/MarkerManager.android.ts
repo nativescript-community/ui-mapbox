@@ -272,8 +272,10 @@ export class MarkerManager {
         com.mapbox.maps.plugin.gestures.GesturesUtils.removeOnMapClickListener(this.map, this.onMapClickListener);
         this.onMapClickListener = null;
 
-        com.nativescript.mapbox.ViewAnnotationManager.removeOnViewAnnotationUpdatedListener(this.mapView, this.onViewAnnotationUpdatedListener);
-        this.onViewAnnotationUpdatedListener = null;
+        if (this.onViewAnnotationUpdatedListener) {
+            com.nativescript.mapbox.ViewAnnotationManager.removeOnViewAnnotationUpdatedListener(this.mapView, this.onViewAnnotationUpdatedListener);
+            this.onViewAnnotationUpdatedListener = null;
+        }
 
         if (this._reusableCalloutView) {
             this._reusableCalloutView._tearDownUI();
