@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.4](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.3...v7.0.4) (2025-10-30)
+
+### Bug Fixes
+
+* **android:** prevent error on destroy ([7695e79](https://github.com/nativescript-community/ui-mapbox/commit/7695e794b6fe7b2447ba67e7826671ad1d7fbb44))
+* **android:** streets style not working ([c49eff2](https://github.com/nativescript-community/ui-mapbox/commit/c49eff23434e3b86a7f13fa78115e1f6aa50df2f))
+* **ios:** working marker image and other fixes ([3ec0f75](https://github.com/nativescript-community/ui-mapbox/commit/3ec0f75f72708a03cafb2a0a1cd847cea8e74206))
+
 ## [7.0.3](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.2...v7.0.3) (2025-10-29)
 
 ### Bug Fixes
