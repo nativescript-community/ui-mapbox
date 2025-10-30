@@ -3031,7 +3031,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
     }
 
-    _getMapStyle(input: any): any {
+    _getMapStyle(input = 'streets'): any {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, '_getMapStyle(): top with input:', input);
         }
@@ -3044,7 +3044,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         } else if (input.startsWith('~/')) {
             return 'file://' + path.join(knownFolders.currentApp().path, input.replace('~/', ''));
         } else {
-            let key = Object.keys(MapStyle)[Object.values(MapStyle).indexOf(input)];
+            let key = Object.keys(MapStyle)[Object.values(MapStyle).indexOf(input as any)];
             // on android STREETS is defined as MAPBOX_STREETS field
             if (key === 'STREETS') {
                 key = 'MAPBOX_STREETS';

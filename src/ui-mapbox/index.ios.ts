@@ -1101,7 +1101,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     reject('No bridge available');
                     return;
                 }
-                const styleStr = typeof style === 'string' ? style : (style as any).toString();
+                const styleStr = (typeof style === 'string' ? style : (style as any).toString()) ?? 'streets';
                 b.setStyle(styleStr, (success: boolean, error?: any) => {
                     if (success) resolve();
                     else reject(error && error.localizedDescription ? error.localizedDescription : error || 'Error setting style');
