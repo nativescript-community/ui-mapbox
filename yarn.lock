@@ -4017,13 +4017,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nativescript/ios@npm:8.8.2":
-  version: 8.8.2
-  resolution: "@nativescript/ios@npm:8.8.2"
-  checksum: 10/128faae63cb190214713d34d4bb11f0ce82975fb4140a82067f1f4bb784868cc253d64d429bea5261579e749bffe598a6ef2de9bb995df98f7f7cc4aa785d363
-  languageName: node
-  linkType: hard
-
 "@nativescript/ios@npm:8.9.4":
   version: 8.9.4
   resolution: "@nativescript/ios@npm:8.9.4"
@@ -4039,7 +4032,7 @@ __metadata:
     "@nativescript-community/template-snippet": "npm:*"
     "@nativescript/android": "npm:8.9.2"
     "@nativescript/core": "npm:8.9.9"
-    "@nativescript/ios": "npm:8.8.2"
+    "@nativescript/ios": "npm:8.9.4"
     "@nativescript/theme": "npm:3.1.0"
     "@nativescript/types": "npm:8.9.1"
     "@nativescript/webpack": "npm:5.0.24"
