@@ -25,7 +25,6 @@
                 <button text="polygon" @tap="addPolygon($event)" @longPress="removePolygon($event)" />
                 <button text="polyline" @tap="addPolyline($event)" @longPress="removePolyline($event)" />
                 <button text="offline" @tap="offlineDownload($event)" @longPress="deleteOffline($event)" />
-                <button text="gotToPage2" @tap="gotToPage2()" />
             </WrapLayout>
         </GridLayout>
     </Page>
@@ -34,7 +33,6 @@
 <script lang="ts">
 import { Color } from '@nativescript/core';
 import { LatLng, MapStyle, MapboxView } from '@nativescript-community/ui-mapbox';
-import Basic2Vue from './Basic2.vue';
 export default {
     data() {
         return {
@@ -187,7 +185,7 @@ export default {
                 })
                 .catch((error) => console.error(error, error.stack))
                 .then(() => {
-                    console.log('source added');
+                    console.log('source added')
                     this.map
                         .addLayer({
                             id: 'test',
@@ -331,9 +329,6 @@ export default {
                     console.log('Offline region deleted');
                 })
                 .catch((error) => console.error(error, error.stack));
-        },
-        gotToPage2() {
-            this.$navigateTo(Basic2Vue);
         }
     }
 };
