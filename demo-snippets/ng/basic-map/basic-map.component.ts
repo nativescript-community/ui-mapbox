@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterExtensions } from '@nativescript/angular';
+import { MAPBOX_ACCESS_TOKEN } from '../mapbox-token';
 
 @Component({
     selector: 'ns-basic-map',
@@ -7,6 +8,7 @@ import { RouterExtensions } from '@nativescript/angular';
 })
 export class BasicMapComponent implements OnInit {
     constructor(private router: RouterExtensions) {}
+    MAPBOX_ACCESS_TOKEN = MAPBOX_ACCESS_TOKEN;
 
     ngOnInit(): void {}
 
@@ -14,7 +16,7 @@ export class BasicMapComponent implements OnInit {
         this.router.back();
     }
 
-    onMapReady(args): void {
+    onMapReady(args: any): void {
         console.log('map is ready');
     }
 }

@@ -1,0 +1,14 @@
+<ActionBar>
+    <NavigationButton android.systemIcon="ic_menu_back" (tap)="goBack()"></NavigationButton>
+    <Label text="Basic Map 3 module"></Label>
+</ActionBar>
+
+<GridLayout rows="auto,*,auto" height="100%" width="100%" padding="0" flexDirection="column">
+    <app-mapbox-header row="0" [mapbox]="mapbox"></app-mapbox-header>
+    <ContentView row="1"
+            width="300"
+            height="300"
+            (loaded)="loadedMap($event)">
+    </ContentView>
+    <app-mapbox-footer row="2"></app-mapbox-footer>
+</GridLayout>
