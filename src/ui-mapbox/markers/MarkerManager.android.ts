@@ -228,13 +228,14 @@ export class MarkerManager {
             this.deselectMarker(this.selectedMarker);
         }
         this.selectedMarker = marker;
-
-        this.prepareViewAnnotation(marker, (e) => {
-            // info Window tapped.
-            if (!this.onInfoWindowTapped(marker)) {
-                this.deselectMarker(marker);
-            }
-        });
+        if (marker.title || marker.snippet) {
+            this.prepareViewAnnotation(marker, (e) => {
+                // info Window tapped.
+                if (!this.onInfoWindowTapped(marker)) {
+                    this.deselectMarker(marker);
+                }
+            });
+        }
     }
 
     deselectMarker(marker: AndroidMarker) {

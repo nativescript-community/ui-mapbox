@@ -707,7 +707,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (this.selectedMarker && !this.isMarkerSelected(marker)) {
                     this.deselectMarker(this.selectedMarker);
                 }
-                await this.showCalloutForMarkerById(marker.id + '');
+                if (marker.title || marker.subtitle) {
+                    await this.showCalloutForMarkerById(marker.id + '');
+                }
                 resolve();
             } catch (ex) {
                 if (Trace.isEnabled()) {
@@ -1435,7 +1437,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     toggleCalloutForMarkerById(markerId: string): void {
         const m = this._markers.find((x) => `${x.id}` === markerId);
-        if (!m || !m.id) return;
+        if (!m || !m.id || (!m.title && !m.subtitle)) return;
         const exists = this.bridgeInstance.hasViewAnnotationForMarker(markerId);
         if (exists) this.hideCalloutForMarkerById(markerId);
         else this.showCalloutForMarkerById(markerId);

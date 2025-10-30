@@ -18,9 +18,6 @@ export class AndroidMarker {
     layerId: string;
 
     constructor(opts: { id: string | number; position: com.mapbox.geojson.Point; icon: android.graphics.Bitmap; title?: string; snippet?: string }) {
-        if (!opts.title && !opts.snippet) {
-            throw new Error('Marker should have either title or snippet!');
-        }
 
         this.position = opts.position;
         this.id = opts.id;
