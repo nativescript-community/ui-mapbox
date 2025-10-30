@@ -32,7 +32,7 @@ declare class MapboxBridge extends NSObject {
 
   setStyle(styleURIOrURL: string, completion: (success: boolean, error?: any) => void): void;
 
-  addImage(imageId: string, image: any): void;
+	addImage(imageId: string, image: UIImage): void;
   removeImage(imageId: string): void;
 
   addMarkers(markers: string): void;

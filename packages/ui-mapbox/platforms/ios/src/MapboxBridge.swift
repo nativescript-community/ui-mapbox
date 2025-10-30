@@ -202,7 +202,7 @@ public class MapboxBridge: NSObject {
         // Register this bridge for the created MapView
         MapboxBridge.registerBridge(self, for: mv)
         
-        addImage("default_pin", image: UIImage(named: "default_pin"))
+        addImage("default_pin", UIImage(named: "default_pin"))
 
         if let options = optionsOpt {
             if ((options["hideLogo"] as? Bool) == true) {
@@ -409,7 +409,7 @@ public class MapboxBridge: NSObject {
         return nil
     }
     
-    @objc public func addImage(_ imageId: String, image: UIImage?) {
+    @objc public func addImage(_ imageId: String, _ image: UIImage?) {
         guard let mv = mapView else { return }
         if (image != nil) {
             imageRegistry[imageId] = image!
@@ -545,7 +545,7 @@ public class MapboxBridge: NSObject {
         annotation.allowOverlapWithPuck = true
         let image = an.image
         let imageHeight = image?.image.size.height ?? 0
-        let offsetY = imageHeight - 12
+        let offsetY = imageHeight/2 + 5
         // TODO: variableAnchors is broken for now if multiple
         annotation.variableAnchors = [ViewAnnotationAnchorConfig(anchor: .bottom, offsetY: offsetY)
                                       //                                      , ViewAnnotationAnchorConfig(anchor: .bottomLeft, offsetY: offsetY), ViewAnnotationAnchorConfig(anchor: .bottomRight, offsetY: offsetY)
@@ -559,6 +559,7 @@ public class MapboxBridge: NSObject {
     @objc public func updateViewAnnotationForMarker(_ markerId: String, _ lat: Double, _ lng: Double) -> Bool {
         guard mapView != nil else { return false }
         guard let view = viewAnnotationByMarkerId[markerId] else { return false }
+        view.view.setNeedsLayout()
         view.annotatedFeature = .geometry(Point(CLLocationCoordinate2D(latitude: lat, longitude: lng)))
         return true
     }

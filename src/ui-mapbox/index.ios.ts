@@ -119,7 +119,7 @@ async function fetchImageIOS(imagePath: string): Promise<any> {
         if (!imagePath) return null;
         if (_markerIconDownloadCache[imagePath]) return _markerIconDownloadCache[imagePath];
         const img = await Http.getImage(imagePath);
-        if (img && img.ios) {
+        if (img?.ios) {
             _markerIconDownloadCache[imagePath] = img.ios;
             return img.ios;
         }
@@ -474,7 +474,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 this.setMapboxViewInstance(nativeMap);
 
                 if (settings.showUserLocation) {
-                    this.showUserLocationMarker({});
+                    this.showUserLocationMarker({ cameraMode: 'NONE' });
                 }
 
                 this.initEventHandlerShim(settings, this._mapboxViewInstance);
@@ -632,7 +632,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 );
 
                 updated.forEach((m) => {
-                    if (m.icon && typeof m.icon === 'string' && (m as any).iconDownloaded) {
+                    if (typeof m?.icon === 'string' && (m as any).iconDownloaded) {
                         try {
                             b.addImage(m.icon, (m as any).iconDownloaded);
                             delete (m as any).iconDownloaded;
@@ -669,8 +669,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 _marker.lng = newSettings.lng;
                                 b.updateMarkerPosition(_marker.id + '', newSettings.lat, newSettings.lng);
                             }
-
-                            if (newSettings.selected) {
+                            if (newSettings.selected || this.isMarkerSelected(_marker)) {
+                                // this will also update callout position
                                 this.selectMarker(_marker);
                             }
                         }
@@ -688,8 +688,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
     selectedMarker: MapboxMarker;
+
+    isMarkerSelected(marker: MapboxMarker) {
+        return this.selectedMarker === marker || this.selectedMarker?.id === marker.id;
+    }
     async deselectMarker(marker: MapboxMarker) {
-        if (this.selectedMarker === marker || this.selectedMarker?.id === marker.id) {
+        if (this.isMarkerSelected(marker)) {
             this.hideCalloutForMarkerById(marker.id + '');
             this.selectedMarker = null;
         }
@@ -700,7 +704,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'selectMarker():', marker.id);
                 }
-                if (this.selectedMarker) {
+                if (this.selectedMarker && !this.isMarkerSelected(marker)) {
                     this.deselectMarker(this.selectedMarker);
                 }
                 await this.showCalloutForMarkerById(marker.id + '');
@@ -1371,8 +1375,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'createCalloutView1():', marker.id, marker.title, !!this._reusableCalloutView);
         }
-        this._reusableCalloutView.removeEventListener('tap');
-        (this._reusableCalloutView.nativeViewProtected as UIView)?.removeFromSuperview();
         return this._reusableCalloutView;
     }
 
@@ -1384,10 +1386,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'showCalloutForMarkerById():', typeof markerId, markerId);
         }
-        if (this.bridgeInstance.hasViewAnnotationForMarker(markerId)) {
-            return;
-        }
         const callout = this.createCalloutView(m);
+        if (this.bridgeInstance.hasViewAnnotationForMarker(markerId)) {
+            // let s Update
+            this.bridgeInstance.removeViewAnnotationForMarker(markerId);
+            // return;
+        }
         callout.on('tap', () => {
             try {
                 const res = m.onCalloutTap ? m.onCalloutTap(m) : undefined;
@@ -1396,6 +1400,8 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 console.error('callout tap handler error', e);
             }
         });
+        this._reusableCalloutView.removeEventListener('tap');
+        (this._reusableCalloutView.nativeViewProtected as UIView)?.removeFromSuperview();
         try {
             const nativeView = createUIViewAutoSizeUIViewAutoSize(callout);
             if (Trace.isEnabled()) {
@@ -1778,12 +1784,12 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     onStart(nativeMap?: any): Promise<void> {
         return Promise.resolve();
     }
-    onResume(nativeMap?: any): Promise<void> {
-        return Promise.resolve();
-    }
-    onPause(nativeMap?: any): Promise<void> {
-        return Promise.resolve();
-    }
+    // onResume(nativeMap?: any): Promise<void> {
+    //     return Promise.resolve();
+    // }
+    // onPause(nativeMap?: any): Promise<void> {
+    //     return Promise.resolve();
+    // }
     onStop(nativeMap?: any): Promise<void> {
         return Promise.resolve();
     }
