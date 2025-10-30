@@ -632,17 +632,9 @@ export interface MapboxApi {
 
     onStart(nativeMap?: any): Promise<any>;
 
-    // onResume(nativeMap?: any): Promise<any>;
-
-    // onPause(nativeMap?: any): Promise<any>;
-
     onStop(nativeMap?: any): Promise<any>;
 
-    // onLowMemory(nativeMap?: any): Promise<any>;
-
     onDestroy(nativeMap?: any): Promise<any>;
-
-    // onSaveInstanceState( Bundle outState)
 
     setMapStyle(style: string | MapStyle, nativeMap?: any): Promise<any>;
 
@@ -1127,18 +1119,9 @@ export abstract class MapboxViewCommonBase extends ContentView implements Mapbox
     onStart(): Promise<any> {
         return this.mapbox?.onStart(this.getNativeMapView());
     }
-    // onResume(nativeMap?: any): Promise<any> {
-    //     return this.mapbox && this.mapbox.onResume(this.getNativeMapView());
-    // }
-    // onPause(nativeMap?: any): Promise<any> {
-    //     return this.mapbox && this.mapbox.onPause(this.getNativeMapView());
-    // }
     onStop(nativeMap?: any): Promise<any> {
         return this.mapbox?.onStop(this.getNativeMapView());
     }
-    // onLowMemory(nativeMap?: any): Promise<any> {
-    //     return this.mapbox.onLowMemory(this.getNativeMapView());
-    // }
     onDestroy(nativeMap?: any): Promise<any> {
         return this.mapbox?.onDestroy(this.getNativeMapView());
     }
