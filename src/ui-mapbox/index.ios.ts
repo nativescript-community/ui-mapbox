@@ -1451,6 +1451,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (!markerId) return;
         const marker = this._markers.find((m) => `${m.id}` === markerId);
         if (!marker) return;
+        if (!!marker.onTap?.(marker)) {
+            return;
+        }
+
         if (marker === this.selectedMarker) {
             this.deselectMarker(marker);
         } else {
