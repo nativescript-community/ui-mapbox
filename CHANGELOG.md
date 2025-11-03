@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.8](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.7...v7.0.8) (2025-11-03)
+
+### Bug Fixes
+
+* **android:** default style to streets like ios ([c37d79c](https://github.com/nativescript-community/ui-mapbox/commit/c37d79c39920790adc488f12d9224f5157226bc0))
+* **ios:** marker onTap not handled ([58859bd](https://github.com/nativescript-community/ui-mapbox/commit/58859bd5199c2c783c2ab4e1484344f59c20443a))
+
 ## [7.0.7](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.6...v7.0.7) (2025-10-30)
 
 **Note:** Version bump only for package ui-mapbox
