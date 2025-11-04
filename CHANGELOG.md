@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.10](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.9...v7.0.10) (2025-11-04)
+
+### Bug Fixes
+
+* **ios:** white title in callout ([46a07bb](https://github.com/nativescript-community/ui-mapbox/commit/46a07bbe7673c9005fcf8c9a9cb6d4fd66809c36))
+
 ## [7.0.9](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.8...v7.0.9) (2025-11-04)
 
 ### Bug Fixes
