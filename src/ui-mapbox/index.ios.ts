@@ -182,7 +182,8 @@ export class MapboxView extends MapboxViewBase {
 
     async disposeNativeView(): Promise<void> {
         this.nativeView.owner = null;
-        if (this.mapbox) await this.mapbox.destroy();
+        this.mapbox?.destroy();
+        this.mapbox = null;
         super.disposeNativeView();
     }
 
@@ -468,7 +469,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 nativeMap.autoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight;
 
                 _markers = [];
-                this.addMarkers(settings.markers);
+                this.addMarkers(settings.markers || []);
                 // setTimeout(() => view.addSubview(nativeMap), 0);
                 view.addSubview(nativeMap);
                 this.setMapboxViewInstance(nativeMap);
@@ -532,22 +533,23 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     this._programmaticMapView = null;
                 }
                 const bridge = MapboxBridge.bridgeFor(theMap);
-                bridge.destroy();
-                if (bridge === this.bridgeInstance) {
-                    this.bridgeInstance = null;
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'destroy():', theMap, bridge);
                 }
-                try {
-                    this._observerTokens.forEach((t) => {
-                        try {
-                            NSNotificationCenter.defaultCenter.removeObserver(t);
-                        } catch (e) {
-                            console.error(e, e.stack);
-                        }
-                    });
-                    this._observerTokens = [];
-                } catch (e) {
-                    console.error(e, e.stack);
+                if (bridge) {
+                    bridge.destroy();
+                    if (bridge === this.bridgeInstance) {
+                        this.bridgeInstance = null;
+                    }
                 }
+                this._observerTokens.forEach((t) => {
+                    try {
+                        NSNotificationCenter.defaultCenter.removeObserver(t);
+                    } catch (e) {
+                        console.error(e, e.stack);
+                    }
+                });
+                this._observerTokens = [];
 
                 if (this._reusableCalloutView) {
                     this._reusableCalloutView._tearDownUI();
@@ -1101,12 +1103,19 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     reject('No bridge available');
                     return;
                 }
+                if (Trace.isEnabled()) {
+                    CLog(CLogTypes.info, 'setMapStyle():', style);
+                }
                 const styleStr = (typeof style === 'string' ? style : (style as any).toString()) ?? 'streets';
                 b.setStyle(styleStr, (success: boolean, error?: any) => {
+                    if (Trace.isEnabled()) {
+                        CLog(CLogTypes.info, 'setMapStyle():', style, 'done:', success, error);
+                    }
                     if (success) resolve();
                     else reject(error && error.localizedDescription ? error.localizedDescription : error || 'Error setting style');
                 });
             } catch (ex) {
+                console.error('setMapStyle():', ex, ex['stack']);
                 reject(ex);
             }
         });

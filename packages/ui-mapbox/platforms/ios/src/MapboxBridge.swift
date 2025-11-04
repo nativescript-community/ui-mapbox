@@ -592,7 +592,7 @@ public class MapboxBridge: NSObject {
         guard let mv = mapView else { completion(false, NSError(domain: "MapboxBridge", code: 1, userInfo: [NSLocalizedDescriptionKey: "No map available"])); return }
         mv.mapboxMap.onStyleLoaded.observeNext { _ in completion(true, nil) }.store(in: &cancelables)
         mv.mapboxMap.loadStyle(getMapStyleURI(styleURIorURL));
-        completion(false, NSError(domain: "MapboxBridge", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid style string"]))
+        // completion(false, NSError(domain: "MapboxBridge", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid style string"]))
     }
     
     // MARK: - Camera / viewport / animateCamera
@@ -953,14 +953,14 @@ public class MapboxBridge: NSObject {
         return true
         
     }
-    @objc public func removePolygons(_ _ids: [String]?) {
-        guard let manager = polygonAnnotationManager else { return }
+    @objc public func removePolygons(_ _ids: [String]?) -> Bool {
+        guard let manager = polygonAnnotationManager else { return false }
         guard let ids = _ids else {
             manager.annotations.removeAll()
             if let outlineManager = polygonOutlineAnnotationManager {
                 outlineManager.annotations.removeAll()
             }
-            return
+            return true
         }
         //        guard let data = idsJSON!.data(using: .utf8) else { return }
         //        guard let ids = try? JSONSerialization.jsonObject(with: data, options: []) as! [String] else { return }
@@ -977,18 +977,20 @@ public class MapboxBridge: NSObject {
         if let outlineManager = polygonOutlineAnnotationManager {
             outlineManager.annotations.removeAll { idSet.contains($0.id) }
         }
+        return true
     }
     
-    @objc public func removePolylines(_ _ids: [String]?) {
-        guard let manager = polylineAnnotationManager else { return }
+    @objc public func removePolylines(_ _ids: [String]?) -> Bool {
+        guard let manager = polylineAnnotationManager else { return false }
         guard let ids = _ids else {
             manager.annotations.removeAll()
-            return
+            return true
         }
         
         let idSet = Set<String>(ids)
         
         manager.annotations.removeAll { idSet.contains($0.id) }
+        return true
     }
     
     enum GeoJSONSourceUpdateError: Error {
