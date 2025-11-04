@@ -9,6 +9,7 @@ export function createInfoWindowView(title, snippet) {
     view.width = 'auto'; // WRAP_CONTENT
     view.height = 'auto'; // WRAP_CONTENT
     view.borderRadius = 12;
+    view.color = new Color('#555');
     view['shadowColor'] = '#000';
     view['shadowOpacity'] = 0.25;
     view['shadowRadius'] = 8;

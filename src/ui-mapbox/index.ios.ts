@@ -1372,14 +1372,14 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
     createCalloutView(marker: MapboxMarker) {
         if (Trace.isEnabled()) {
-            CLog(CLogTypes.info, 'createCalloutView():', marker.id, marker.title, !!this._reusableCalloutView);
+            CLog(CLogTypes.info, 'createCalloutView():', marker.id, marker.title, marker?.subtitle, !!this._reusableCalloutView);
         }
         if (this._reusableCalloutView) {
             const title = this._reusableCalloutView.getViewById<Label>('title');
             title.text = marker?.title || '';
             const subtitle = this._reusableCalloutView.getViewById<Label>('subtitle');
             subtitle.text = marker?.subtitle;
-            subtitle.visibility = marker?.subtitle ? 'visible' : 'collapse';
+            // subtitle.visibility = marker?.subtitle ? 'visible' : 'collapse';
         } else {
             this._reusableCalloutView = createInfoWindowView(marker.title, marker.subtitle);
         }
