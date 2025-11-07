@@ -18,7 +18,7 @@ repositories {
 
 // see https://www.mapbox.com/android-sdk/
 dependencies {
-	def mapboxVersion =  project.hasProperty("mapboxVersion") ? project.mapboxVersion : "11.15.3"
+	def mapboxVersion =  project.hasProperty("mapboxVersion") ? project.mapboxVersion : "11.16.2"
 	def mapboxServicesVersion =  project.hasProperty("mapboxServicesVersion") ? project.mapboxServicesVersion : "7.8.0"
 	def mapboxPluginsVersion =  project.hasProperty("mapboxPluginsVersion") ? project.mapboxPluginsVersion : "v9"
 	def mapboxAnnotationPluginVersion =  project.hasProperty("mapboxAnnotationPluginVersion") ? project.mapboxAnnotationPluginVersion : "0.9.0"
@@ -26,8 +26,8 @@ dependencies {
 
     println "com.mapbox.maps:android:$mapboxVersion"
 
-    // Core Mapbox Maps SDK v11+
-    implementation "com.mapbox.maps:android:$mapboxVersion"
+    // Core Mapbox Maps SDK v11+. For now use ndk27 to support 16Kb
+    implementation "com.mapbox.maps:android-ndk27:$mapboxVersion"
 
     // GeoJSON / Annotations support (choose correct module name & version)
     implementation "com.mapbox.mapboxsdk:mapbox-sdk-geojson:$mapboxServicesVersion"  // example version
