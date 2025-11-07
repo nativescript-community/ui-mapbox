@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.11](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.10...v7.0.11) (2025-11-07)
+
+### Bug Fixes
+
+* **android:** use ndk27 of mapbox lib to support 16KB ([e709baf](https://github.com/nativescript-community/ui-mapbox/commit/e709baf3d29d4d21a68b634ab23fdc62a91e77e0))
+
 ## [7.0.10](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.9...v7.0.10) (2025-11-04)
 
 ### Bug Fixes
