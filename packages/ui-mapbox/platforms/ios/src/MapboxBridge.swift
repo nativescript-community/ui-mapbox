@@ -125,6 +125,8 @@ public class MapboxBridge: NSObject {
     private var imageRegistry: [String: UIImage] = [:]
     private var viewAnnotationByMarkerId: [String: ViewAnnotation] = [:]
     
+    private var defaultPinImageHeight: CGFloat = 0
+    
     // Camera handling
     private var cameraIdleWorkItem: DispatchWorkItem?
     private var cameraChangeCallback: (([String: Any]) -> Void)? = nil
@@ -201,8 +203,11 @@ public class MapboxBridge: NSObject {
         
         // Register this bridge for the created MapView
         MapboxBridge.registerBridge(self, for: mv)
-        
-        addImage("default_pin", UIImage(named: "default_pin"))
+        let defaultPinImage =  UIImage(named: "default_pin")
+        if (defaultPinImage != nil) {
+            self.defaultPinImageHeight = defaultPinImage!.size.height
+            addImage("default_pin", defaultPinImage)
+        }
 
         if let options = optionsOpt {
             if ((options["hideLogo"] as? Bool) == true) {
@@ -456,7 +461,7 @@ public class MapboxBridge: NSObject {
                 else { theId = String(NSDate().timeIntervalSince1970) }
             }
             var pa = PointAnnotation(id:theId! , coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lng))
-            
+            pa.iconAnchor = .bottom
             // userInfo
             var userInfo = JSONObject()
             
@@ -544,8 +549,8 @@ public class MapboxBridge: NSObject {
         annotation.allowOverlap = true
         annotation.allowOverlapWithPuck = true
         let image = an.image
-        let imageHeight = image?.image.size.height ?? 0
-        let offsetY = imageHeight/2 + 5
+        let imageHeight = image?.image.size.height ?? self.defaultPinImageHeight
+        let offsetY = imageHeight + 5
         // TODO: variableAnchors is broken for now if multiple
         annotation.variableAnchors = [ViewAnnotationAnchorConfig(anchor: .bottom, offsetY: offsetY)
                                       //                                      , ViewAnnotationAnchorConfig(anchor: .bottomLeft, offsetY: offsetY), ViewAnnotationAnchorConfig(anchor: .bottomRight, offsetY: offsetY)
