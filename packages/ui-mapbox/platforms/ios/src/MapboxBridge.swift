@@ -93,7 +93,7 @@ public class MapboxBridge: NSObject {
         }
     }
     public func postEvent(_ event: String)  {
-        NotificationCenter.default.post(name: Notification.Name(MapboxBridge.CameraMoveCancelNotification), object: self.mapView)
+        NotificationCenter.default.post(name: Notification.Name(event), object: self.mapView)
     }
     
     // Notification constants
