@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.13](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.12...v7.0.13) (2026-01-21)
+
+### Bug Fixes
+
+* **ios:** events not being fired ([b04b976](https://github.com/nativescript-community/ui-mapbox/commit/b04b976111971abecbce713ab77191b19c2ecc84))
+
 ## [7.0.12](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.11...v7.0.12) (2025-11-12)
 
 ### Bug Fixes
