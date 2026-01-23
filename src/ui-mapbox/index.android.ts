@@ -813,7 +813,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
     }
 
-    async destroy(nativeMap?: any) {
+    async destroy(nativeMap?: com.mapbox.maps.MapboxMap) {
         this.clearEventListeners();
         this._markerIconDownloadCache = {};
         if (Trace.isEnabled()) {
@@ -1007,21 +1007,21 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     // ------------------------------------------------
     // Life Cycle Hooks
     // ------------------------------------------------
-    async onStart(nativeMap?: any) {
+    async onStart(nativeMap?: com.mapbox.maps.MapboxMap) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'onStart()');
         }
         this._mapboxViewInstance.onStart();
     }
 
-    async onStop(nativeMap?: any) {
+    async onStop(nativeMap?: com.mapbox.maps.MapboxMap) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'onStop()');
         }
         this._mapboxViewInstance.onStop();
     }
 
-    async onDestroy(nativeMap?: any) {
+    async onDestroy(nativeMap?: com.mapbox.maps.MapboxMap) {
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'onDestroy()');
         }
@@ -1215,7 +1215,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    async getImage(imageId: string, nativeMap?: any): Promise<ImageSource> {
+    async getImage(imageId: string, nativeMap?: com.mapbox.maps.MapboxMap): Promise<ImageSource> {
         return new Promise((resolve, reject) => {
             const theMap = nativeMap || this._mapboxMapInstance;
 
@@ -1225,10 +1225,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
 
             try {
-                const nativeImage = theMap.getStyle().getImage(imageId);
-                const img = new ImageSource(nativeImage);
-
-                resolve(img);
+                const nativeImage = theMap.getStyle().getStyleImage(imageId);
+                if (nativeImage) {
+                    const img = new ImageSource(nativeImage);
+                    resolve(img);
+                } else {
+                    resolve(null);
+                }
             } catch (ex) {
                 reject('Error during getImage: ' + ex);
 
@@ -1240,7 +1243,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    async addImage(imageId: string, imagePath: string, nativeMap?: any): Promise<void> {
+    async addImage(imageId: string, imagePath: string, nativeMap?: com.mapbox.maps.MapboxMap): Promise<void> {
         return new Promise(async (resolve, reject) => {
             const theMap = nativeMap || this._mapboxMapInstance;
 
@@ -1251,7 +1254,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
             try {
                 const imageSource = await this.fetchImageSource(imagePath);
-                theMap.getStyle().addImage(imageId, imageSource.android);
+
+                const ImageExtensionImpl = com.mapbox.maps.extension.style.image.ImageExtensionImpl;
+                const imageBuilder = new ImageExtensionImpl.Builder(imageId, imageSource.android);
+                const image = imageBuilder.build();
+                image.bindTo(theMap.getStyle());
                 resolve();
             } catch (ex) {
                 reject('Error during addImage: ' + ex);
@@ -1264,7 +1271,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    async removeImage(imageId: string, nativeMap?: any): Promise<void> {
+    async removeImage(imageId: string, nativeMap?: com.mapbox.maps.MapboxMap): Promise<void> {
         return new Promise((resolve, reject) => {
             const theMap = nativeMap || this._mapboxMapInstance;
 
@@ -1274,7 +1281,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             }
 
             try {
-                theMap.getStyle().removeImage(imageId);
+                theMap.getStyle().removeStyleImage(imageId);
                 resolve();
             } catch (ex) {
                 reject('Error during removeImage: ' + ex);
@@ -1292,7 +1299,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @deprecated
      * @link https://github.com/mapbox/mapbox-plugins-android/tree/master/plugin-annotation
      */
-    async addMarkers(markers: MapboxMarker[], nativeMap?: any) {
+    async addMarkers(markers: MapboxMarker[], nativeMap?: com.mapbox.maps.MapboxMap) {
         try {
             await this._addMarkers(markers, this._mapboxViewInstance);
         } catch (ex) {
@@ -1308,7 +1315,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      * @deprecated
      * @link https://github.com/mapbox/mapbox-plugins-android/tree/master/plugin-annotation
      */
-    async removeMarkers(ids?: any, nativeMap?: any) {
+    async removeMarkers(ids?: any, nativeMap?: com.mapbox.maps.MapboxMap) {
         try {
             this._removeMarkers(ids, this._mapboxViewInstance);
         } catch (ex) {
@@ -1939,7 +1946,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    setOnMapClickListener(listener: (data: LatLng) => boolean, nativeMap?: any): Promise<void> {
+    setOnMapClickListener(listener: (data: LatLng) => boolean, nativeMap?: com.mapbox.maps.MapboxMap): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
                 if (!this._mapboxMapInstance) {
@@ -3464,7 +3471,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    getLayer(name: string, nativeMap?: any): Promise<LayerCommon> {
+    getLayer(name: string, nativeMap?: com.mapbox.maps.MapboxMap): Promise<LayerCommon> {
         return new Promise((resolve, reject) => {
             try {
                 const theMap = nativeMap || this._mapboxMapInstance;
@@ -3493,7 +3500,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         });
     }
 
-    getLayers(nativeMap?: any): Promise<LayerCommon[]> {
+    getLayers(nativeMap?: com.mapbox.maps.MapboxMap): Promise<LayerCommon[]> {
         return new Promise((resolve, reject) => {
             try {
                 const theMap = nativeMap || this._mapboxMapInstance;
@@ -3590,7 +3597,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         };
     }
 
-    // getUserLocationCameraMode(nativeMap?: any): UserLocationCameraMode {
+    // getUserLocationCameraMode(nativeMap?: com.mapbox.maps.MapboxMap): UserLocationCameraMode {
     //     if (!this._mapboxMapInstance) {
     //         return 'NONE';
     //     }
