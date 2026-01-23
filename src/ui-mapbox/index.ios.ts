@@ -1332,36 +1332,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         return new Promise((resolve, reject) => {
             try {
                 const b = nativeMap ? MapboxBridge.bridgeFor(nativeMap) : this.bridgeInstance;
-                if (!b || !b.getImage) {
+                if (!b) {
                     resolve(null);
                     return;
                 }
                 // The native bridge now returns a UIImage (native iOS object) or null.
-                const nativeImage: any = b.getImage(imageId);
-                if (!nativeImage) {
-                    resolve(null);
-                    return;
-                }
-
-                // Wrap the native UIImage into a NativeScript ImageSource
-                try {
-                    // ImageSource.fromNativeSource accepts a native UIImage on iOS
-                    const imgSrc = new ImageSource(nativeImage);
-                    resolve(imgSrc || null);
-                } catch (err) {
-                    // As a fallback, if the bridge returns base64 string (older fallback), try decode
-                    try {
-                        const maybeBase64 = nativeImage as string;
-                        if (typeof maybeBase64 === 'string') {
-                            const src = ImageSource.fromBase64Sync ? ImageSource.fromBase64Sync(maybeBase64) : ImageSource.fromBase64(maybeBase64);
-                            resolve(src || null);
-                        } else {
-                            resolve(null);
-                        }
-                    } catch (e) {
-                        resolve(null);
-                    }
-                }
+                const nativeImage = b.getImage(imageId);
+                resolve(nativeImage ? new ImageSource(nativeImage) : null);
             } catch (ex) {
                 reject(ex);
             }
