@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.14](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.13...v7.0.14) (2026-01-23)
+
+### Bug Fixes
+
+* **android:** getImage fix ([88a7ff8](https://github.com/nativescript-community/ui-mapbox/commit/88a7ff8caeeb68beb2f8e5b27b32761eab5dc638))
+
 ## [7.0.13](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.12...v7.0.13) (2026-01-21)
 
 ### Bug Fixes
