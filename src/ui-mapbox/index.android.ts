@@ -191,7 +191,7 @@ export class MapboxView extends MapboxViewBase {
     }
 
     getNativeMapView(): any {
-        return this.nativeMapView;
+        return this.mapbox.getMapInstance();
     }
 
     /**
@@ -518,6 +518,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
     }
 
+    getMapInstance() {
+        return this._mapboxMapInstance;
+    }
+
     /**
      * not used
      */
@@ -540,7 +544,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @see MapboxView::init()
      *
-     * @todo FIXME: the timeout delay before showing the map works around some race condition. The source error needs to be figured out.
      */
     async show(options: ShowOptions): Promise<ShowResult> {
         return new Promise((resolve, reject) => {
@@ -597,7 +600,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 // load.
 
                 this._mapboxMapInstance = this._mapboxViewInstance.getMapboxMap();
-
                 const gesturePlugin = this._getGesturesPlugin();
                 gesturePlugin.setPitchEnabled(!settings.disableTilt);
                 gesturePlugin.setScrollEnabled(!settings.disableScroll);
@@ -764,11 +766,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'show(): showIt() bottom');
                 }
-                // };
-
-                // FIXME: There is some initialization error. A short delay works around this.
-
-                // setTimeout(showIt, settings.delay ? settings.delay : 200);
             } catch (ex) {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.error, 'Error in mapbox.show: ' + ex);
@@ -2604,6 +2601,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     addSource(id: string, options: AddSourceOptions, nativeMap?: com.mapbox.maps.MapboxMap): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
+                console.log('addSource', nativeMap, this._mapboxMapInstance, new Error().stack);
                 const theMap = nativeMap || this._mapboxMapInstance;
                 let source;
 
@@ -2845,6 +2843,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     }
 
     private getSource<T = com.mapbox.maps.extension.style.sources.Source>(sId: string, mapboxInstance: com.mapbox.maps.MapboxMap = this._mapboxMapInstance) {
+        console.log('getSource', mapboxInstance);
         // TODO: missing extension typings
         //@ts-ignore
         return mapboxInstance.getStyle().getSource(sId) as T;
