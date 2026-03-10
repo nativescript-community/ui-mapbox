@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.15](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.14...v7.0.15) (2026-03-10)
+
+### Bug Fixes
+
+* android error on most calls ([37ef2bc](https://github.com/nativescript-community/ui-mapbox/commit/37ef2bc529dd12a795088555d707d06a53905c20))
+
 ## [7.0.14](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.13...v7.0.14) (2026-01-23)
 
 ### Bug Fixes
