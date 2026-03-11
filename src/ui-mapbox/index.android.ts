@@ -2756,7 +2756,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     /**
      * remove source by id
      */
-    removeSource(id: string, nativeMap?): Promise<void> {
+    removeSource(id: string, nativeMap?: com.mapbox.maps.MapboxMap): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
                 const theMap = nativeMap || this._mapboxMapInstance;
@@ -2766,7 +2766,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     return;
                 }
 
-                const isRemoved = theMap.getStyle().removeSource(id);
+                const isRemoved = theMap.getStyle().removeStyleSource(id);
                 if (!isRemoved) {
                     reject(`Could not remove source with id: ${id}`);
                 }
@@ -2817,11 +2817,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         if (belowLayerId) {
             // TODO: missing extension typings
             //@ts-ignore
-            this._mapboxMapInstance.getStyle().addLayerBelow(layer.getNativeInstance(), belowLayerId);
+            theMap.getStyle().addLayerBelow(layer.getNativeInstance(), belowLayerId);
         } else {
             // TODO: missing extension typings
             //@ts-ignore
-            this._mapboxMapInstance.getStyle().addLayer(layer.getNativeInstance());
+            theMap.getStyle().addLayer(layer.getNativeInstance());
         }
     }
 
@@ -2832,10 +2832,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
      *
      * @param {string} id
      */
-    public async removeLayer(id: string, nativeMap?) {
+    public async removeLayer(id: string, nativeMap?: com.mapbox.maps.MapboxMap) {
         const theMap = nativeMap || this._mapboxMapInstance;
 
-        theMap.getStyle().removeLayer(id);
+        theMap.getStyle().removeStyleLayer(id);
 
         if (Trace.isEnabled()) {
             CLog(CLogTypes.info, 'Mapbox:removeLayer(): after removing layer');

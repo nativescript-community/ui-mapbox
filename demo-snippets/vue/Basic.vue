@@ -21,7 +21,7 @@
                 <button text="updateMarker" @tap="updateMarker($event)" />
                 <button text="camera" @tap="animateCamera($event)" />
                 <button text="location" @tap="trackUser($event)" @longPress="stopTracking($event)" />
-                <button text="source" @tap="addSource($event)" />
+                <button text="source" @tap="addSource($event)" @longPress="removeSource($event)"  />
                 <button text="polygon" @tap="addPolygon($event)" @longPress="removePolygon($event)" />
                 <button text="polyline" @tap="addPolyline($event)" @longPress="removePolyline($event)" />
                 <button text="offline" @tap="offlineDownload($event)" @longPress="deleteOffline($event)" />
@@ -39,7 +39,7 @@ export default {
     data() {
         return {
             map: null,
-            accessToken: 'pk.eyJ1IjoiYWt5bGFzIiwiYSI6ImNtaDBhNGp4ajBhbjQ1dnM4dzIwYXh1NjcifQ.iQt8KEQ2YfulTZuA1BQp2w'
+            accessToken: ''
         };
     },
     methods: {
@@ -148,6 +148,10 @@ export default {
         },
         stopTracking(event) {
             this.map.hideUserLocationMarker();
+        },
+        removeSource(event) {
+            this.map.removeSource('test');
+            this.map.removeLayer('test');
         },
         addSource(event) {
             this.map
