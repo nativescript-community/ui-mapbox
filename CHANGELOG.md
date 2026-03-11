@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.17](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.14...v7.0.17) (2026-03-11)
+
+### Bug Fixes
+
+* android error on most calls ([37ef2bc](https://github.com/nativescript-community/ui-mapbox/commit/37ef2bc529dd12a795088555d707d06a53905c20))
+* **android:** removeLayer/removeSource fix ([ca4a8d3](https://github.com/nativescript-community/ui-mapbox/commit/ca4a8d3ca425c26a4c9b7285889dea3aa9847d74))
+
 ## [7.0.16](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.15...v7.0.16) (2026-03-11)
 
 **Note:** Version bump only for package ui-mapbox
