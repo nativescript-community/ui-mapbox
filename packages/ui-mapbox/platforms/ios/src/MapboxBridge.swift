@@ -95,6 +95,8 @@ public class MapboxBridge: NSObject {
     public func postEvent(_ event: String)  {
         NotificationCenter.default.post(name: Notification.Name(event), object: self.mapView)
     }
+
+    public static let MARKER_LAYER_ID = "mapbox-ios-markers"
     
     // Notification constants
     public static let MapLoadedNotification = "MapboxBridgeMapLoaded"
@@ -203,6 +205,8 @@ public class MapboxBridge: NSObject {
         
         // Register this bridge for the created MapView
         MapboxBridge.registerBridge(self, for: mv)
+
+        pointAnnotationManager = mv.annotations.makePointAnnotationManager(id: MapboxBridge.MARKER_LAYER_ID)
         let defaultPinImage =  UIImage(named: "default_pin")
         if (defaultPinImage != nil) {
             self.defaultPinImageHeight = defaultPinImage!.size.height
@@ -445,7 +449,7 @@ public class MapboxBridge: NSObject {
         guard let markers = try? JSONSerialization.jsonObject(with: data, options: []) as! [NSDictionary] else { return }
         
         if pointAnnotationManager == nil {
-            pointAnnotationManager = mv.annotations.makePointAnnotationManager()
+            pointAnnotationManager = mv.annotations.makePointAnnotationManager(id: MapboxBridge.MARKER_LAYER_ID)
         }
         guard let manager = pointAnnotationManager else { return }
         
@@ -935,7 +939,10 @@ public class MapboxBridge: NSObject {
         
         
         if polylineAnnotationManager == nil {
-            polylineAnnotationManager = mv.annotations.makePolylineAnnotationManager()
+            polylineAnnotationManager = mv.annotations.makePolylineAnnotationManager(
+                id: "mapbox-ios-polylines",
+                layerPosition: .below(MapboxBridge.MARKER_LAYER_ID)
+            )
         }
         guard let manager = polylineAnnotationManager else { return false }
         var annotation = PolylineAnnotation(id: id, lineCoordinates: ccoords)
@@ -1139,7 +1146,10 @@ public class MapboxBridge: NSObject {
         
         
         if polygonAnnotationManager == nil {
-            polygonAnnotationManager = mv.annotations.makePolygonAnnotationManager()
+            polygonAnnotationManager = mv.annotations.makePolygonAnnotationManager(
+                id: "mapbox-ios-polygons",
+                layerPosition: .below(MapboxBridge.MARKER_LAYER_ID)
+            )
         }
         guard let manager = polygonAnnotationManager else { return false }
         let polygon = Polygon(outerRing: .init(coordinates: ccoords))
@@ -1162,7 +1172,10 @@ public class MapboxBridge: NSObject {
             
             if (strokeOpacity != nil || strokeWidth != nil){
                 if polygonOutlineAnnotationManager == nil {
-                    polygonOutlineAnnotationManager = mv.annotations.makePolylineAnnotationManager()
+                    polygonOutlineAnnotationManager = mv.annotations.makePolylineAnnotationManager(
+                        id: "mapbox-ios-polygon-outlines",
+                        layerPosition: .below(MapboxBridge.MARKER_LAYER_ID)
+                    )
                 }
                 var outline = PolylineAnnotation(id: id, lineCoordinates: ccoords)
                 if (strokeColor != nil) {
