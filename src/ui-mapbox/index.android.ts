@@ -1376,11 +1376,13 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         console.warn(`No icon found for this device density for icon ' ${marker.icon}'. Falling back to the default icon.`);
                     }
                 } else if (marker.icon.startsWith('http')) {
-                    if (marker.downloadedIcon !== null) {
+                    if (marker.downloadedIcon) {
                         icon = marker.downloadedIcon;
 
                         // markerOptions.setIcon(iconFactory.fromBitmap(marker.iconDownloaded));
                     }
+                } else if (marker.imageSource) {
+                    icon = marker.imageSource;
                 } else {
                     if (Trace.isEnabled()) {
                         CLog(CLogTypes.info, 'Please use res://resourcename, http(s)://imageurl or iconPath to use a local path');
@@ -3566,6 +3568,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
             return marker;
         } catch (error) {
             console.error(error);
+            return marker;
         }
     }
 
@@ -3573,7 +3576,9 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         const result: MapboxMarker[] = [];
         for (let i = 0; i < markers.length; i++) {
             const marker = markers[i];
-            if (marker.icon && marker.icon.startsWith('http')) {
+            if (marker.imageSource || marker.downloadedIcon) {
+                result.push(marker);
+            } else if (marker.icon && marker.icon.startsWith('http')) {
                 const mark = await this._downloadImage(marker);
                 result.push(mark);
             } else {
