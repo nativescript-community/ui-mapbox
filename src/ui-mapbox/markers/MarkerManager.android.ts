@@ -29,7 +29,7 @@ export class MarkerManager {
         this.mapView = mapView;
         this.onInfoWindowTapped = onInfoWindowClick;
         const AnnotationConfig = com.mapbox.maps.plugin.annotation.AnnotationConfig;
-        const layerConfig = new AnnotationConfig(MarkerManager.LAYER_ID);
+        const layerConfig = new AnnotationConfig(null, MarkerManager.LAYER_ID);
         const annotationPlugin = mapView.getPlugin('MAPBOX_ANNOTATION_PLUGIN_ID') as com.mapbox.maps.plugin.annotation.AnnotationPlugin;
         this.pointAnnotationManager = annotationPlugin.createAnnotationManager(
             com.mapbox.maps.plugin.annotation.AnnotationType.PointAnnotation,
