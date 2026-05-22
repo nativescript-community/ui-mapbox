@@ -148,6 +148,11 @@ export interface MapboxMarker extends LatLng {
      */
     iconPath?: string;
     /**
+     * Runtime-generated image used directly as a marker icon.
+     * Useful when the app composes an icon in memory instead of loading it from a resource, file path, or URL.
+     */
+    imageSource?: ImageSource;
+    /**
      * A callback function to invoke when the marker is tapped.
      */
     onTap?: Function;

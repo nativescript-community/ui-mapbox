@@ -626,7 +626,11 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 const updated = await Promise.all(
                     markers.map(async (m) => {
-                        if (m.icon && typeof m.icon === 'string' && m.icon.startsWith('http')) {
+                        if (m.imageSource) {
+                            (m as any).iconDownloaded = m.imageSource.ios;
+                        } else if (m.downloadedIcon) {
+                            (m as any).iconDownloaded = m.downloadedIcon.ios;
+                        } else if (m.icon && typeof m.icon === 'string' && m.icon.startsWith('http')) {
                             (m as any).iconDownloaded = await fetchImageIOS(m.icon);
                         }
                         return m;
