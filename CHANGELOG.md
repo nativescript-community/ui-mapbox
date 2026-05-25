@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.19](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.18...v7.0.19) (2026-05-25)
+
+### Features
+
+* Add imageSource support for marker rendering ([8492598](https://github.com/nativescript-community/ui-mapbox/commit/8492598a73d8fc95446e6ffc919fc442def63f63))
+
 ## [7.0.18](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.17...v7.0.18) (2026-03-11)
 
 **Note:** Version bump only for package ui-mapbox
