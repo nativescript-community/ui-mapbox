@@ -12,7 +12,7 @@ export class MarkerManager {
     private map: com.mapbox.maps.MapboxMap;
     private pointAnnotationManager: com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager;
     private markerList: AndroidMarker[] = [];
-    private static readonly LAYER_ID = 'annotation-layer';
+    static readonly LAYER_ID = 'annotation-layer';
     private static readonly ADDITIONAL_EDGE_PADDING_PX = 20.0;
 
     private selectedMarker: AndroidMarker;
