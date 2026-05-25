@@ -95,6 +95,11 @@ public class MapboxBridge: NSObject {
     public func postEvent(_ event: String)  {
         NotificationCenter.default.post(name: Notification.Name(event), object: self.mapView)
     }
+
+    public static let MARKER_LAYER_ID = "mapbox-ios-markers"
+    public static let POLYLINE_LAYER_ID = "mapbox-ios-polylines"
+    public static let POLYGON_LAYER_ID = "mapbox-ios-polygons"
+    public static let POLYGON_OUTLINE_LAYER_ID = "mapbox-ios-polygon-outlines"
     
     // Notification constants
     public static let MapLoadedNotification = "MapboxBridgeMapLoaded"
@@ -168,6 +173,16 @@ public class MapboxBridge: NSObject {
         return MapboxBridge.bridgeTable.object(forKey: mapView) as? MapboxBridge
     }
     
+    private func ensurePointAnnotationManager(for mapView: MapView) -> PointAnnotationManager {
+        if let manager = pointAnnotationManager {
+            return manager
+        }
+        
+        let manager = mapView.annotations.makePointAnnotationManager(id: MapboxBridge.MARKER_LAYER_ID)
+        pointAnnotationManager = manager
+        return manager
+    }
+    
     @objc  public  func getMapView() -> MapView? {
         return mapView
     }
@@ -203,6 +218,7 @@ public class MapboxBridge: NSObject {
         
         // Register this bridge for the created MapView
         MapboxBridge.registerBridge(self, for: mv)
+        _ = ensurePointAnnotationManager(for: mv)
         let defaultPinImage =  UIImage(named: "default_pin")
         if (defaultPinImage != nil) {
             self.defaultPinImageHeight = defaultPinImage!.size.height
@@ -444,10 +460,7 @@ public class MapboxBridge: NSObject {
         guard let data = markersJSON.data(using: .utf8) else { return }
         guard let markers = try? JSONSerialization.jsonObject(with: data, options: []) as! [NSDictionary] else { return }
         
-        if pointAnnotationManager == nil {
-            pointAnnotationManager = mv.annotations.makePointAnnotationManager()
-        }
-        guard let manager = pointAnnotationManager else { return }
+        let manager = ensurePointAnnotationManager(for: mv)
         
         var current = manager.annotations
         var additions: [PointAnnotation] = []
@@ -934,8 +947,12 @@ public class MapboxBridge: NSObject {
         }
         
         
+        _ = ensurePointAnnotationManager(for: mv)
         if polylineAnnotationManager == nil {
-            polylineAnnotationManager = mv.annotations.makePolylineAnnotationManager()
+            polylineAnnotationManager = mv.annotations.makePolylineAnnotationManager(
+                id: MapboxBridge.POLYLINE_LAYER_ID,
+                layerPosition: .below(MapboxBridge.MARKER_LAYER_ID)
+            )
         }
         guard let manager = polylineAnnotationManager else { return false }
         var annotation = PolylineAnnotation(id: id, lineCoordinates: ccoords)
@@ -1138,8 +1155,12 @@ public class MapboxBridge: NSObject {
         }
         
         
+        _ = ensurePointAnnotationManager(for: mv)
         if polygonAnnotationManager == nil {
-            polygonAnnotationManager = mv.annotations.makePolygonAnnotationManager()
+            polygonAnnotationManager = mv.annotations.makePolygonAnnotationManager(
+                id: MapboxBridge.POLYGON_LAYER_ID,
+                layerPosition: .below(MapboxBridge.MARKER_LAYER_ID)
+            )
         }
         guard let manager = polygonAnnotationManager else { return false }
         let polygon = Polygon(outerRing: .init(coordinates: ccoords))
@@ -1162,7 +1183,10 @@ public class MapboxBridge: NSObject {
             
             if (strokeOpacity != nil || strokeWidth != nil){
                 if polygonOutlineAnnotationManager == nil {
-                    polygonOutlineAnnotationManager = mv.annotations.makePolylineAnnotationManager()
+                    polygonOutlineAnnotationManager = mv.annotations.makePolylineAnnotationManager(
+                        id: MapboxBridge.POLYGON_OUTLINE_LAYER_ID,
+                        layerPosition: .below(MapboxBridge.MARKER_LAYER_ID)
+                    )
                 }
                 var outline = PolylineAnnotation(id: id, lineCoordinates: ccoords)
                 if (strokeColor != nil) {

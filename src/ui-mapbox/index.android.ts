@@ -669,7 +669,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                                 const annotationPlugin = this._getPlugin<com.mapbox.maps.plugin.annotation.AnnotationPlugin>('MAPBOX_ANNOTATION_PLUGIN_ID');
                                 this.lineManager = annotationPlugin.createAnnotationManager(
                                     com.mapbox.maps.plugin.annotation.AnnotationType.PolylineAnnotation,
-                                    new com.mapbox.maps.plugin.annotation.AnnotationConfig()
+                                    new com.mapbox.maps.plugin.annotation.AnnotationConfig(MarkerManager.LAYER_ID)
                                 ) as com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager;
 
                                 this.onAnnotationClickListener = new com.mapbox.maps.plugin.annotation.generated.OnPolylineAnnotationClickListener({
@@ -1756,7 +1756,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     const annotationPlugin = this._getPlugin<com.mapbox.maps.plugin.annotation.AnnotationPlugin>('MAPBOX_ANNOTATION_PLUGIN_ID');
                     this.polygonManager = annotationPlugin.createAnnotationManager(
                         com.mapbox.maps.plugin.annotation.AnnotationType.PolygonAnnotation,
-                        new com.mapbox.maps.plugin.annotation.AnnotationConfig()
+                        new com.mapbox.maps.plugin.annotation.AnnotationConfig(MarkerManager.LAYER_ID)
                     ) as com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationManager;
                 }
                 const polygonOptions = new com.mapbox.maps.plugin.annotation.generated.PolygonAnnotationOptions();
@@ -1798,7 +1798,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                     const annotationPlugin = this._getPlugin<com.mapbox.maps.plugin.annotation.AnnotationPlugin>('MAPBOX_ANNOTATION_PLUGIN_ID');
                     this.lineManager = annotationPlugin.createAnnotationManager(
                         com.mapbox.maps.plugin.annotation.AnnotationType.PolylineAnnotation,
-                        new com.mapbox.maps.plugin.annotation.AnnotationConfig()
+                        new com.mapbox.maps.plugin.annotation.AnnotationConfig(MarkerManager.LAYER_ID)
                     ) as com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager;
                 }
                 const polylineOptions = new com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions();
