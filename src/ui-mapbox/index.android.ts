@@ -2603,7 +2603,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     addSource(id: string, options: AddSourceOptions, nativeMap?: com.mapbox.maps.MapboxMap): Promise<void> {
         return new Promise((resolve, reject) => {
             try {
-                console.log('addSource', nativeMap, this._mapboxMapInstance, new Error().stack);
                 const theMap = nativeMap || this._mapboxMapInstance;
                 let source;
 
@@ -2634,14 +2633,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
 
                         if (options.scheme) {
-                            switch (options.scheme) {
-                                case 'tms':
-                                    builder.scheme(com.mapbox.maps.extension.style.sources.generated.Scheme.TMS);
-                                    break;
-                                default:
-                                    builder.scheme(com.mapbox.maps.extension.style.sources.generated.Scheme.XYZ);
-                                    break;
-                            }
+                            builder.scheme(com.mapbox.maps.extension.style.sources.generated.Scheme.valueOf(options.scheme.toUpperCase()));
                         }
 
                         if (options.bounds) {
@@ -2711,14 +2703,7 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                         }
 
                         if (options.scheme) {
-                            switch (options.scheme) {
-                                case 'tms':
-                                    builder.scheme(com.mapbox.maps.extension.style.sources.generated.Scheme.TMS);
-                                    break;
-                                default:
-                                    builder.scheme(com.mapbox.maps.extension.style.sources.generated.Scheme.XYZ);
-                                    break;
-                            }
+                            builder.scheme(com.mapbox.maps.extension.style.sources.generated.Scheme.valueOf(options.scheme.toUpperCase()));
                         }
 
                         if (options.bounds) {
@@ -2845,7 +2830,6 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
     }
 
     private getSource<T = com.mapbox.maps.extension.style.sources.Source>(sId: string, mapboxInstance: com.mapbox.maps.MapboxMap = this._mapboxMapInstance) {
-        console.log('getSource', mapboxInstance);
         // TODO: missing extension typings
         //@ts-ignore
         return mapboxInstance.getStyle().getSource(sId) as T;
