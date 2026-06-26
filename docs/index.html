@@ -125,27 +125,7 @@
 <p><a href="#prerequisites"></a></p>
 <h2 id="prerequisites" class="tsd-anchor-link">Prerequisites<a href="#prerequisites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>You either need your own tile server such as the one provided by <a href="https://openmaptiles.org">openmaptiles.org</a> or a Mapbox API access token (they have a 🆓 Starter plan!), so <a href="https://www.mapbox.com/signup/">sign up with Mapbox</a>.
 Once you've registered go to your Account &gt; Apps &gt; New token. The 'Default Secret Token' is what you'll need.</p>
-<h3 id="android" class="tsd-anchor-link">Android<a href="#android" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>Mapbox now requires (version &gt; 8.6.6) an api key to download the sdk</p>
-<p>If you want to use newer version than the default 8.6.6 you need to add this to your <code>app.gradle</code></p>
-<pre><code class="gradle">allprojects {
-  repositories {
-       maven {
-        url 'https://api.mapbox.com/downloads/v2/releases/maven'
-        authentication {
-            basic(BasicAuthentication)
-        }
-        credentials {
-            // Do not change the username below.
-            // This should always be `mapbox` (not your username). 
-            username = 'mapbox'
-            // Use the secret token you stored in gradle.properties as the password
-            password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
-        }
-    }
-  }
-}
-</code><button type="button">Copy</button></pre>
-
+<h3 id="android" class="tsd-anchor-link">Android<a href="#android" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>Mapbox now requires an api key to download the sdk on Android. You can pass it through gradle properties or env variable under the name <code>MAPBOX_DOWNLOADS_TOKEN</code></p>
 <p><a href="#installation"></a></p>
 <p><a href="#installation"></a></p>
 <h2 id="installation" class="tsd-anchor-link">Installation<a href="#installation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>Run the following command from the root of your project:</p>
