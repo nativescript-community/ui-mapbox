@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.21](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.20...v7.0.21) (2026-06-26)
+
+### Bug Fixes
+
+* iOS now uses swift package allowing user to override version ([aab77b7](https://github.com/nativescript-community/ui-mapbox/commit/aab77b78f40ee5ca0dec5637390d8a38ec7f7f66))
+* many android fixes ([3152dfc](https://github.com/nativescript-community/ui-mapbox/commit/3152dfc960ab7b25b52f5896074105b912e82c54))
+* many ios fixes ([f1bea97](https://github.com/nativescript-community/ui-mapbox/commit/f1bea97a185dfd2c0622065f7ce41c8fceed8611))
+
 ## [7.0.20](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.19...v7.0.20) (2026-06-03)
 
 **Note:** Version bump only for package @nativescript-community/ui-mapbox
