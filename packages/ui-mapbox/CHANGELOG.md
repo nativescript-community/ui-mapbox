@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.22](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.21...v7.0.22) (2026-06-26)
+
+**Note:** Version bump only for package @nativescript-community/ui-mapbox
+
 ## [7.0.21](https://github.com/nativescript-community/ui-mapbox/compare/v7.0.20...v7.0.21) (2026-06-26)
 
 ### Bug Fixes
