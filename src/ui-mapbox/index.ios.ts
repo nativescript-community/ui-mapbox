@@ -480,7 +480,27 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
 
                 this.initEventHandlerShim(settings, this._mapboxViewInstance);
                 if (settings.onMapReady) {
-                    settings.onMapReady(this._mapboxViewInstance);
+                    // The Mapbox style loads asynchronously *after* the native MapView is
+                    // created. Calling addImage/addSource/addLayer before the style is loaded
+                    // silently fails (the native calls throw and are swallowed), which leaves
+                    // symbol layers without their icons and makes addLayer reject. Defer
+                    // onMapReady until the style-loaded notification fires.
+                    const fireMapReady = () => settings.onMapReady(this._mapboxViewInstance);
+                    if (bridge.isStyleLoaded && bridge.isStyleLoaded()) {
+                        fireMapReady();
+                    } else {
+                        let token;
+                        token = NSNotificationCenter.defaultCenter.addObserverForNameObjectQueueUsingBlock(
+                            MAPBOX_BRIDGE_STYLE_LOADED,
+                            nativeMap,
+                            NSOperationQueue.mainQueue,
+                            () => {
+                                NSNotificationCenter.defaultCenter.removeObserver(token);
+                                fireMapReady();
+                            }
+                        );
+                        this.pushToken(token);
+                    }
                 }
                 resolve({ ios: nativeMap });
             } catch (ex) {
@@ -1232,16 +1252,33 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
                 if (Trace.isEnabled()) {
                     CLog(CLogTypes.info, 'addSource:', id, JSON.stringify(options));
                 }
-                if (options.type === 'geojson') {
-                    const geojson = options.data ? JSON.stringify(options.data) : options.url;
-                    if (!geojson) {
-                        reject('geojson source requires data or url');
-                        return;
+                switch (options.type) {
+                    case 'geojson': {
+                        const geojson = options.data ? JSON.stringify(options.data) : options.url;
+                        if (!geojson) {
+                            reject('geojson source requires data or url');
+                            return;
+                        }
+                        const ok = b.addSourceGeoJSON(id, geojson);
+                        if (ok) resolve();
+                        else reject('Failed to add source');
+                        break;
                     }
-                    const ok = b.addSourceGeoJSON(id, geojson);
-                    if (ok) resolve();
-                    else reject('Failed to add source');
-                } else reject('Only geojson source supported in bridge.addSource');
+                    case 'vector': {
+                        const ok = b.addSourceVector(id, JSON.stringify(options));
+                        if (ok) resolve();
+                        else reject('Failed to add source');
+                        break;
+                    }
+                    case 'raster': {
+                        const ok = b.addSourceRaster(id, JSON.stringify(options));
+                        if (ok) resolve();
+                        else reject('Failed to add source');
+                        break;
+                    }
+                    default:
+                        reject('Invalid source type: ' + (options as any)['type']);
+                }
             } catch (ex) {
                 reject(ex);
             }

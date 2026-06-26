@@ -257,6 +257,12 @@ public class MapboxBridge: NSObject {
         
         // styleLoaded
         mv.mapboxMap.onStyleLoaded.observeNext {  _ in
+            // Images are cleared whenever the style (re)loads, and addImage may have been
+            // called before the style finished loading. Re-apply the registered images so
+            // symbol layers can resolve their icon-image.
+            for (id, image) in self.imageRegistry {
+                try? mv.mapboxMap.addImage(image, id: id)
+            }
             self.postEvent(MapboxBridge.StyleLoadedNotification)
         }.store(in: &cancelables)
         
@@ -431,11 +437,20 @@ public class MapboxBridge: NSObject {
     }
     
     @objc public func addImage(_ imageId: String, _ image: UIImage?) {
-        guard let mv = mapView else { return }
-        if (image != nil) {
-            imageRegistry[imageId] = image!
-            try? mv.mapboxMap.addImage(image!, id: imageId)
+        guard let mv = mapView, let image = image else { return }
+        imageRegistry[imageId] = image
+        do {
+            try mv.mapboxMap.addImage(image, id: imageId)
+        } catch {
+            // The style is likely not loaded yet; the image is kept in imageRegistry and
+            // re-applied from the onStyleLoaded observer.
+            NSLog("MapboxBridge.addImage failed for \(imageId): \(error.localizedDescription)")
         }
+    }
+
+    @objc public func isStyleLoaded() -> Bool {
+        guard let mv = mapView else { return false }
+        return mv.mapboxMap.isStyleLoaded
     }
     
     @objc public func removeImage(_ imageId: String) {
@@ -458,7 +473,7 @@ public class MapboxBridge: NSObject {
     @objc public func addMarkers(_ markersJSON: String) {
         guard let mv = mapView else { return }
         guard let data = markersJSON.data(using: .utf8) else { return }
-        guard let markers = try? JSONSerialization.jsonObject(with: data, options: []) as! [NSDictionary] else { return }
+        guard let markers = try? JSONSerialization.jsonObject(with: data, options: []) as? [NSDictionary] else { return }
         
         let manager = ensurePointAnnotationManager(for: mv)
         
@@ -510,7 +525,7 @@ public class MapboxBridge: NSObject {
             return
         }
         guard let data = idsJSON!.data(using: .utf8) else { return }
-        guard let ids = try? JSONSerialization.jsonObject(with: data, options: []) as! [String] else { return }
+        guard let ids = try? JSONSerialization.jsonObject(with: data, options: []) as? [String] else { return }
         
         var idSet = Set<String>()
         for case let v  in ids {
@@ -900,6 +915,43 @@ public class MapboxBridge: NSObject {
         }
     }
     
+    // optionsJSON is the stringified VectorSource options: url, tiles, bounds, minzoom, maxzoom, scheme
+    @objc public func addSourceVector(_ sourceId: String, _ optionsJSON: String) -> Bool {
+        guard let mv = mapView else { return false }
+        guard let data = optionsJSON.data(using: .utf8),
+              let opts = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else { return false }
+        var source = VectorSource(id: sourceId)
+        if let url = opts["url"] as? String {
+            source.url = url
+        } else if let tiles = opts["tiles"] as? [String] {
+            source.tiles = tiles
+        }
+        if let bounds = opts["bounds"] as? [Double] { source.bounds = bounds }
+        if let minzoom = opts["minzoom"] as? Double { source.minzoom = minzoom }
+        if let maxzoom = opts["maxzoom"] as? Double { source.maxzoom = maxzoom }
+        if let scheme = opts["scheme"] as? String { source.scheme = Scheme(rawValue: scheme) }
+        do { try mv.mapboxMap.addSource(source); return true } catch { return false }
+    }
+
+    // optionsJSON is the stringified RasterSource options: url, tiles, bounds, minzoom, maxzoom, tileSize, scheme
+    @objc public func addSourceRaster(_ sourceId: String, _ optionsJSON: String) -> Bool {
+        guard let mv = mapView else { return false }
+        guard let data = optionsJSON.data(using: .utf8),
+              let opts = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else { return false }
+        var source = RasterSource(id: sourceId)
+        if let url = opts["url"] as? String {
+            source.url = url
+        } else if let tiles = opts["tiles"] as? [String] {
+            source.tiles = tiles
+        }
+        if let bounds = opts["bounds"] as? [Double] { source.bounds = bounds }
+        if let minzoom = opts["minzoom"] as? Double { source.minzoom = minzoom }
+        if let maxzoom = opts["maxzoom"] as? Double { source.maxzoom = maxzoom }
+        if let tileSize = opts["tileSize"] as? Double { source.tileSize = tileSize }
+        if let scheme = opts["scheme"] as? String { source.scheme = Scheme(rawValue: scheme) }
+        do { try mv.mapboxMap.addSource(source); return true } catch { return false }
+    }
+
     @objc public func updateSourceGeoJSON(_ sourceId: String, _ geojson: String) -> Bool {
         guard let mv = mapView else { return false }
         guard let data = geojson.data(using: .utf8) else { return false }
@@ -939,7 +991,7 @@ public class MapboxBridge: NSObject {
         guard let mv = mapView else { return false }
         guard let data = coordsJSON.data(using: .utf8), let coords = try? JSONSerialization.jsonObject(with: data, options: []) as? [[Double]] else { return false }
         var ccoords = [CLLocationCoordinate2D]()
-        for item in coords! {
+        for item in coords {
             ccoords.append(CLLocationCoordinate2D(latitude: item[1], longitude: item[0]))
         }
         if (ccoords.isEmpty) {
@@ -985,7 +1037,7 @@ public class MapboxBridge: NSObject {
             return true
         }
         //        guard let data = idsJSON!.data(using: .utf8) else { return }
-        //        guard let ids = try? JSONSerialization.jsonObject(with: data, options: []) as! [String] else { return }
+        //        guard let ids = try? JSONSerialization.jsonObject(with: data, options: []) as? [String] else { return }
         //
         let idSet = Set<String>(ids)
         //        for case let v  in ids {
@@ -1030,7 +1082,7 @@ public class MapboxBridge: NSObject {
         if (actualSourceId == nil) {
             actualSourceId = id + "_source"
         }
-        let coordinate = CLLocationCoordinate2D(latitude: (coords![1]), longitude: (coords![0]))
+        let coordinate = CLLocationCoordinate2D(latitude: (coords[1]), longitude: (coords[0]))
         
         guard let source = try? mv.mapboxMap.source(withId: actualSourceId!, type: GeoJSONSource.self) else { return false }
         
@@ -1228,10 +1280,10 @@ public class MapboxBridge: NSObject {
             return false
         }
         
-        self.userTrackingCameraMode = ((obj?["cameraMode"] as? String ?? "TRACKING")).uppercased()
-        let renderMode = ((obj?["renderMode"] as? String  ?? "GPS")).uppercased()
-        self.userTrackingCameraAnimated = (obj?["animated"] as? Bool  ?? true)
-        let imageName = obj?["image"] as? String
+        self.userTrackingCameraMode = ((obj["cameraMode"] as? String ?? "TRACKING")).uppercased()
+        let renderMode = ((obj["renderMode"] as? String  ?? "GPS")).uppercased()
+        self.userTrackingCameraAnimated = (obj["animated"] as? Bool  ?? true)
+        let imageName = obj["image"] as? String
         
         // If cameraMode starts with NONE -> stop tracking immediately
 //        if cameraModeRaw.hasPrefix("NONE") {

@@ -5,29 +5,33 @@ import MapboxMaps
 @objcMembers
 public class NativeLayerFactory: NSObject {
     
-    // Create a layer from JSON. Returns true on success.
-    @objc public static func createLayer(_ mapboxView: MapView, _ layerId: String, _ jsonString: String, _ belowLayerId:  String?) -> Bool {
-        guard let mapboxMap = mapboxView.mapboxMap, let data = jsonString.data(using: .utf8) else { return false }
+    // Create a layer from JSON. Returns nil on success, otherwise an error message.
+    @objc public static func createLayer(_ mapboxView: MapView, _ layerId: String, _ jsonString: String, _ belowLayerId:  String?) -> NSString? {
+        guard let mapboxMap = mapboxView.mapboxMap, let data = jsonString.data(using: .utf8) else {
+            return "No map available or invalid layer JSON" as NSString
+        }
         do {
             // Parse to a JSON dictionary
             guard let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-                throw NSError(domain: "LayerError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid JSON"])
+                return "Invalid layer JSON" as NSString
             }
-            
+
             guard let typeString = jsonObject["type"] as? String,
                   let type = LayerType(rawValue: typeString).layerType else {
-                throw TypeConversionError.invalidObject
+                return "Unsupported or missing layer type" as NSString
             }
-            
+
             let layer = try type.init(jsonObject: jsonObject)
-            if (belowLayerId != nil) {
-                try mapboxMap.addLayer(layer, layerPosition: .below(belowLayerId!))
+            // Only position below the reference layer if it actually exists in the current
+            // style; otherwise `.below` throws and the layer is never added.
+            if let belowLayerId = belowLayerId, mapboxMap.layerExists(withId: belowLayerId) {
+                try mapboxMap.addLayer(layer, layerPosition: .below(belowLayerId))
             } else {
                 try mapboxMap.addLayer(layer)
             }
-            return true
+            return nil
         } catch {
-            return false
+            return error.localizedDescription as NSString
         }
     }
     

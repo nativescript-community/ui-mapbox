@@ -55,10 +55,12 @@ export class LayerFactory {
             CLog(CLogTypes.info, 'createLayer:', belowLayerId, JSON.stringify(style));
         }
         const id = style.id || 'layer_' + Date.now();
-        if (NativeLayerFactory.createLayer(mapboxView, id, styleJson, belowLayerId)) {
+        // createLayer returns nil on success, otherwise the native error message.
+        const error = NativeLayerFactory.createLayer(mapboxView, id, styleJson, belowLayerId);
+        if (error == null) {
             return new Layer(mapboxView, id);
         } else {
-            throw new Error('failed to create layer');
+            throw new Error('failed to create layer "' + id + '": ' + error);
         }
     }
 

@@ -34,6 +34,7 @@ declare class MapboxBridge extends NSObject {
 
 	addImage(imageId: string, image: UIImage): void;
   removeImage(imageId: string): void;
+  isStyleLoaded(): boolean;
 
   addMarkers(markers: string): void;
   removeMarkers(ids?: string): void;
@@ -63,6 +64,8 @@ declare class MapboxBridge extends NSObject {
 
 
   addSourceGeoJSON(sourceId: string, geojson: string): boolean;
+  addSourceVector(sourceId: string, optionsJSON: string): boolean;
+  addSourceRaster(sourceId: string, optionsJSON: string): boolean;
   updateSourceGeoJSON(sourceId: string, geojson: string): boolean;
   removeSource(sourceId: string): boolean;
 
@@ -105,7 +108,7 @@ declare class MapboxBridge extends NSObject {
  * These are optional: the TS shims will call into them when present.
  */
 declare class NativeLayerFactory extends NSObject {
-  static createLayer(mapboxView: MapView, id:string, layerJSON: string, belowLayerId: string): boolean;
+  static createLayer(mapboxView: MapView, id:string, layerJSON: string, belowLayerId: string): string | null;
   static applyLayerProperties(mapboxView: MapView, layerId: string, properties: NSDictionary<any, any>): boolean;
   static setLayerProperty(mapboxView: MapView, layerId: string, name: string, value: any): boolean;
   static getLayerProperty(mapboxView: MapView, layerId: string, name: string): any;
