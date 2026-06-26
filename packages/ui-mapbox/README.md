@@ -113,28 +113,7 @@ Once you've registered go to your Account > Apps > New token. The 'Default Secre
 
 ### Android
 
-Mapbox now requires (version > 8.6.6) an api key to download the sdk
-
-If you want to use newer version than the default 8.6.6 you need to add this to your `app.gradle`
-```gradle
-allprojects {
-  repositories {
-       maven {
-        url 'https://api.mapbox.com/downloads/v2/releases/maven'
-        authentication {
-            basic(BasicAuthentication)
-        }
-        credentials {
-            // Do not change the username below.
-            // This should always be `mapbox` (not your username). 
-            username = 'mapbox'
-            // Use the secret token you stored in gradle.properties as the password
-            password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
-        }
-    }
-  }
-}
-```
+Mapbox now requires an api key to download the sdk on Android. You can pass it through gradle properties or env variable under the name `MAPBOX_DOWNLOADS_TOKEN`
 
 
 [](#installation)
