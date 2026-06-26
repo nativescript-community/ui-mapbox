@@ -109,16 +109,22 @@ export class LayerFactory {
 
             const value = properties[key];
             const actualKey = toCamelCase(key);
-            const nValue = transformValue(actualKey, value);
 
             // Mapbox v11 setters are named after the property, e.g., circleColor(), circleRadius()
             const setterName = actualKey;
 
-            // Call the setter dynamically
-            if (typeof layer[setterName] === 'function') {
-                layer[setterName](nValue);
-            } else {
+            // Call the setter dynamically. Guard each property individually so a single
+            // unsupported/invalid property cannot abort the whole layer creation (which
+            // would prevent the layer — and its symbols — from being added at all).
+            if (typeof layer[setterName] !== 'function') {
                 console.warn(`Layer has no setter for ${setterName}`);
+                continue;
+            }
+            try {
+                const nValue = transformValue(actualKey, value);
+                layer[setterName](nValue);
+            } catch (e) {
+                console.warn(`Failed to set layer property ${setterName}=${JSON.stringify(value)}: ${e}`);
             }
         }
     }
@@ -157,9 +163,12 @@ export class LayerFactory {
         if (style.maxzoom !== undefined) {
             nativeLayer.maxZoom(style.maxzoom);
         }
-        // if (style['source-layer'] && (nativeLayer as any).withSourceLayer) {
-        //     (nativeLayer as any).withSourceLayer(style['source-layer']);
-        // }
+        // Required for vector sources: without the source-layer the layer references no
+        // features and renders nothing (e.g. the hyperlocal line layers stayed invisible).
+        const sourceLayer = style['source-layer'];
+        if (sourceLayer && typeof (nativeLayer as any).sourceLayer === 'function') {
+            (nativeLayer as any).sourceLayer(sourceLayer);
+        }
         return layer;
     }
 

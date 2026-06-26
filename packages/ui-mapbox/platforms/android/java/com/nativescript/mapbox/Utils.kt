@@ -72,7 +72,16 @@ class ViewAnnotationManager {
 class Utils {
     companion object {
         fun getViewAnnotationManager(map: MapView): com.mapbox.maps.viewannotation.ViewAnnotationManager {
-            return map.viewAnnotationManager 
+            return map.viewAnnotationManager
+        }
+        /**
+        * Returns whether a layer with the given id exists in the current style.
+        * Used to avoid calling addLayerBelow() with a missing reference layer, which
+        * throws a MapboxStyleException and leaves the layer unadded.
+        */
+        @JvmStatic
+        fun styleLayerExists(map: com.mapbox.maps.MapboxMap, layerId: String): Boolean {
+            return map.getStyle()?.styleLayerExists(layerId) ?: false
         }
         // fun getCamera(map: com.mapbox.maps.MapView): com.mapbox.maps.plugin.animation.CameraAnimationsPlugin {
         //     return map.getPlugin("MAPBOX_CAMERA_PLUGIN_ID") 

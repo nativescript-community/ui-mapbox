@@ -19,6 +19,8 @@ declare namespace com {
                 function removeOnViewAnnotationUpdatedListener(map: com.mapbox.maps.MapView, listener: com.mapbox.maps.viewannotation.OnViewAnnotationUpdatedListener);
             }
             export namespace Utils {
+                function styleLayerExists(map: com.mapbox.maps.MapboxMap, layerId: string): boolean;
+
                 export namespace Companion {
                     function getViewAnnotationManager(map: com.mapbox.maps.MapView): com.mapbox.maps.viewannotation.ViewAnnotationManager;
                     function addViewAnnotation(map: com.mapbox.maps.MapView, view: android.view.View, options: com.mapbox.maps.ViewAnnotationOptions);

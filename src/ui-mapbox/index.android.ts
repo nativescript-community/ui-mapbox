@@ -2801,7 +2801,10 @@ export class Mapbox extends MapboxCommon implements MapboxApi {
         }
 
         const layer = await LayerFactory.createLayer(style, source);
-        if (belowLayerId) {
+        // Only position below the reference layer when it actually exists in the current
+        // style; otherwise addLayerBelow() throws a MapboxStyleException and the layer is
+        // never added (e.g. referencing a layer that isn't present in the active style).
+        if (belowLayerId && com.nativescript.mapbox.Utils.styleLayerExists(theMap, belowLayerId)) {
             // TODO: missing extension typings
             //@ts-ignore
             theMap.getStyle().addLayerBelow(layer.getNativeInstance(), belowLayerId);
