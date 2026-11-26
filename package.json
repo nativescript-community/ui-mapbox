@@ -6,7 +6,7 @@
         "sync": "node ./tools/sync.mjs",
         "build": "lerna run build",
         "build.all": "npm run build",
-        "clean": "rimraf -g 'packages/**/*.d.ts' 'packages/**/*.tsbuildinfo' 'packages/**/*.js' 'packages/**/*.mjs' 'packages/**/*.js.map' 'packages/**/*.mjs.map' 'packages/**/*.metada' 'packages/**/angular/ng-package.json'",
+        "clean": "rimraf -g 'packages/**/*.d.ts' 'packages/**/*.tsbuildinfo' 'packages/*/*.js' 'packages/*/!(platforms)/**/*.js' 'packages/**/*.mjs' 'packages/**/*.js.map' 'packages/**/*.mjs.map' 'packages/**/*.metada' 'packages/**/angular/ng-package.json'",
         "commitmsg": "commitlint -e $GIT_PARAMS",
         "demo.ng.android": "cd ./demo-ng && ns run android --no-hmr --env.watchNodeModules",
         "demo.ng.clean": "cd ./demo-ng && ns clean",
@@ -19,7 +19,7 @@
         "update": "node ./tools/update.js",
         "doc": "node tools/builddoc.mjs",
         "fullclean": "npm run clean && rimraf -g 'packages/**/node_modules' 'demo-*/hooks' 'demo-*/node_modules' 'package-lock.json' 'pnpm-lock.yaml' 'node_modules'",
-        "commit_readme_doc_changes": "git add docs/** *.md ; git commit -m \"readme/doc\" ; echo \"commit readme doc done\""
+        "commit_readme_doc_changes": "git add docs *.md ; git commit -m \"readme/doc\" ; echo \"commit readme doc done\""
     },
     "repository": {
         "type": "git",

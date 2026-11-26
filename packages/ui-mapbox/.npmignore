@@ -1,6 +1,12 @@
-*.map
+node_modules/
+pnpm-global/
+bin/
+hooks/
 *.ts
-!*.d.ts
+*.old
 tsconfig.json
-references.d.ts
+!*.d.ts
+*.aar
+*.jar
+blueprint.md
 !nativescript.config.ts
